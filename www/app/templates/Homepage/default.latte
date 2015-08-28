@@ -1,0 +1,14 @@
+{block content}
+<div class="container">
+	<h1>Homepage</h1>
+	{if $user->loggedIn}
+		<a n:href="Admin:Lockscreen:out">Logout</a>
+	{else}
+		<a n:href="Admin:Lockscreen:">Login</a>
+	{/if}
+	<div n:foreach="$users as $user">
+		<h2>{$user->name}</h2>
+		<p>{$user->email}</p>
+	</div>
+</div>
+{/block}
