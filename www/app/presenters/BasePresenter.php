@@ -2,8 +2,9 @@
 
 namespace App\Presenters;
 
-use Nette;
-use App\Model;
+use Nette,
+	App\Model,
+	Nette\Application\UI\Form as Form;
 
 
 /**

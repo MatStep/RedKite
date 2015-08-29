@@ -1,0 +1,50 @@
+{block content}
+	<div class="box box-primary">
+		<div class="box-header with-border">
+			<h2 class="box-title">
+				Pridanie používateľa
+			</h2>
+		</div>
+		<div class="box-body">
+			{form addUserForm}
+			<div n:if="$form->hasErrors()">
+				<ul class="errors">
+					<li n:foreach="$form->errors as $error"><strong>{$error}</strong></li>
+				</ul>
+			</div> 
+			<div class="form-group">
+				<label for="inputName">
+					Meno
+				</label>
+				{input name}
+			</div>
+			<div class="form-group">
+				<label for="inputEmail">
+					Email
+				</label>
+				{input email}
+			</div>
+			<div class="form-group">
+				<label for="inputPassword">
+					Heslo
+				</label>
+				{input password}
+			</div>
+			<div class="form-group">
+				<label for="inputPassword2">
+					Potvrdenie hesla
+				</label>
+				{input password2}
+			</div>
+			{input submit}
+			{/form}
+		</div>
+	</div>
+
+{* Script for changing active menu *}
+<script>
+	$(function() {
+		unsetAndSetActive('#users', '#listUsers');
+	});
+</script>
+{/block}
