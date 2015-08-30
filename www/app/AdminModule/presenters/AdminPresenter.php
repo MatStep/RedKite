@@ -28,15 +28,6 @@ class AdminPresenter extends \App\AdminModule\Presenters\BasePresenter
 			$this->flashMessage('Stránka nebola nájdená');
 			$this->redirect(':Homepage');
 		}
-		//$this->template->user = $user;
-	}
-
-	public function actionRemove($userId)
-	{
-		$this->userManager->removeUser($userId);
-
-		$this->flashMessage('Používateľ bol úspešne vymazaný');
-		$this->redirect("Admin:");
 	}
 
 	/*Form add user*/
@@ -95,6 +86,14 @@ class AdminPresenter extends \App\AdminModule\Presenters\BasePresenter
 		}
 
 			$this->redirect("Admin:");
+	}
+
+	public function actionRemove($userId)
+	{
+		$this->userManager->removeUser($userId);
+
+		$this->flashMessage('Používateľ bol úspešne vymazaný');
+		$this->redirect("Admin:");
 	}
 
 	public function actionEdit($userId)
