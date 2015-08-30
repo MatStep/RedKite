@@ -20,8 +20,15 @@ class AdminPresenter extends \App\AdminModule\Presenters\BasePresenter
 		$this->template->users = $users;
 	}
 
-	public function hello(){
-		echo "hello";
+	public function renderEdit($userId)
+	{
+		$user = $this->userManager->getUser($userId);
+
+		if (!$user) {
+			$this->flashMessage('Stránka nebola nájdená');
+			$this->redirect(':Homepage');
+		}
+		//$this->template->user = $user;
 	}
 
 	public function actionRemove($userId)
@@ -32,7 +39,8 @@ class AdminPresenter extends \App\AdminModule\Presenters\BasePresenter
 		$this->redirect("Admin:");
 	}
 
-	public function createComponentAddUserForm()
+	/*Form add user*/
+	public function createComponentUserForm()
 	{
 		$form = new Form;
 
@@ -60,18 +68,43 @@ class AdminPresenter extends \App\AdminModule\Presenters\BasePresenter
 		$form->addSubmit("submit", "Submit")
 			 ->getControlPrototype()->class("btn btn-primary btn-block");
 
-		$form->onSuccess[] = array($this, "userAddFormSucceeded");
+		$form->onSuccess[] = array($this, "userFormSucceeded");
 
 		return $form;
 	}
 
-	public function userAddFormSucceeded($form, $values)
+	public function userFormSucceeded($form, $values)
 	{
-			$this->userManager->addUser($values);
+		$adding = true;
+		
+		if ( isset($this->request->getParameters()['userId']) )
+		{
+			$userId = $this->getParameter('userId');
+			$adding = false;
+		}
 
+		if ($adding)
+		{
+			$this->userManager->addUser($values);
 			$this->flashMessage('Používateľ úspešne pridaný');
+		}
+		else
+		{
+			$this->userManager->editUser($userId, $values);
+			$this->flashMessage('Používateľ bol aktualizovaný');
+		}
+
 			$this->redirect("Admin:");
 	}
 
+	public function actionEdit($userId)
+	{
+		$user = $this->userManager->getUser($userId);
+
+		$this->template->userId = $userId;
+
+		$this['userForm']->setDefaults($user->toArray());
+
+	}
 
 }

@@ -100,14 +100,59 @@ class UserManager extends Nette\Object implements Nette\Security\IAuthenticator
 		}
 	}
 
+	/*Get user*/
+	public function getUser($userId)
+	{
+		$user =  $this->database->table(self::TABLE_NAME)->where(self::COLUMN_ID, $userId)->fetch();
+
+		if ( !$user )
+		{
+			throw new UserDoesNotExistException;
+		}
+
+		return $user;
+	}
+
+	/*Get user by name*/
+	public function getUserByName($userName)
+	{
+		return $this->database->table(self::TABLE_NAME)->where(self::COLUMN_NAME, $userName)->fetch();
+	}
+
+	/*Edit User*/
+	public function editUser($userId, $values) 
+	{
+		$user = $this->database->table(self::TABLE_NAME)->where(self::COLUMN_ID, $userId);
+
+		if ( !$user )
+		{
+			throw new UserDoesNotExistException;
+		}
+
+		$user->update(array(
+				self::COLUMN_NAME => $values->name,
+				self::COLUMN_EMAIL => $values->email,
+				self::COLUMN_PASSWORD_HASH => Passwords::hash($values->password),
+			));
+	}
+
+	/*Remove User*/
 	public function removeUser($userId) 
 	{
-		$this->database->table(self::TABLE_NAME)->where(self::COLUMN_ID, $userId)->delete();
+		$user = $this->database->table(self::TABLE_NAME)->where(self::COLUMN_ID, $userId)->fetch();
+
+		if ( !$user )
+		{
+			throw new UserDoesNotExistException;
+		}
+
+		$user->delete();
 	}
 
 }
 
-
+class UserDoesNotExistException extends \Exception
+{}
 
 class DuplicateNameException extends \Exception
 {}
