@@ -11,6 +11,15 @@ class AdminPresenter extends \App\AdminModule\Presenters\BasePresenter
 	/** @var \App\Model\UserManager @inject */
 	public $userManager;
 
+	/*Before render template redirect if user has no rights to enter the page*/
+	public function beforeRender()
+	{
+		if(!$this->userManager->hasRole($this->getUser(), "admin")) {
+			$this->flashMessage('Nemáte práva na vstup do sekcie Admin');
+			$this->redirect('Homepage:');
+		}
+	}
+
 	public function renderDefault()
 	{
 		$user = $this->getUser();
@@ -35,6 +44,11 @@ class AdminPresenter extends \App\AdminModule\Presenters\BasePresenter
 	{
 		$form = new Form;
 
+		$roles = array(
+			'admin' => 'admin',
+			'user' => 'user'
+			);
+
 		$form->addText("name", "Meno")
 			 ->setRequired('Meno je povinné')
 			 ->getControlPrototype()->class("form-control");
@@ -55,6 +69,11 @@ class AdminPresenter extends \App\AdminModule\Presenters\BasePresenter
              ->setRequired('heslo je povinné')
              ->addRule(Form::EQUAL, 'Heslá sa nezhodujú', $form['password']);
         $form['password2']->getControlPrototype()->class('form-control');
+
+        $form->addSelect("role", "Roľa:", $roles)
+        	 ->setRequired('Roľa je povinná')
+        	 ->setDefaultValue('user');
+        $form['role']->getControlPrototype()->class('form-control');
 
 		$form->addSubmit("submit", "Submit")
 			 ->getControlPrototype()->class("btn btn-primary btn-block");

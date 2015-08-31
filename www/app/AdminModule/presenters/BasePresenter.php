@@ -8,11 +8,9 @@ namespace App\AdminModule\Presenters;
  */
 class BasePresenter extends \App\Presenters\BasePresenter
 {
+
 	public function startup()
     {
     	parent::startup();
-
-    	// if ( !$this->autorisator->hasRole($this->getUser(), "admin") )
-    	// 	$this->redirect('Lockscreen:');
     }
 }

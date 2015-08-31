@@ -87,19 +87,6 @@ class UserManager extends Nette\Object implements Nette\Security\IAuthenticator
 		return $this->database->table(self::TABLE_NAME);
 	}
 
-	public function addUser($values)
-	{
-		try {
-			$this->database->table(self::TABLE_NAME)->insert(array(
-				self::COLUMN_NAME => $values->name,
-				self::COLUMN_EMAIL => $values->email,
-				self::COLUMN_PASSWORD_HASH => Passwords::hash($values->password),
-			));
-		} catch (Nette\Database\UniqueConstraintViolationException $e) {
-			throw new DuplicateNameException;
-		}
-	}
-
 	/*Get user*/
 	public function getUser($userId)
 	{
@@ -119,7 +106,22 @@ class UserManager extends Nette\Object implements Nette\Security\IAuthenticator
 		return $this->database->table(self::TABLE_NAME)->where(self::COLUMN_NAME, $userName)->fetch();
 	}
 
-	/*Edit User*/
+	/*Add user*/
+	public function addUser($values)
+	{
+		try {
+			$this->database->table(self::TABLE_NAME)->insert(array(
+				self::COLUMN_NAME => $values->name,
+				self::COLUMN_EMAIL => $values->email,
+				self::COLUMN_PASSWORD_HASH => Passwords::hash($values->password),
+				self::COLUMN_ROLE => $values->role,
+			));
+		} catch (Nette\Database\UniqueConstraintViolationException $e) {
+			throw new DuplicateNameException;
+		}
+	}
+
+	/*Edit user*/
 	public function editUser($userId, $values) 
 	{
 		$user = $this->database->table(self::TABLE_NAME)->where(self::COLUMN_ID, $userId);
@@ -133,10 +135,11 @@ class UserManager extends Nette\Object implements Nette\Security\IAuthenticator
 				self::COLUMN_NAME => $values->name,
 				self::COLUMN_EMAIL => $values->email,
 				self::COLUMN_PASSWORD_HASH => Passwords::hash($values->password),
+				self::COLUMN_ROLE => $values->role,
 			));
 	}
 
-	/*Remove User*/
+	/*Remove user*/
 	public function removeUser($userId) 
 	{
 		$user = $this->database->table(self::TABLE_NAME)->where(self::COLUMN_ID, $userId)->fetch();
@@ -147,6 +150,21 @@ class UserManager extends Nette\Object implements Nette\Security\IAuthenticator
 		}
 
 		$user->delete();
+	}
+
+	/*Get role of user*/
+	public function getRole()
+	{
+		return $this->getUser()->getIdentity()->role;
+	}
+
+	/*Returns if $user has $role*/
+	public function hasRole($user, $role)
+	{
+		if(!$user->isLoggedIn())
+			return false;
+
+		return $user->getIdentity()->role == $role? TRUE : FALSE;
 	}
 
 }

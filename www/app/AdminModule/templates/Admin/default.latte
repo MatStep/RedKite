@@ -25,6 +25,9 @@
 							Email
 						</th>
 						<th>
+							Roľa
+						</th>
+						<th>
 							Možnosti
 						</th>
 					</tr>
@@ -43,6 +46,9 @@
 						</td>
 						<td>
 							{$user->email}
+						</td>
+						<td>
+							{$user->role}
 						</td>
 						<td>
 							<a n:href="Admin:remove $user->id" style="margin-top: 10px; width: 130px;" class='itemTrash'><i class="fa fa-trash-o"></i></a>
