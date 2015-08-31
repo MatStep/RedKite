@@ -23,3 +23,6 @@ services:
 	- App\Model\UserManager
 	- App\Forms\SignFormFactory
 	router: App\RouterFactory::createRouter
+
+	categories:
+		class: App\Model\CategoryManager

@@ -1,3 +1,65 @@
 {block content}
-Kategórie
+<div class="box box-primary">
+	<div class="box-header with-border">
+		<h2 class="box-title">
+			Kategórie
+		</h2>
+	</div>
+	<div class="box-body">
+		<!-- Admin VIEW TABLE BEGIN -->
+		<div class="table">
+			<table class="table table-hover">
+				<!-- ADMIN VIEW TABLE HEADER BEGIN -->
+				<thead>
+					<tr>
+						<th>
+							<input id="headerCheckBox" type="checkbox" class="adminCheckBox" name="select">
+						</th>
+						<th>
+							Meno
+						</th>
+						<th>
+							Ikonka
+						</th>
+						<th>
+							Hĺbka
+						</th>
+						<th>
+							Možnosti
+						</th>
+					</tr>
+				</thead>
+				<tbody>
+					{foreach $categories as $category}
+					<tr>
+						<td>
+							<input id="admin-check-box-{$category->id}" type="checkbox" class="adminCheckBox" name="select">
+						</td>
+						<td>
+							{$category->name}
+						</td>
+						<td>
+							{$category->icon}
+						</td>
+						<td>
+							{$category->depth}
+						</td>
+						<td>
+							<a n:href="Category:remove $category->id" style="margin-top: 10px; width: 130px;" class='itemTrash'><i class="fa fa-trash-o"></i></a>
+							<a n:href="Category:edit $category->id" style="margin-top: 10px; width: 130px;" class='itemEdit'><i class="fa fa-edit"></i></a>
+						</td>
+					</tr>
+					{/foreach}
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
+
+{* Script for changing active menu *}
+<script>
+	$(function() {
+		unsetAndSetActive('#categories', '#listCategories');
+	});
+</script>
 {/block}

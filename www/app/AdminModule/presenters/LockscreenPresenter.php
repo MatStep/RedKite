@@ -47,15 +47,8 @@ class LockscreenPresenter extends \App\Presenters\BasePresenter
     		$user = $this->getUser();
     		$user->login($this->userManager->authenticate(array($values->name, $values->password)));
 
-         //    if ( !$this->autorisator->hasRole($user, "admin") )
-        	// {
-        	// 	$form->addError('Nedovolený vstup');
-        	// }
-        	// else
-        	// {
-    			$this->flashMessage('Prihlásenie prebehlo úspešne');
-    			$this->redirect('Homepage:default');
-            // }
+    		$this->flashMessage('Prihlásenie prebehlo úspešne');
+    		$this->redirect('Homepage:default');
 
     	}
     	catch(\Nette\Security\AuthenticationException $e)

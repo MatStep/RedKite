@@ -19,10 +19,7 @@ class HomepagePresenter extends BasePresenter
 
 	public function renderDefault()
 	{
-		if(!$this->getUser()->isLoggedIn()) {
-			$this->flashMessage('Pred vstupom do Admin panela je potrebné sa prihlásiť');
-			$this->redirect(':Homepage:');
-		}
+		
 	}
 
 }

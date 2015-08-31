@@ -77,7 +77,7 @@ class UserManager extends Nette\Object implements Nette\Security\IAuthenticator
 				self::COLUMN_PASSWORD_HASH => Passwords::hash($password),
 			));
 		} catch (Nette\Database\UniqueConstraintViolationException $e) {
-			throw new DuplicateNameException;
+			throw new Nette\Application\BadRequestException("DUPLICATE_NAME");
 		}
 	}
 
@@ -94,7 +94,7 @@ class UserManager extends Nette\Object implements Nette\Security\IAuthenticator
 
 		if ( !$user )
 		{
-			throw new UserDoesNotExistException;
+			throw new Nette\Application\BadRequestException("NAME_EXISTS");
 		}
 
 		return $user;
@@ -117,7 +117,7 @@ class UserManager extends Nette\Object implements Nette\Security\IAuthenticator
 				self::COLUMN_ROLE => $values->role,
 			));
 		} catch (Nette\Database\UniqueConstraintViolationException $e) {
-			throw new DuplicateNameException;
+			throw new Nette\Application\BadRequestException("DUPLICATE_NAME");
 		}
 	}
 
@@ -128,7 +128,7 @@ class UserManager extends Nette\Object implements Nette\Security\IAuthenticator
 
 		if ( !$user )
 		{
-			throw new UserDoesNotExistException;
+			throw new Nette\Application\BadRequestException("NAME_EXISTS");
 		}
 
 		$user->update(array(
@@ -146,7 +146,7 @@ class UserManager extends Nette\Object implements Nette\Security\IAuthenticator
 
 		if ( !$user )
 		{
-			throw new UserDoesNotExistException;
+			throw new Nette\Application\BadRequestException("NAME_EXISTS");
 		}
 
 		$user->delete();
@@ -168,9 +168,3 @@ class UserManager extends Nette\Object implements Nette\Security\IAuthenticator
 	}
 
 }
-
-class UserDoesNotExistException extends \Exception
-{}
-
-class DuplicateNameException extends \Exception
-{}
