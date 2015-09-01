@@ -6,10 +6,10 @@
 		</h2>
 	</div>
 	<div class="box-body">
-		<!-- Admin VIEW TABLE BEGIN -->
+		<!-- CATEGORY VIEW TABLE BEGIN -->
 		<div class="table">
 			<table class="table table-hover">
-				<!-- ADMIN VIEW TABLE HEADER BEGIN -->
+				<!-- TABLE HEADER -->
 				<thead>
 					<tr>
 						<th>
@@ -29,7 +29,7 @@
 						</th>
 					</tr>
 				</thead>
-				<tbody>
+				<tbody><!-- TABLE BODY -->
 					{foreach $categories as $category}
 					<tr>
 						<td>
@@ -45,10 +45,41 @@
 							{$category->depth}
 						</td>
 						<td>
-							<a n:href="Category:remove $category->id" style="margin-top: 10px; width: 130px;" class='itemTrash'><i class="fa fa-trash-o"></i></a>
 							<a n:href="Category:edit $category->id" style="margin-top: 10px; width: 130px;" class='itemEdit'><i class="fa fa-edit"></i></a>
+							<a n:href="Category:remove $category->id" style="margin-top: 10px; width: 130px;" class='itemTrash'><i class="fa fa-trash-o"></i></a>
 						</td>
 					</tr>
+					<!-- SUBCATEGORIES -->
+					{var $subcategories = $category->related('category.parent_id')}
+					{var $depth = 1}
+					{block categoriesList}
+						{foreach $subcategories as $subcategory}
+							<tr>
+								<td>
+									<input id="admin-check-box-{$category->id}" type="checkbox" class="adminCheckBox" name="select">
+								</td>
+								<td>
+									{for $i = 0; $i < $depth; $i++}
+									&nbsp;&nbsp;&nbsp;&nbsp;
+									{/for}
+									{$subcategory->name}
+								</td>
+								<td>
+									{$subcategory->icon}
+								</td>
+								<td>
+									{$subcategory->depth}
+								</td>
+								<td>
+									<a n:href="Category:edit $subcategory->id" style="margin-top: 10px; width: 130px;" class='itemEdit'><i class="fa fa-edit"></i></a>
+									<a n:href="Category:remove $subcategory->id" style="margin-top: 10px; width: 130px;" class='itemTrash'><i class="fa fa-trash-o"></i></a>
+								</td>
+							</tr>
+							{var $depth = $subcategory->depth + 1}
+							{include categoriesList, subcategories => $subcategory->related('category.parent_id')}
+							{var $depth = $subcategory->depth}
+						{/foreach}
+					{/block}
 					{/foreach}
 				</tbody>
 			</table>

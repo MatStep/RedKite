@@ -48,15 +48,12 @@ class CategoryPresenter extends \App\AdminModule\Presenters\BasePresenter
         		->setAttribute('value', $this->values['icon'])
         		->setRequired('Ikonka je povinná');
 
-	        $categories = array();
-	        $categories[0] = "";
-
 			foreach ($this->categories->getAll(FALSE)->order('name') as $category) 
 			{ 
-				$categories[$category["id"]] = $category["name"];
 				$this->catDepth[$category["id"]]   = $category["depth"];
 			}        
 
+        	$categories = $this->categories->getAllCategoriesAsArray();
 
 	        $select = $form->addSelect('parent', 'Kategória', $categories)
 	    		->setAttribute('class', 'form-control');
@@ -66,9 +63,6 @@ class CategoryPresenter extends \App\AdminModule\Presenters\BasePresenter
 
 	    	if ($this->id && isset($this->values["parent_id"]) && $this->values["parent_id"])
 	    		$select->setDefaultValue($this->values["parent_id"]);
-
-	    	// if ($this->id)
-	    	// 	$form->setDefaults(array('parent' => $this->values["parent_id"]));
 	    	
         	$form->addSubmit('addItem', 'Pridať kategóriu')
         			->setAttribute('class', 'btn btn-primary');
