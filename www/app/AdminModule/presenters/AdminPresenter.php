@@ -22,9 +22,11 @@ class AdminPresenter extends \App\AdminModule\Presenters\BasePresenter
 
 	public function renderDefault()
 	{
-		$user = $this->getUser();
+		$loggedUser = $this->getUser();
 		
 		$users = $this->userManager->getUsers();
+
+		$this->template->loggedUser = $loggedUser;
 
 		$this->template->users = $users;
 	}
