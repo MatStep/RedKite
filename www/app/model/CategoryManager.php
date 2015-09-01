@@ -144,10 +144,10 @@ class CategoryManager extends Nette\Object
 	{
 		$category = $this->database->table(self::CATEGORY_TABLE)->where(self::COLUMN_ID, $id);
 
-		// if (!$category)
-		// {
-		// 	throw new Nette\Application\BadRequestException("DOESNT_EXIST");
-		// }
+		if (!$category)
+		{
+			throw new Nette\Application\BadRequestException("DOESNT_EXIST");
+		}
 
 		$category->update(array(
 			self::COLUMN_NAME => $values->name,

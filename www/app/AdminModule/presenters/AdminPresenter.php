@@ -6,6 +6,9 @@ use Nette,
 	App\Model,	
     Nette\Application\UI\Form as Form;
 
+/**
+ * Admin presenter
+ */
 class AdminPresenter extends \App\AdminModule\Presenters\BasePresenter
 {
 	/** @var \App\Model\UserManager @inject */

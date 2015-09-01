@@ -13,7 +13,7 @@
 				<thead>
 					<tr>
 						<th>
-							<input id="headerCheckBox" type="checkbox" class="adminCheckBox" name="select">
+							<input id="headerCheckBox" type="checkbox" class="categoryCheckBox" name="select">
 						</th>
 						<th>
 							Meno
@@ -33,7 +33,7 @@
 					{foreach $categories as $category}
 					<tr>
 						<td>
-							<input id="admin-check-box-{$category->id}" type="checkbox" class="adminCheckBox" name="select">
+							<input id="category-check-box-{$category->id}" type="checkbox" class="categoryCheckBox" name="select">
 						</td>
 						<td>
 							{$category->name}
