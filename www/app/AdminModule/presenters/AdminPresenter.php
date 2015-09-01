@@ -87,32 +87,44 @@ class AdminPresenter extends \App\AdminModule\Presenters\BasePresenter
 	{
 		$adding = true;
 		
-		if ( isset($this->request->getParameters()['userId']) )
-		{
-			$userId = $this->getParameter('userId');
-			$adding = false;
-		}
+		try {
+			if ( isset($this->request->getParameters()['userId']) )
+			{
+				$userId = $this->getParameter('userId');
+				$adding = false;
+			}
 
-		if ($adding)
-		{
-			$this->userManager->addUser($values);
-			$this->flashMessage('Používateľ úspešne pridaný');
-		}
-		else
-		{
-			$this->userManager->editUser($userId, $values);
-			$this->flashMessage('Používateľ bol aktualizovaný');
-		}
+			if ($adding)
+			{
+				$this->userManager->addUser($values);
+				$this->flashMessage('Používateľ úspešne pridaný');
+			}
+			else
+			{
+				$this->userManager->editUser($userId, $values);
+				$this->flashMessage('Používateľ bol aktualizovaný');
+			}
 
-			$this->redirect("Admin:");
+				$this->redirect("Admin:");
+		} catch (Nette\Application\BadRequestException $e) {
+			if ($e->getMessage() == "NAME_EXISTS")
+				$form->addError('Používateľ neexistuje');
+		}
 	}
 
 	public function actionRemove($userId)
 	{
-		$this->userManager->removeUser($userId);
-
-		$this->flashMessage('Používateľ bol úspešne vymazaný');
-		$this->redirect("Admin:");
+		if($userId != $this->getUser()->id)
+		{
+			$this->userManager->removeUser($userId);
+			$this->flashMessage('Používateľ bol úspešne vymazaný');
+			$this->redirect("Admin:");
+		}
+		else
+		{
+			$this->flashMessage('Nemožno vymazať prihláseného používateľa');
+			$this->redirect("Admin:");
+		}
 	}
 
 	public function actionEdit($userId)
