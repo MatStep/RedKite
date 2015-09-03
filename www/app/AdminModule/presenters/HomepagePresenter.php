@@ -5,7 +5,9 @@ namespace App\AdminModule\Presenters;
 use Nette;
 use App\Model;
 
-
+/**
+ * Homepage presenter
+ */
 class HomepagePresenter extends BasePresenter
 {
 	/**@var Nette\Database\Context*/

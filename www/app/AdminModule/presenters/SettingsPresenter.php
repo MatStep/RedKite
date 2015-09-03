@@ -17,7 +17,7 @@ class SettingsPresenter extends \App\AdminModule\Presenters\BasePresenter
 	public function beforeRender()
 	{
 		if(!$this->userManager->hasRole($this->getUser(), "admin")) {
-			$this->flashMessage('Nemáte práva na vstup do sekcie Admin');
+			$this->flashMessage('Nemáte práva na vstup do sekcie nastavenia');
 			$this->redirect('Homepage:');
 		}
 	}

@@ -34,6 +34,7 @@ class CategoryPresenter extends \App\AdminModule\Presenters\BasePresenter
 		$this->template->categories = $this->categories->getAll()->order('name');
 	}
 
+    /*Category form*/
 	protected function createComponentCategoryForm()
     {
         $form = new Form;

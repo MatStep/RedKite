@@ -31,7 +31,7 @@ class TaxPresenter extends \App\AdminModule\Presenters\BasePresenter
 	public function beforeRender()
 	{
 		if(!$this->userManager->hasRole($this->getUser(), "admin")) {
-			$this->flashMessage('Nemáte práva na vstup do sekcie Admin');
+			$this->flashMessage('Nemáte práva na vstup do sekcie dane');
 			$this->redirect('Homepage:');
 		}
 	}
@@ -41,7 +41,7 @@ class TaxPresenter extends \App\AdminModule\Presenters\BasePresenter
 		$this->template->taxes = $this->taxes->getAll();
 	}
 
-	/*Form add tax*/
+	/*Tax form*/
 	public function createComponentTaxForm()
 	{
 		$form = new Form;

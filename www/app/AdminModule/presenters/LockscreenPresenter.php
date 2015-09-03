@@ -18,6 +18,7 @@ class LockscreenPresenter extends \App\Presenters\BasePresenter
 
 	}
 
+    /*Login form*/
 	protected function createComponentLoginForm()
     {
         $form = new UI\Form;
