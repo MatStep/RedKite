@@ -168,6 +168,7 @@
 			<!-- Content Header (Page header) -->
 			<section class="content-header">
 				<div n:foreach="$flashes as $flash" n:class="flash, $flash->type">{$flash->message}</div>
+				<!-- Remove modal window-->
 				<div id="removeWindow" class="modal">
 					<div class="modal-dialog">
 						<div class="modal-content">
@@ -182,9 +183,9 @@
 								<button type="button" class="closeRm btn btn-default pull-left" data-dismiss="modal">Zrušiť</button>
 								<button type="button" id="saveRm" class="btn btn-primary">Vymazať</button>
 							</div>
-						</div><!-- /.modal-content -->
-					</div><!-- /.modal-dialog -->
-				</div><!-- /.modal -->
+						</div>
+					</div>
+				</div><!-- Remove modal window end -->
 				{include content}
 			</section>
 
