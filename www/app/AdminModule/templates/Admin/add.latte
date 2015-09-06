@@ -4,6 +4,7 @@
 			<h2 class="box-title">
 				Pridanie používateľa
 			</h2>
+			<a n:href="Admin:" class="pull-right"><i class="fa fa-remove"></i></a>
 		</div>
 		<div class="box-body">
 			{form userForm}
@@ -42,7 +43,7 @@
 				</label>
 				{input role}
 			</div>
-			{input submit}
+			{input add}
 			{/form}
 		</div>
 	</div>
@@ -50,7 +51,7 @@
 {* Script for changing active menu *}
 <script>
 	$(function() {
-		unsetAndSetActive('#users', '#listUsers');
+		unsetAndSetActive('#users', '#addUser');
 	});
 </script>
 {/block}

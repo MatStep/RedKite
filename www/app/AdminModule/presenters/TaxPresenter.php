@@ -55,10 +55,10 @@ class TaxPresenter extends \App\AdminModule\Presenters\BasePresenter
 			 ->getControlPrototype()->class("form-control");
 
 		$form->addSubmit("add", "Pridať daň")
-			 ->getControlPrototype()->class("btn btn-primary btn-block");
+			 ->getControlPrototype()->class("btn btn-primary pull-right");
 
 		$form->addSubmit("edit", "Uložiť zmeny")
-			 ->getControlPrototype()->class("btn btn-primary btn-block");
+			 ->getControlPrototype()->class("btn btn-primary pull-right");
 
 		$form->onSuccess[] = array($this, "taxFormSucceeded");
 

@@ -80,8 +80,11 @@ class AdminPresenter extends \App\AdminModule\Presenters\BasePresenter
         	 ->setDefaultValue('user');
         $form['role']->getControlPrototype()->class('form-control');
 
-		$form->addSubmit("submit", "Submit")
-			 ->getControlPrototype()->class("btn btn-primary btn-block");
+		$form->addSubmit("add", "Pridať používateľa")
+			 ->getControlPrototype()->class("btn btn-primary pull-right");
+
+		$form->addSubmit("edit", "Uložiť zmeny")
+			 ->getControlPrototype()->class("btn btn-primary pull-right");
 
 		$form->onSuccess[] = array($this, "userFormSucceeded");
 

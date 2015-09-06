@@ -65,11 +65,11 @@ class CategoryPresenter extends \App\AdminModule\Presenters\BasePresenter
 	    	if ($this->id && isset($this->values["parent_id"]) && $this->values["parent_id"])
 	    		$select->setDefaultValue($this->values["parent_id"]);
 	    	
-        	$form->addSubmit('addItem', 'Pridať kategóriu')
-        			->setAttribute('class', 'btn btn-primary');
+        	$form->addSubmit('add', 'Pridať kategóriu')
+        			->setAttribute('class', 'btn btn-primary pull-right');
         	
-        	$form->addSubmit('editItem', 'Uložiť zmeny')
-        			->setAttribute('class', 'btn btn-primary');
+        	$form->addSubmit('edit', 'Uložiť zmeny')
+        			->setAttribute('class', 'btn btn-primary pull-right');
 
         	$form->onSuccess[] = array($this, 'CategoryFormSucceeded');
 
