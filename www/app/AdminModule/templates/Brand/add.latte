@@ -1,0 +1,40 @@
+{block content}
+<div class="box box-primary">
+		<div class="box-header with-border">
+			<h2 class="box-title">
+				Pridanie značky
+			</h2>
+			<a n:href="Brand:" class="pull-right"><i class="fa fa-remove"></i></a>
+		</div>
+		<div class="box-body">
+			{form brandForm}
+			<div n:if="$form->hasErrors()">
+				<ul class="errors">
+					<li n:foreach="$form->errors as $error"><strong>{$error}</strong></li>
+				</ul>
+			</div> 
+			<div class="form-group">
+				<label for="inputName">
+					Názov
+				</label>
+				{input name}
+			</div>
+			<div class="form-group">
+				<label for="inputLogo">
+					Logo
+				</label>
+				{input logo}
+			</div>
+			{input add}
+			{/form}
+		</div>
+	</div>
+
+{* Script for changing active menu *}
+<script>
+	$(function() {
+		unsetAndSetActive('#products', '#brands');
+		unsetAndSetActive('#brands', '#addBrand');
+	});
+</script>
+{/block}

@@ -29,3 +29,9 @@ services:
 		
 	taxes:
 		class: App\Model\TaxManager
+		
+	brands:
+		class: App\Model\BrandManager
+		
+	ImageManager:
+		class: App\Model\ImageManager
