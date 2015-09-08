@@ -62,7 +62,7 @@ class ProductManager extends Nette\Object
 		$data["desc"] = $values->desc;
 		$data["status"] = $values->status;
 		$data["price_sell"] = $values->price_sell;
-		$data["brand_id"] = $values->brand_id;
+		$data["brand_id"] = 1;//$values->brand_id;
 
 		return $this->database->table(self::PRODUCT_TABLE)->insert($data);
 

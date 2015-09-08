@@ -41,11 +41,23 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
 			 ->setRequired('Názov je povinný')
 			 ->getControlPrototype()->class("form-control");
 
-		$form->addText("value", "Hodnota")
-			 ->setRequired('Hodnota je povinná')
+		$form->addText("short_desc", "Krátky popis")
+			 ->setRequired('Krátky popis je povinný')
 			 ->getControlPrototype()->class("form-control");
 
-		$form->addSubmit("add", "Pridať daň")
+		$form->addText("desc", "Popis")
+			 ->setRequired('Popis je povinný')
+			 ->getControlPrototype()->class("form-control");
+
+		$form->addText("price_sell", "Cena")
+			 ->setRequired('Cena je povinná')
+			 ->getControlPrototype()->class("form-control");
+
+		$form->addText("status", "Status")
+			 ->getControlPrototype()->class("form-control");
+
+
+		$form->addSubmit("add", "Pridať produkt")
 			 ->getControlPrototype()->class("btn btn-primary pull-right");
 
 		$form->addSubmit("edit", "Uložiť zmeny")
@@ -88,7 +100,7 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
 	public function actionRemove($productId)
 	{
 			$this->products->remove($productId);
-			$this->flashMessage('Daň bola úspešne vymazaná');
+			$this->flashMessage('Produkt bol úspešne vymazaný');
 			$this->redirect("Product:");
 	}
 
