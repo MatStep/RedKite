@@ -1,0 +1,72 @@
+{block content}
+<div class="box box-primary">
+	<div class="box-header with-border">
+		<h2 class="box-title">
+			Dane
+		</h2>
+	</div>
+	<div class="box-body">
+		<!-- Currency VIEW TABLE BEGIN -->
+		<div class="table">
+			<table class="table table-hover">
+				<!-- TABLE HEADER -->
+				<thead>
+					<tr>
+						<th>
+							<input id="headerCheckBox" type="checkbox" class="currencyCheckBox" name="select">
+						</th>
+						<th>
+							Id
+						</th>
+						<th>
+							Názov
+						</th>
+						<th>
+							Značka
+						</th>
+						<th>
+							Kurz v pomere k euru
+						</th>
+						<th>
+							Možnosti
+						</th>
+					</tr>
+				</thead>
+				<tbody>	<!-- TABLE BODY -->	
+					{foreach $currencies as $currency}
+					<tr>
+						<td>
+							<input id="currency-check-box-{$currency->id}" type="checkbox" class="currencyCheckBox" name="select">
+						</td>
+						<td>
+							{$currency->id}
+						</td>
+						<td>
+							{$currency->name}
+						</td>
+						<td>
+							{$currency->sign}
+						</td>
+						<td>
+							{$currency->rate}
+						</td>
+						<td>
+							<a n:href="Currency:edit $currency->id" style="margin-top: 10px; width: 130px;" class='itemEdit'><i class="fa fa-edit"></i></a>
+							<a n:href="Currency:remove $currency->id" style="margin-top: 10px; width: 130px;" class='itemTrash'><i class="fa fa-trash-o"></i></a>
+						</td>
+					</tr>
+					{/foreach}
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
+
+{* Script for changing active menu *}
+<script>
+	$(function() {
+		unsetAndSetActive('#settings', '#currencies');
+		unsetAndSetActive('#currencies', '#listCurrencies');
+	});
+</script>
+{/block}

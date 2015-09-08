@@ -23,7 +23,7 @@ class TaxPresenter extends \App\AdminModule\Presenters\BasePresenter
 	public function __construct(Model\TaxManager $taxes)
 	{
 		$this->taxes = $taxes;
-		$this->values = array("name" => "", "value" => "");
+		$this->values = array("name" => "", "value" => "", "active" => "");
 		$this->id = 0;
 	}
 
@@ -51,7 +51,10 @@ class TaxPresenter extends \App\AdminModule\Presenters\BasePresenter
 			 ->getControlPrototype()->class("form-control");
 
 		$form->addText("value", "Hodnota")
+			 ->setType("number")
 			 ->setRequired('Hodnota je povinná')
+			 ->addRule(Form::FLOAT, 'Hodnota musí byť číslo')
+			 ->addRule(Form::RANGE, 'Hodnota musí byť v rozmedzí od %d po %d', array(0,100))
 			 ->getControlPrototype()->class("form-control");
 
 		$form->addSubmit("add", "Pridať daň")

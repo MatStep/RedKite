@@ -29,6 +29,9 @@ services:
 		
 	taxes:
 		class: App\Model\TaxManager
+
+	currencies:
+		class: App\Model\CurrencyManager
 		
 	brands:
 		class: App\Model\BrandManager
