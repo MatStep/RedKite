@@ -1,0 +1,79 @@
+{block content}
+<div class="box box-primary">
+	<div class="box-header with-border">
+		<h2 class="box-title">
+			Produkty
+		</h2>
+	</div>
+	<div class="box-body">
+		<!-- Product VIEW TABLE BEGIN -->
+		<div class="table">
+			<table class="table table-hover">
+				<!-- TABLE HEADER -->
+				<thead>
+					<tr>
+						<th>
+							<input id="headerCheckBox" type="checkbox" class="productCheckBox" name="select">
+						</th>
+						<th>
+							Id
+						</th>
+						<th>
+							Názov
+						</th>
+						<th>
+							Krátky popis
+						</th>
+						<th>
+							Cena
+						</th>
+						<th>
+							Status
+						</th>
+						<th>
+							Možnosti
+						</th>
+					</tr>
+				</thead>
+				<tbody>	<!-- TABLE BODY -->	
+					{foreach $products as $product}
+					<tr>
+						<td>
+							<input id="product-check-box-{$product->id}" type="checkbox" class="productCheckBox" name="select">
+						</td>
+						<td>
+							{$product->id}
+						</td>
+						<td>
+							{$product->name}
+						</td>
+						<td>
+							{$product->short_desc}
+						</td>
+						<td>
+							{* Currency from currency settings *}
+							{$product->price_sell}€
+						</td>
+						<td>
+							{$product->status}
+						</td>
+						<td>
+							<a n:href="Product:edit $product->id" style="margin-top: 10px; width: 130px;" class='itemEdit'><i class="fa fa-edit"></i></a>
+							<a n:href="Product:remove $product->id" style="margin-top: 10px; width: 130px;" class='itemTrash'><i class="fa fa-trash-o"></i></a>
+						</td>
+					</tr>
+					{/foreach}
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
+
+{* Script for changing active menu *}
+<script>
+	$(function() {
+		unsetAndSetActive('#settings', '#products');
+		unsetAndSetActive('#products', '#listProducts');
+	});
+</script>
+{/block}

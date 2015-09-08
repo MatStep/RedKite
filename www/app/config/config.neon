@@ -32,6 +32,9 @@ services:
 		
 	brands:
 		class: App\Model\BrandManager
+
+	products:
+		class: App\Model\ProductManager
 		
 	ImageManager:
 		class: App\Model\ImageManager
