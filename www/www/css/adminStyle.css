@@ -1,0 +1,9 @@
+.remove {
+	position: absolute;
+	right: 0;
+	color: #B20000;
+}
+
+.remove:hover {
+	color: #C13333;
+}

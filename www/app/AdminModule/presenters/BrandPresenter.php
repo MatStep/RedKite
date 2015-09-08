@@ -33,6 +33,13 @@ class BrandPresenter extends \App\AdminModule\Presenters\BasePresenter
 		$this->template->brands = $this->brands->getAll();
 	}
 
+	public function renderEdit($brandId)
+	{
+		$this->template->brand = $this->brands->getBrand($brandId);
+		$logo_path = $this->brands->getImage($brandId);
+		$this->template->logo_path = $logo_path;
+	}
+
 	/*Brand form*/
 	public function createComponentBrandForm()
 	{
@@ -102,5 +109,13 @@ class BrandPresenter extends \App\AdminModule\Presenters\BasePresenter
 
 		$this['brandForm']->setDefaults($brand->toArray());
 
+	}
+
+	public function actionRemoveImage($brandId)
+	{
+		$this->brands->removeImage($brandId);
+
+		$this->flashMessage('Obrázok bol úspešne vymazaný');
+		$this->redirect('Brand:Edit', $brandId);
 	}
 }

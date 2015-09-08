@@ -89,4 +89,21 @@ class BrandManager extends Nette\Object
 	{
 		return $this->database->table(self::BRAND_TABLE)->where(self::COLUMN_ID, $id)->delete();
 	}
+
+	public function getImage($id)
+	{
+		return $this->database->table(self::BRAND_TABLE)
+			->where(self::COLUMN_ID, $id)
+			->fetch()[self::COLUMN_LOGO_PATH];
+	}
+
+	public function removeImage($id)
+	{
+		$brand = self::getBrand($id);
+
+		unlink($brand->logo_path);
+
+		$brand->update(array(self::COLUMN_LOGO_PATH => ''));
+	}
+
 }
