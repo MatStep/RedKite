@@ -33,4 +33,30 @@ class BasePresenter extends \App\Presenters\BasePresenter
     	$this->template->taxes = $this->taxes->getAll();
     	$this->template->currencies = $this->currencies->getAll();
     }
+
+    /*Tax settings*/
+    public function createComponentTaxSettings()
+    {
+    	$form = new Form;
+
+    	$taxes = $this->taxes->getAllTaxesAsArray();
+
+    	$select = $form->addSelect('tax', 'Dane', $taxes)
+	    		->setAttribute('class', 'form-control');
+
+	    $form->addSubmit("edit", "Zmeniť")
+	    	 ->getControlPrototype()->class("btn btn-primary");
+
+	    $form->onSuccess[] = array($this, "taxSettingsSucceeded");
+
+	    return $form;
+    }
+
+    public function taxSettingsSucceeded($form, $values)
+	{
+		$taxId = $this->getParameter('id');
+		$this->taxes->setActive($values);
+		$this->flashMessage('Nastavenie dane bolo zmenené');
+		$this->redirect("Homepage:");
+	}
 }

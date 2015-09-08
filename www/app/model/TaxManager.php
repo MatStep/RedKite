@@ -15,7 +15,10 @@ class TaxManager extends Nette\Object
 		TAX_TABLE = 'tax',
 		COLUMN_ID = 'id',
 		COLUMN_NAME = 'name',
-		COLUMN_VALUE = 'value';
+		COLUMN_VALUE = 'value',
+		COLUMN_ACTIVE = 'active';
+
+	public $taxesArray = array();
 
 	/** @var Nette\Database\Context */
 	private $database;
@@ -41,6 +44,76 @@ class TaxManager extends Nette\Object
 		}
 
 		return $tax;
+	}
+
+	/*Get active tax*/
+	public function getActiveTax()
+	{
+		return $this->database->table(self::TAX_TABLE)->where(self::COLUMN_ACTIVE, 1)->fetch();
+	}
+
+	/*Get all taxes in array */
+	public function getAllTaxesAsArray() 
+	{
+		$taxes = self::getAll();
+		$taxArray = array();
+
+		foreach ($taxes as $tax) {
+			$tax = $tax->toArray();
+			$tax['selectName'] = '';
+			array_push($taxArray, $tax);
+		}
+
+		$taxes = $taxArray;
+		$taxArray = array();
+
+		foreach ($taxes as $tax) 
+		{
+			$tax['selectName'] = $tax['selectName'] . $tax['name'];
+			if($tax['id'] == self::getActiveTax()->id)
+				$tax['selectName'] = $tax['selectName'] . " (aktívne)";
+			array_push($taxArray, $tax);
+		}
+
+		$taxes = $taxArray;
+		$taxArray = array();
+		foreach($taxes as $tax) 
+		{
+			array_push($this->taxesArray,$tax);	
+			array_merge($this->taxesArray, $taxes);
+		}
+		//Edit taxes for select with tax name
+		$taxArray[0] = '';
+		$taxes = $this->taxesArray;
+		$taxArray = array();
+
+		foreach ($taxes as $tax) 
+		{
+			$taxArray[$tax['id']]= $tax['selectName'];	
+		}
+		return $taxArray;
+	}
+
+	/*Unset active tax*/
+	public function unsetActive()
+	{
+		$tax = self::getActiveTax();
+
+		$tax->update(array(
+			self::COLUMN_ACTIVE => 0,
+			));
+	}
+
+	/*Set a new tax active*/
+	public function setActive($values)
+	{
+		$tax = $this->database->table(self::TAX_TABLE)->where(self::COLUMN_ID, $values->tax);
+
+		self::unsetActive();
+
+		$tax->update(array(
+			self::COLUMN_ACTIVE => 1,
+			));
 	}
 
 	public function insert($values)

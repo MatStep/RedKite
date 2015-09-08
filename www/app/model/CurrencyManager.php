@@ -16,7 +16,8 @@ class CurrencyManager extends Nette\Object
 		COLUMN_ID = 'id',
 		COLUMN_NAME = 'name',
 		COLUMN_SIGN = 'sign',
-		COLUMN_RATE = 'rate';
+		COLUMN_RATE = 'rate',
+		COLUMN_ACTIVE = 'active';
 
 	/** @var Nette\Database\Context */
 	private $database;
