@@ -25,7 +25,7 @@
 							Krátky popis
 						</th>
 						<th>
-							Cena
+							Cena <span class="text-darkGray">(s DPH)</span>
 						</th>
 						<th>
 							Status
@@ -52,7 +52,8 @@
 						</td>
 						<td>
 							{* Currency from currency settings *}
-							{$product->price_sell}€
+							<?php $taxIncluded = (($tax->value)/100 + 1) * $product->price_sell ?>
+							{$product->price_sell}€ <span class="text-darkGray">({$taxIncluded}€)</span>
 						</td>
 						<td>
 							{$product->status}

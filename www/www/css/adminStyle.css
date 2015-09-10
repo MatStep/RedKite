@@ -1,3 +1,7 @@
+.text-darkGray {
+	color: #888;
+}
+
 .remove {
 	position: absolute;
 	right: 0;

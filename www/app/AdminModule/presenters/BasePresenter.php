@@ -31,6 +31,7 @@ class BasePresenter extends \App\Presenters\BasePresenter
     	}
 
     	$this->template->taxes = $this->taxes->getAll();
+    	$this->template->tax = $this->taxes->getActiveTax();
     	$this->template->currencies = $this->currencies->getAll();
     }
 
