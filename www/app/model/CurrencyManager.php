@@ -19,6 +19,8 @@ class CurrencyManager extends Nette\Object
 		COLUMN_RATE = 'rate',
 		COLUMN_ACTIVE = 'active';
 
+	public $currenciesArray = array();
+
 	/** @var Nette\Database\Context */
 	private $database;
 
@@ -43,6 +45,83 @@ class CurrencyManager extends Nette\Object
 		}
 
 		return $currency;
+	}
+
+	/*Get active currency*/
+	public function getActiveCurrency()
+	{
+		return $this->database->table(self::CURRENCY_TABLE)->where(self::COLUMN_ACTIVE, 1)->fetch();
+	}
+
+	/*Get all currencies in array */
+	public function getAllCurrenciesAsArray() 
+	{
+		$currencies = self::getAll();
+		$currencyArray = array();
+
+		foreach ($currencies as $currency) {
+			$currency = $currency->toArray();
+			$currency['selectName'] = '';
+			array_push($currencyArray, $currency);
+		}
+
+		$currencies = $currencyArray;
+		$currencyArray = array();
+
+		// If currency is active don't add it to currencyArray, currency will be added later as first
+		foreach ($currencies as $currency) 
+		{
+			$currency['selectName'] = $currency['selectName'] . $currency['name'];
+			if($currency['id'] == self::getActiveCurrency()->id)
+			{
+				$currency['selectName'] = $currency['selectName'] . " (aktívne)";
+				$active = $currency['selectName'];
+			}
+			else
+			{
+				array_push($currencyArray, $currency);
+			}
+		}
+
+		$currencies = $currencyArray;
+		$currencyArray = array();
+		foreach($currencies as $currency) 
+		{
+			array_push($this->currenciesArray,$currency);	
+			array_merge($this->currenciesArray, $currencies);
+		}
+		
+		//Edit currencies for select with currency name
+		$currencyArray[0] = $active;
+		$currencies = $this->currenciesArray;
+
+		foreach ($currencies as $currency) 
+		{
+			$currencyArray[$currency['id']]= $currency['selectName'];	
+		}
+		return $currencyArray;
+	}
+
+	/*Unset active currency*/
+	public function unsetActive()
+	{
+		$currency = self::getActiveCurrency();
+
+		$currency->update(array(
+			self::COLUMN_ACTIVE => 0,
+			));
+	}
+
+	/*Set a new currency active*/
+	public function setActive($values)
+	{
+		$currency = $this->database->table(self::CURRENCY_TABLE)->where(self::COLUMN_ID, $values->currency);
+
+		self::unsetActive();
+
+		$currency->update(array(
+			self::COLUMN_ACTIVE => 1,
+			));
 	}
 
 	public function insert($values)

@@ -52,8 +52,10 @@
 						</td>
 						<td>
 							{* Currency from currency settings *}
-							<?php $taxIncluded = (($tax->value)/100 + 1) * $product->price_sell ?>
-							{$product->price_sell}€ <span class="text-darkGray">({$taxIncluded}€)</span>
+							<?php 
+							$priceCurrency = $product->price_sell*$currency->rate;
+							$taxIncluded = (($tax->value)/100 + 1) * $priceCurrency; ?>
+							{$priceCurrency} {$currency->sign} <span class="text-darkGray">({$taxIncluded} {$currency->sign})</span>
 						</td>
 						<td>
 							{$product->status}

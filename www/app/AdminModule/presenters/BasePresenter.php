@@ -33,6 +33,7 @@ class BasePresenter extends \App\Presenters\BasePresenter
     	$this->template->taxes = $this->taxes->getAll();
     	$this->template->tax = $this->taxes->getActiveTax();
     	$this->template->currencies = $this->currencies->getAll();
+    	$this->template->currency = $this->currencies->getActiveCurrency();
     }
 
     /*Tax settings*/
@@ -56,6 +57,31 @@ class BasePresenter extends \App\Presenters\BasePresenter
 	{
 		$taxId = $this->getParameter('id');
 		$this->taxes->setActive($values);
+		$this->flashMessage('Nastavenie dane bolo zmenené');
+		$this->redirect("this");
+	}
+
+	/*Currency settings*/
+    public function createComponentCurrencySettings()
+    {
+    	$form = new Form;
+
+    	$form->getElementPrototype()->class('ajax');
+
+    	$currencies = $this->currencies->getAllCurrenciesAsArray();
+
+    	$select = $form->addSelect('currency', 'Dane', $currencies)
+	    		->setAttribute('class', 'form-control');
+
+	    $form->onSuccess[] = array($this, "currencySettingsSucceeded");
+
+	    return $form;
+    }
+
+    public function currencySettingsSucceeded($form, $values)
+	{
+		$currencyId = $this->getParameter('id');
+		$this->currencies->setActive($values);
 		$this->flashMessage('Nastavenie dane bolo zmenené');
 		$this->redirect("this");
 	}
