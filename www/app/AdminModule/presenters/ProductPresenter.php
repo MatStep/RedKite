@@ -50,12 +50,12 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
 			 ->getControlPrototype()->class("form-control");
 
 		$form->addText("price_sell", "Cena")
+			 ->setType('number')
 			 ->setRequired('Cena je povinná')
+			 ->addRule(Form::FLOAT, "Kurz musí byť číslo")
 			 ->getControlPrototype()->class("form-control");
 
-		$form->addText("status", "Status")
-			 ->getControlPrototype()->class("form-control");
-
+		$form->addCheckbox("status", "");
 
 		$form->addSubmit("add", "Pridať produkt")
 			 ->getControlPrototype()->class("btn btn-primary pull-right");
@@ -71,6 +71,11 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
 	public function productFormSucceeded($form, $values)
 	{
 		$adding = true;
+
+		if( $form['status']->getValue() == 'checked')
+		{
+			$values->status = 1;
+		}
 		
 		try {
 			if ( isset($this->request->getParameters()['productId']) )
