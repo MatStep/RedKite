@@ -38,6 +38,9 @@ services:
 
 	products:
 		class: App\Model\ProductManager
+
+	services:
+		class: App\Model\ServiceManager
 		
 	ImageManager:
 		class: App\Model\ImageManager
