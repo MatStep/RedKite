@@ -28,6 +28,7 @@
 	<!-- jQuery 2.1.4 -->
 	<script src="{$basePath}/adminCnt/plugins/jQuery/jQuery-2.1.4.min.js"></script>
 	<script src="{$basePath}/js/scripts.js"></script>
+	<script src="{$basePath}/js/nette.ajax.js"></script>
 
 	<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
 	<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -60,6 +61,20 @@
 		{
 			rmWindow.hide();
 		});
+	});
+
+	//JS for onchange select
+
+	$(function() {
+		$.nette.ext('select-onchange', {
+			load: function() {
+				$('select').change(function (e) {
+					$(this).closest('form').submit();
+					return false;
+				});
+			}
+		});
+		$.nette.init();
 	});
 </script>
 
@@ -99,7 +114,6 @@
                     <div style="position: relative; overflow: hidden; width: auto; height: 200px;" class="slimScrollDiv">
 							{form taxSettings}
                       			{input tax}
-                      			{input edit}
                       		{/form}
                     </div>
                   </li>

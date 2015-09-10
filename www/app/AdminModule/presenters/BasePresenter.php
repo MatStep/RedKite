@@ -40,13 +40,12 @@ class BasePresenter extends \App\Presenters\BasePresenter
     {
     	$form = new Form;
 
+    	$form->getElementPrototype()->class('ajax');
+
     	$taxes = $this->taxes->getAllTaxesAsArray();
 
     	$select = $form->addSelect('tax', 'Dane', $taxes)
 	    		->setAttribute('class', 'form-control');
-
-	    $form->addSubmit("edit", "Zmeniť")
-	    	 ->getControlPrototype()->class("btn btn-primary");
 
 	    $form->onSuccess[] = array($this, "taxSettingsSucceeded");
 
@@ -58,6 +57,6 @@ class BasePresenter extends \App\Presenters\BasePresenter
 		$taxId = $this->getParameter('id');
 		$this->taxes->setActive($values);
 		$this->flashMessage('Nastavenie dane bolo zmenené');
-		$this->redirect("Homepage:");
+		$this->redirect("this");
 	}
 }

@@ -71,8 +71,14 @@ class TaxManager extends Nette\Object
 		{
 			$tax['selectName'] = $tax['selectName'] . $tax['name'];
 			if($tax['id'] == self::getActiveTax()->id)
+			{
 				$tax['selectName'] = $tax['selectName'] . " (aktívne)";
-			array_push($taxArray, $tax);
+				$active = $tax['selectName'];
+			}
+			else
+			{
+				array_push($taxArray, $tax);
+			}
 		}
 
 		$taxes = $taxArray;
@@ -83,9 +89,8 @@ class TaxManager extends Nette\Object
 			array_merge($this->taxesArray, $taxes);
 		}
 		//Edit taxes for select with tax name
-		$taxArray[0] = '';
+		$taxArray[0] = $active;
 		$taxes = $this->taxesArray;
-		$taxArray = array();
 
 		foreach ($taxes as $tax) 
 		{
