@@ -67,6 +67,7 @@ class TaxManager extends Nette\Object
 		$taxes = $taxArray;
 		$taxArray = array();
 
+		// If tax is active don't add it to taxArray, tax will be added later as first
 		foreach ($taxes as $tax) 
 		{
 			$tax['selectName'] = $tax['selectName'] . $tax['name'];
@@ -88,6 +89,7 @@ class TaxManager extends Nette\Object
 			array_push($this->taxesArray,$tax);	
 			array_merge($this->taxesArray, $taxes);
 		}
+		
 		//Edit taxes for select with tax name
 		$taxArray[0] = $active;
 		$taxes = $this->taxesArray;
