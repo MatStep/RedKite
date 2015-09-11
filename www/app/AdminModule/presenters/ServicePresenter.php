@@ -36,18 +36,18 @@ class ServicePresenter extends \App\AdminModule\Presenters\BasePresenter
     {
         $form = new Form;
 
-        $form->addText("name", "Názov služby")
-             ->setRequired('Názov je povinný')
+        $form->addText("name", "NÃ¡zov sluÅ¾by")
+             ->setRequired('NÃ¡zov je povinnÃ½')
              ->getControlPrototype()->class("form-control");
 
         $form->addText("desc", "Popis")
-             ->setRequired('Popis je povinný')
+             ->setRequired('Popis je povinnÃ½')
              ->getControlPrototype()->class("form-control");
 
-        $form->addSubmit("add", "Prida službu")
+        $form->addSubmit("add", "PridaÅ¥ sluÅ¾bu")
              ->getControlPrototype()->class("btn btn-primary pull-right");
 
-        $form->addSubmit("edit", "Uloži zmeny")
+        $form->addSubmit("edit", "UloÅ¾iÅ¥ zmeny")
              ->getControlPrototype()->class("btn btn-primary pull-right");
 
         $form->onSuccess[] = array($this, "serviceFormSucceeded");
@@ -69,19 +69,19 @@ class ServicePresenter extends \App\AdminModule\Presenters\BasePresenter
     		if ($adding)
             {
                 $this->services->insert($values);
-                $this->flashMessage('Služba úspešne pridaná');
+                $this->flashMessage('SluÅ¾ba ÃºspeÅ¡ne pridanÃ¡');
             }
             else
             {
                 $this->services->edit($serviceId, $values);
-                $this->flashMessage('Sluzba bola aktualizovaná');
+                $this->flashMessage('Sluzba bola aktualizovanÃ¡');
             }
 
     		$this->redirect('Service:');
 
     	} catch (Nette\Application\BadRequestException $e) {
     		if ($e->getMessage() == "NAME_EXISTS")
-    			$form->addError('Názov služby už existuje');
+    			$form->addError('NÃ¡zov sluÅ¾by uÅ¾ existuje');
     	}
     }
 
@@ -89,7 +89,7 @@ class ServicePresenter extends \App\AdminModule\Presenters\BasePresenter
 	{
 		$this->services->remove($serviceId);
 
-		$this->flashMessage('Služba bola úspešne vymazaná');
+		$this->flashMessage('SluÅ¾ba bola ÃºspeÅ¡ne vymazanÃ¡');
 		$this->redirect("Service:");
 	}
 

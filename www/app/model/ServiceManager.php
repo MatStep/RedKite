@@ -72,7 +72,7 @@ class ServiceManager extends Nette\Object
 			));
 	}
 
-	public function remove($id, $state = "parent")
+	public function remove($id)
 	{
 		return $this->database->table(self::SERVICE_TABLE)->where(self::COLUMN_ID, $id)->delete();
 	}
