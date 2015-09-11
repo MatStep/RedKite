@@ -93,6 +93,9 @@ class CategoryPresenter extends \App\AdminModule\Presenters\BasePresenter
     			$parent = $values['parent']? $values['parent'] : NULL;
     			$depth   = $parent? ( $this->catDepth[$parent] + 1 ) : 0;
     			$this->categories->insert($values['name'], $parent, $values["icon"], $depth);
+
+                $lastId = $this->categories->getLastInsertedId();
+                $this->categories->translateData(1, $lastId, $values['name'], 0);
     			$this->flashMessage('Kategória úspešne pridaná');
     		}
     		else
@@ -100,6 +103,7 @@ class CategoryPresenter extends \App\AdminModule\Presenters\BasePresenter
 		    	// EDIT CATEGORY
     			$values['depth']   = $values['parent']? ( $this->catDepth[$values['parent']] + 1 ) : 0;
     			$this->categories->edit($categoryId, $values);
+                $this->categories->translateData(1, $categoryId, $values['name'], 1);
     			$this->flashMessage('Kategória úspešne aktualizovaná');
 
     		}
@@ -109,6 +113,10 @@ class CategoryPresenter extends \App\AdminModule\Presenters\BasePresenter
     	} catch (Nette\Application\BadRequestException $e) {
     		if ($e->getMessage() == "NAME_EXISTS")
     			$form->addError('Názov kategórie už existuje');
+            if ($e->getMessage() == "DOESNT_EXIST")
+                $form->addError('Kategória neexistuje');
+            if ($e->getMessage() == "CATEGORY_LANG_DOESNT_EXIST")
+                $form->addError('Kategória nemá zaindexovaný preklad');
     	}
     }
 
@@ -124,9 +132,13 @@ class CategoryPresenter extends \App\AdminModule\Presenters\BasePresenter
 	{
 		$category = $this->categories->getCategory($categoryId);
 
+        $parent = $this->categories->getCategory($category->parent_id);
+
 		$this->template->categoryId = $categoryId;
 
 		$this['categoryForm']->setDefaults($category->toArray());
+
+        $this['categoryForm']['parent']->setDefaultValue($parent);
 
 	}
 

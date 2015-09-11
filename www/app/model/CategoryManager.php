@@ -18,7 +18,16 @@ class CategoryManager extends Nette\Object
 		COLUMN_PARENT_ID = 'parent_id',
 		COLUMN_ICON = 'icon',
 		COLUMN_DEPTH = 'depth',
-		COLUMN_NAME = 'name';
+		COLUMN_NAME = 'name',
+
+		LANG_TABLE = 'lang',
+		COLUMN_LANG_ID = 'id',
+
+		CATEGORY_LANG_TABLE = "category_lang",
+		COLUMN_CATGEORY_LANG_ID = "id",
+		COLUMN_CATEGORY_ID = "category_id",
+		COLUMN_FOREIGN_LANG_ID = "lang_id",
+		COLUMN_TRANSLATED_NAME = "name";
 
 	public $categoriesArray = array();
 
@@ -39,7 +48,7 @@ class CategoryManager extends Nette\Object
 	{
 		$q = $this->database->table('category');
 		if ($parent)
-			$q->where('parent_id', NULL);
+			$q->where('parent_id', 0);
 		return $q;
 	}
 
@@ -171,6 +180,66 @@ class CategoryManager extends Nette\Object
 			}
 			$subcategories = self::getSubcategories($subcategory['id']);
 		}
+
+		// delete all rows where is category located in category lang
+		self::getCategoryLang($id)->delete();
+
 		return $this->database->table(self::CATEGORY_TABLE)->where(self::COLUMN_ID, $id)->delete();
+	}
+
+	/**
+	 * @return int	return id of last inserted row
+	*/
+	function getLastInsertedId()
+	{
+		//Select returns string before number so need to trim
+		$id = $this->database->query("SELECT LAST_INSERT_ID()")->fetchField();
+
+		return $id;
+	}
+
+	/** 
+	 * Return lang id
+	 * @param string $categoryId   category id
+	 * @return int				   return category id
+	 */
+	public function getCategoryLang($categoryId)
+	{
+		$category_lang = $this->database->table(self::CATEGORY_LANG_TABLE)
+			->where(self::COLUMN_CATEGORY_ID, $categoryId)
+			->fetch();
+
+		if ( !$category_lang )
+		{
+			throw new Nette\Application\BadRequestException("CATEGORY_LANG_DOESNT_EXIST");
+		}
+
+		return $category_lang;
+	}
+
+	/** 
+	 * translate data
+	 * @param int $lang 		   language id
+	 * @param array $data		   array of data to transalte
+	 * @param int $method 		   method defines 0-> adding, 1->updating
+	 * @param string $categoryId   id of category
+	 */
+	public function translateData($langId, $categoryId, $data, $method)
+	{
+		if($method == '0')
+		{
+			$this->database->table(self::CATEGORY_LANG_TABLE)->insert(array(
+				self::COLUMN_CATEGORY_ID => $categoryId,
+				self::COLUMN_FOREIGN_LANG_ID => $langId,
+				self::COLUMN_TRANSLATED_NAME => $data,
+				));
+		}
+		else
+		{
+			$category_lang = self::getCategoryLang($categoryId);
+			$category_lang->update(array(
+				self::COLUMN_TRANSLATED_NAME => $data,
+				));
+		}
 	}
 }

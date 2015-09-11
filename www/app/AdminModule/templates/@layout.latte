@@ -68,7 +68,7 @@
 	$(function() {
 		$.nette.ext('select-onchange', {
 			load: function() {
-				$('select').change(function (e) {
+				$('.main-header-settings select').change(function (e) {
 					$(this).closest('form').submit();
 					return false;
 				});
