@@ -11,6 +11,12 @@ use Nette,
  */
 class BasePresenter extends \App\Presenters\BasePresenter
 {
+	/** @persistent */
+    public $locale;
+
+    /** @var \Kdyby\Translation\Translator @inject */
+    public $translator;
+
 	private $taxes;
 
 	private $currencies;
@@ -19,6 +25,16 @@ class BasePresenter extends \App\Presenters\BasePresenter
 	{
 		$this->taxes = $taxes;
 		$this->currencies = $currencies;
+	}
+
+	protected function createTemplate($class = NULL)
+	{
+	    $template = parent::createTemplate($class);
+        $template->presenterName = $this->name;
+
+        $this->translator->createTemplateHelpers()->register($template->getLatte());
+
+	    return $template;
 	}
 
 	public function startup()

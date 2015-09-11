@@ -74,7 +74,7 @@ class ServicePresenter extends \App\AdminModule\Presenters\BasePresenter
             else
             {
                 $this->services->edit($serviceId, $values);
-                $this->flashMessage('Sluzba bola aktualizovaná');
+                $this->flashMessage('Služba bola aktualizovaná');
             }
 
     		$this->redirect('Service:');

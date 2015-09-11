@@ -2,6 +2,10 @@
 
 require __DIR__ . '/../vendor/autoload.php';
 
+use Nette\Application\Routers\Route,
+	Nette\Application\Routers\RouteList,
+	Nette\Application\Routers\SimpleRouter;
+
 $configurator = new Nette\Configurator;
 
 //$configurator->setDebugMode('23.75.345.200'); // enable for your remote IP

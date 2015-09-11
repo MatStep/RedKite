@@ -44,3 +44,11 @@ services:
 		
 	ImageManager:
 		class: App\Model\ImageManager
+
+extensions:
+    translation: Kdyby\Translation\DI\TranslationExtension
+
+translation:
+    default: sk
+    fallback: [sk_SVK, sk]
+    whitelist: [sk, cs, en]
