@@ -8,7 +8,7 @@ use Nette,
 
 
 /**
- * Category management.
+ * Category management
  */
 class CategoryManager extends Nette\Object
 {
@@ -29,11 +29,15 @@ class CategoryManager extends Nette\Object
 		COLUMN_FOREIGN_LANG_ID = "lang_id",
 		COLUMN_TRANSLATED_NAME = "name";
 
-	public $categoriesArray = array();
-
 	/** @var Nette\Database\Context */
 	private $database;
 
+	/** @var array */
+	public $categoriesArray = array();
+
+	/**
+	 * Database constructor
+	 */
 	public function __construct(Nette\Database\Context $database)
 	{
 		$this->database   = $database;
@@ -52,7 +56,11 @@ class CategoryManager extends Nette\Object
 		return $q;
 	}
 
-	/*Get category*/
+	/**
+	 * Get category method returns category with categoryId
+	 * @param int $categoryId	id of category
+	 * @return Object	Category with $categoryId
+	 */
 	public function getCategory($categoryId)
 	{
 		$category =  $this->database->table(self::CATEGORY_TABLE)->where(self::COLUMN_ID, $categoryId)->fetch();
@@ -65,7 +73,12 @@ class CategoryManager extends Nette\Object
 		return $category;
 	}
 
-	/*Sort categories*/
+	/**
+	 * This method sort categories with parent categories and their child following
+	 * @param Object $categories	Categories from database
+	 * @param int $categoryId		id of parent category
+	 * @return Array				return array of sorted subcategories
+	 */
 	public function sortCategories($categories, $categoryId) 
 	{
 		$i = 0;
@@ -81,7 +94,10 @@ class CategoryManager extends Nette\Object
 		return $subCatArray;
 	}
 
-	/*Get all categories in array where subcategories are intended with spaces before category name*/
+	/**
+	 * Get all categories in array where subcategories are intended with spaces before category name
+	 * @return Array	method return array with sorted categories
+	 */
 	public function getAllCategoriesAsArray() 
 	{
 		$categories = self::getAll(FALSE);
@@ -128,66 +144,18 @@ class CategoryManager extends Nette\Object
 		return $catArray;
 	}
 
-	/*Get subcategories*/
+	/**
+	 * This method get all subscribers for specific category
+	 * @param int $categoryId	id of category
+	 * @return Object	method returns subcategories that have parant_id same as category_id of parent category
+	 */
 	public function getSubcategories($categoryId)
 	{
 		return $this->database->table(self::CATEGORY_TABLE)->where(self::COLUMN_PARENT_ID, $categoryId);
 	}
 
-	public function insert($name, $parent_id = 0, $icon, $depth = 0)
-	{
-		if ($this->database->table(self::CATEGORY_TABLE)->where(self::COLUMN_NAME, $name)->count() > 0)
-			throw new Nette\Application\BadRequestException("NAME_EXISTS");
-
-		$data = array();
-		$data["name"] 	 = $name;
-		$data["parent_id"] = $parent_id;
-		$data["icon"] 	   = $icon;
-		$data["depth"] 	   = $depth;
-
-		return $this->database->table(self::CATEGORY_TABLE)->insert($data);
-
-	}
-
-	public function edit($id, $values)
-	{
-		$category = $this->database->table(self::CATEGORY_TABLE)->where(self::COLUMN_ID, $id);
-
-		if (!$category)
-		{
-			throw new Nette\Application\BadRequestException("DOESNT_EXIST");
-		}
-
-		$category->update(array(
-			self::COLUMN_NAME => $values->name,
-			self::COLUMN_ICON => $values->icon,
-			self::COLUMN_PARENT_ID => $values->parent,
-			self::COLUMN_DEPTH => $values->depth,
-			));
-	}
-
-	public function remove($id, $state = "parent")
-	{
-		$subcategories = self::getSubcategories($id);
-
-		while($subcategories->count() > 0) {
-			foreach($subcategories as $subcategory)
-			{
-				$subcategory->update(array(
-					self::COLUMN_PARENT_ID => NULL,
-					self::COLUMN_DEPTH => 0,
-					));
-			}
-			$subcategories = self::getSubcategories($subcategory['id']);
-		}
-
-		// delete all rows where is category located in category lang
-		self::getCategoryLang($id)->delete();
-
-		return $this->database->table(self::CATEGORY_TABLE)->where(self::COLUMN_ID, $id)->delete();
-	}
-
 	/**
+	 * This method returns last inserted row
 	 * @return int	return id of last inserted row
 	*/
 	function getLastInsertedId()
@@ -215,6 +183,78 @@ class CategoryManager extends Nette\Object
 		}
 
 		return $category_lang;
+	}
+
+	/**
+	 * Method inserts new category in database
+	 * @param string $name		Name of category
+	 * @param int $parent_id	Identifier of parent category
+	 * @param string $icon		Icon of category
+	 * @param int $depth		depth of category, tells how many parent categories category have
+	 * @return Object			Inserted row
+	*/
+	public function insert($name, $parent_id = 0, $icon, $depth = 0)
+	{
+		if ($this->database->table(self::CATEGORY_TABLE)->where(self::COLUMN_NAME, $name)->count() > 0)
+			throw new Nette\Application\BadRequestException("NAME_EXISTS");
+
+		$data = array();
+		$data["name"] 	 = $name;
+		$data["parent_id"] = $parent_id;
+		$data["icon"] 	   = $icon;
+		$data["depth"] 	   = $depth;
+
+		return $this->database->table(self::CATEGORY_TABLE)->insert($data);
+
+	}
+
+	/**
+	 * Edit category in database
+	 * @param int $id			Identifier of category
+	 * @param array $values		Values of catgory
+	 * @return void
+	*/
+	public function edit($id, $values)
+	{
+		$category = $this->database->table(self::CATEGORY_TABLE)->where(self::COLUMN_ID, $id);
+
+		if (!$category)
+		{
+			throw new Nette\Application\BadRequestException("DOESNT_EXIST");
+		}
+
+		$category->update(array(
+			self::COLUMN_NAME => $values->name,
+			self::COLUMN_ICON => $values->icon,
+			self::COLUMN_PARENT_ID => $values->parent,
+			self::COLUMN_DEPTH => $values->depth,
+			));
+	}
+
+	/**
+	 * Remove category from database
+	 * @param int $id			Identifier of category	
+	 * @return Object			Removed category
+	*/
+	public function remove($id)
+	{
+		$subcategories = self::getSubcategories($id);
+
+		while($subcategories->count() > 0) {
+			foreach($subcategories as $subcategory)
+			{
+				$subcategory->update(array(
+					self::COLUMN_PARENT_ID => NULL,
+					self::COLUMN_DEPTH => 0,
+					));
+			}
+			$subcategories = self::getSubcategories($subcategory['id']);
+		}
+
+		// delete all rows where is category located in category lang
+		self::getCategoryLang($id)->delete();
+
+		return $this->database->table(self::CATEGORY_TABLE)->where(self::COLUMN_ID, $id)->delete();
 	}
 
 	/** 
