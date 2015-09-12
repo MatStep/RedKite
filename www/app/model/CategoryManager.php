@@ -43,6 +43,7 @@ class CategoryManager extends Nette\Object
 		$this->database   = $database;
 	}
 
+
 	/**
 	 * getAll method returns all categories.
 	 * @param  boolean $parent If value is FALSE, method return all categories included their childrens. TRUE return just main categories.
@@ -55,6 +56,7 @@ class CategoryManager extends Nette\Object
 			$q->where('parent_id', 0);
 		return $q;
 	}
+
 
 	/**
 	 * Get category method returns category with categoryId
@@ -72,6 +74,7 @@ class CategoryManager extends Nette\Object
 
 		return $category;
 	}
+
 
 	/**
 	 * This method sort categories with parent categories and their child following
@@ -93,6 +96,7 @@ class CategoryManager extends Nette\Object
 		}
 		return $subCatArray;
 	}
+
 
 	/**
 	 * Get all categories in array where subcategories are intended with spaces before category name
@@ -144,6 +148,7 @@ class CategoryManager extends Nette\Object
 		return $catArray;
 	}
 
+
 	/**
 	 * This method get all subscribers for specific category
 	 * @param int $categoryId	id of category
@@ -154,17 +159,18 @@ class CategoryManager extends Nette\Object
 		return $this->database->table(self::CATEGORY_TABLE)->where(self::COLUMN_PARENT_ID, $categoryId);
 	}
 
+
 	/**
 	 * This method returns last inserted row
 	 * @return int	return id of last inserted row
 	*/
 	function getLastInsertedId()
 	{
-		//Select returns string before number so need to trim
 		$id = $this->database->query("SELECT LAST_INSERT_ID()")->fetchField();
 
 		return $id;
 	}
+
 
 	/** 
 	 * Return lang id
@@ -184,6 +190,7 @@ class CategoryManager extends Nette\Object
 
 		return $category_lang;
 	}
+
 
 	/**
 	 * Method inserts new category in database
@@ -208,6 +215,7 @@ class CategoryManager extends Nette\Object
 
 	}
 
+
 	/**
 	 * Edit category in database
 	 * @param int $id			Identifier of category
@@ -230,6 +238,7 @@ class CategoryManager extends Nette\Object
 			self::COLUMN_DEPTH => $values->depth,
 			));
 	}
+
 
 	/**
 	 * Remove category from database
@@ -256,6 +265,7 @@ class CategoryManager extends Nette\Object
 
 		return $this->database->table(self::CATEGORY_TABLE)->where(self::COLUMN_ID, $id)->delete();
 	}
+
 
 	/** 
 	 * translate data

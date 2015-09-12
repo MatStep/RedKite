@@ -41,6 +41,9 @@ services:
 
 	services:
 		class: App\Model\ServiceManager
+
+	languages:
+		class: App\Model\LanguageManager
 		
 	ImageManager:
 		class: App\Model\ImageManager

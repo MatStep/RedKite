@@ -17,14 +17,21 @@ class BasePresenter extends \App\Presenters\BasePresenter
     /** @var \Kdyby\Translation\Translator @inject */
     public $translator;
 
+    /** @var App\Model\LanguageManager */
+    private $languages;
+
+    /** @var string */
+    private $currentLanguage;
+
 	private $taxes;
 
 	private $currencies;
 
-	public function inject(Model\TaxManager $taxes, Model\CurrencyManager $currencies)
+	public function inject(Model\TaxManager $taxes, Model\CurrencyManager $currencies, Model\LanguageManager $languages)
 	{
 		$this->taxes = $taxes;
 		$this->currencies = $currencies;
+		$this->languages = $languages;
 	}
 
 	protected function createTemplate($class = NULL)
@@ -50,6 +57,8 @@ class BasePresenter extends \App\Presenters\BasePresenter
     	$this->template->tax = $this->taxes->getActiveTax();
     	$this->template->currencies = $this->currencies->getAll();
     	$this->template->currency = $this->currencies->getActiveCurrency();
+
+    	$this->template->lang = $this->languages->getLanguage();
     }
 
     /*Tax settings*/
