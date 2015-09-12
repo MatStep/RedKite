@@ -29,17 +29,21 @@ class LanguageManager extends Nette\Object
 	/** @var \Kdyby\Translation\Translator */
 	private $translator;
 
+	/** @var Nette\Http\IRequest */
+	private $httpRequest;
+
 	/** @var string */
 	public $language;
 
 	/**
 	 * Database and translator constructor
 	 */
-	public function __construct(Nette\Database\Context $database, \Kdyby\Translation\Translator $translator)
+	public function __construct(Nette\Database\Context $database, \Kdyby\Translation\Translator $translator, Nette\Http\Request $httpRequest)
 	{
-		$this->database   = $database;
-		$this->translator = $translator;
-		$this->language   = $this->translator->getLocale();
+		$this->database    = $database;
+		$this->translator  = $translator;
+		$this->language    = $this->translator->getLocale();
+		$this->httpRequest = $httpRequest;
 	}
 
 
@@ -69,5 +73,38 @@ class LanguageManager extends Nette\Object
 	public function getLanguage()
 	{
 		return $this->language;
+	}
+
+	/**
+	 * Method set language
+	 * @param string $lang	Language to set
+	 */
+	public function setLanguage($lang)
+	{
+		$this->language = $lang;
+	}
+
+
+	/**
+	 * Method change language in url
+	 * @param string $lang	Language to change
+	 * @return string	return Url to change
+	 */
+	public function changeLanguage($lang)
+	{
+		$base = $this->httpRequest->url->baseUrl;
+		$relative = $this->httpRequest->url->relativeUrl;
+
+		$lang_code = strtok($relative, '/');
+
+		// there is + 1 because of slash
+		if(strlen($lang_code) == 2)
+		{
+			$relative = substr($relative, strlen($lang_code) + 1);
+		}
+
+		$url = $base . $lang . "/" . $relative;
+
+		return $url;
 	}
 }

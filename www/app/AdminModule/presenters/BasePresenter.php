@@ -23,6 +23,9 @@ class BasePresenter extends \App\Presenters\BasePresenter
     /** @var string */
     private $currentLanguage;
 
+    /** @var string temporary variable */
+    private $path;
+
 	private $taxes;
 
 	private $currencies;
@@ -59,6 +62,8 @@ class BasePresenter extends \App\Presenters\BasePresenter
     	$this->template->currency = $this->currencies->getActiveCurrency();
 
     	$this->template->lang = $this->languages->getLanguage();
+    	$this->template->lang_czech = $this->languages->changeLanguage('cs');
+    	$this->template->lang_slovak = $this->languages->changeLanguage('sk');
     }
 
     /*Tax settings*/
