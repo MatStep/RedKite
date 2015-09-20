@@ -61,9 +61,26 @@ class BasePresenter extends \App\Presenters\BasePresenter
     	$this->template->currencies = $this->currencies->getAll();
     	$this->template->currency = $this->currencies->getActiveCurrency();
 
+        $this->template->languages = $this->languages->getAll();
     	$this->template->lang = $this->languages->getLanguage();
-    	$this->template->lang_czech = $this->languages->changeLanguage('cs');
-    	$this->template->lang_slovak = $this->languages->changeLanguage('sk');
+    	// $this->template->lang_czech = $this->languages->changeLanguage('cs');
+    	// $this->template->lang_slovak = $this->languages->changeLanguage('sk');
+    }
+
+    // function to change language used in template
+    // $input is iso_code
+    public function changeLanguage($input)
+    {
+        return $this->languages->changeLanguage($input);
+    }
+
+    /*Check if language is currently used on the website*/
+    public function isLangUsed($input)
+    {
+        if($this->languages->getLanguage() == $input)
+            return true;
+        else
+            return false;
     }
 
     /*Tax settings*/

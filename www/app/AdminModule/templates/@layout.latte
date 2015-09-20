@@ -120,7 +120,16 @@
 							{form currencySettings}
                       			{input currency}
                       		{/form}
-                      		Aktívny jazyk: {$lang}
+                      		Jazyk:
+                      		{foreach $languages as $language}
+                      		<a href="{$presenter->changeLanguage($language->iso_code)}">
+                      			{if $presenter->isLangUsed($language->iso_code)}
+                      				<b>{$language->iso_code}</b>
+                      			{else}
+                      				{$language->iso_code}
+                      			{/if}
+                      		</a> |
+                      		{/foreach}
                     </div>
                   </li>
                 </ul>
