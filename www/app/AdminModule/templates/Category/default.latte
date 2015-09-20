@@ -36,7 +36,7 @@
 							<input id="category-check-box-{$category->id}" type="checkbox" class="categoryCheckBox" name="select">
 						</td>
 						<td>
-							{$category->name}
+							{$presenter->getCategoryLang($category->id)->name}
 						</td>
 						<td>
 							{$category->icon}
@@ -62,7 +62,7 @@
 									{for $i = 0; $i < $depth; $i++}
 									&nbsp;&nbsp;&nbsp;&nbsp;
 									{/for}
-									{$subcategory->name}
+									{$presenter->getCategoryLang($subcategory->id)->name}
 								</td>
 								<td>
 									{$subcategory->icon}

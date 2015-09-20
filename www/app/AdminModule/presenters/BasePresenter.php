@@ -18,10 +18,7 @@ class BasePresenter extends \App\Presenters\BasePresenter
     public $translator;
 
     /** @var App\Model\LanguageManager */
-    private $languages;
-
-    /** @var string */
-    private $currentLanguage;
+    public $languages;
 
     /** @var string temporary variable */
     private $path;
@@ -46,6 +43,19 @@ class BasePresenter extends \App\Presenters\BasePresenter
 
 	    return $template;
 	}
+
+    //method returns Language id
+    public function getLanguage()
+    {
+        $selected = $this->languages->getLanguage();
+
+        return $this->languages->getLanguageByName($selected)->id;
+    }
+
+    public function getAllLanguages()
+    {
+        return $this->languages->getAllActive();
+    }
 
 	public function startup()
     {

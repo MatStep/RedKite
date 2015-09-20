@@ -18,13 +18,12 @@ class CategoryManager extends Nette\Object
 		COLUMN_PARENT_ID = 'parent_id',
 		COLUMN_ICON = 'icon',
 		COLUMN_DEPTH = 'depth',
-		COLUMN_NAME = 'name',
 
 		LANG_TABLE = 'lang',
 		COLUMN_LANG_ID = 'id',
 
 		CATEGORY_LANG_TABLE = "category_lang",
-		COLUMN_CATGEORY_LANG_ID = "id",
+		COLUMN_CATEGORY_LANG_ID = "id",
 		COLUMN_CATEGORY_ID = "category_id",
 		COLUMN_FOREIGN_LANG_ID = "lang_id",
 		COLUMN_TRANSLATED_NAME = "name";
@@ -32,15 +31,19 @@ class CategoryManager extends Nette\Object
 	/** @var Nette\Database\Context */
 	private $database;
 
+	/** @var App\Model\LanguageManager */
+    public $languages;
+
 	/** @var array */
 	public $categoriesArray = array();
 
 	/**
 	 * Database constructor
 	 */
-	public function __construct(Nette\Database\Context $database)
+	public function __construct(Nette\Database\Context $database, LanguageManager $languages)
 	{
 		$this->database   = $database;
+		$this->languages  = $languages;
 	}
 
 
@@ -121,9 +124,10 @@ class CategoryManager extends Nette\Object
 			{
 				$category['selectName'] = "\xc2\xa0 \xc2\xa0 \xc2\xa0 \xc2\xa0" . $category['selectName'];
 			}
-			$category['selectName'] = $category['selectName'] . $category['name'];
+			$category['selectName'] = $category['selectName'] . self::getCategoryLang($category['id'], $this->languages->getLanguageByName($this->languages->getLanguage()))['name'];
 			array_push($catArray, $category);
 		}
+
 		$categories = $catArray;
 		$catArray = array();
 		foreach($categories as $category) 
@@ -175,12 +179,33 @@ class CategoryManager extends Nette\Object
 	/** 
 	 * Return lang id
 	 * @param string $categoryId   category id
-	 * @return int				   return category id
+	 * @return Object			   return category_lang
 	 */
-	public function getCategoryLang($categoryId)
+	public function getAllCategoryLang($categoryId)
+	{
+		$category_lang = $this->database->table(self::CATEGORY_LANG_TABLE)
+			->where(self::COLUMN_CATEGORY_ID, $categoryId);
+
+		if ( !$category_lang )
+		{
+			throw new Nette\Application\BadRequestException("CATEGORY_LANG_DOESNT_EXIST");
+		}
+
+		return $category_lang;
+	}
+
+
+	/** 
+	 * Return lang id
+	 * @param string $categoryId   category id
+	 * @param string $langId	   language id
+	 * @return Object			   return category_lang
+	 */
+	public function getCategoryLang($categoryId, $langId)
 	{
 		$category_lang = $this->database->table(self::CATEGORY_LANG_TABLE)
 			->where(self::COLUMN_CATEGORY_ID, $categoryId)
+			->where(self::COLUMN_FOREIGN_LANG_ID, $langId)
 			->fetch();
 
 		if ( !$category_lang )
@@ -200,13 +225,9 @@ class CategoryManager extends Nette\Object
 	 * @param int $depth		depth of category, tells how many parent categories category have
 	 * @return Object			Inserted row
 	*/
-	public function insert($name, $parent_id = 0, $icon, $depth = 0)
+	public function insert($parent_id = 0, $icon, $depth = 0)
 	{
-		if ($this->database->table(self::CATEGORY_TABLE)->where(self::COLUMN_NAME, $name)->count() > 0)
-			throw new Nette\Application\BadRequestException("NAME_EXISTS");
-
 		$data = array();
-		$data["name"] 	 = $name;
 		$data["parent_id"] = $parent_id;
 		$data["icon"] 	   = $icon;
 		$data["depth"] 	   = $depth;
@@ -232,7 +253,6 @@ class CategoryManager extends Nette\Object
 		}
 
 		$category->update(array(
-			self::COLUMN_NAME => $values->name,
 			self::COLUMN_ICON => $values->icon,
 			self::COLUMN_PARENT_ID => $values->parent,
 			self::COLUMN_DEPTH => $values->depth,
@@ -261,7 +281,15 @@ class CategoryManager extends Nette\Object
 		}
 
 		// delete all rows where is category located in category lang
-		self::getCategoryLang($id)->delete();
+
+		$allCategoryLang = self::getAllCategoryLang($id);
+
+		while($allCategoryLang->count() > 0) {
+			foreach($allCategoryLang as $categoryLang)
+			{
+				$categoryLang->delete();
+			}
+		}
 
 		return $this->database->table(self::CATEGORY_TABLE)->where(self::COLUMN_ID, $id)->delete();
 	}

@@ -62,7 +62,7 @@ class LanguageManager extends Nette\Object
 	 */
 	public function getAllActive()
 	{
-		return $this->database->table(self::LANGUAGE_TABLE)->where(self::COLUMN_ACTIVE, 1)->fetch();
+		return $this->database->table(self::LANGUAGE_TABLE)->where(self::COLUMN_ACTIVE, 1);
 	}
 
 
@@ -74,6 +74,25 @@ class LanguageManager extends Nette\Object
 	{
 		return $this->language;
 	}
+
+
+	/**
+	 * Method returns language selected from DB by code
+	 * @param string $code 	Iso code
+	 * @return Object		Current language from database
+	 */
+	public function getLanguageByName($code)
+	{
+		$language =  $this->database->table(self::LANGUAGE_TABLE)->where(self::COLUMN_ISO_CODE, $code)->fetch();
+
+		if ( !$language )
+		{
+			throw new Nette\Application\BadRequestException("DOESNT_EXIST");
+		}
+
+		return $language;
+	}
+
 
 	/**
 	 * Method set language

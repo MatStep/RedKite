@@ -13,6 +13,8 @@ class CategoryPresenter extends \App\AdminModule\Presenters\BasePresenter
 {
 	private $categories;
 
+    public $languages;
+
 	private $catDepth;
 
 	private $values;
@@ -24,14 +26,15 @@ class CategoryPresenter extends \App\AdminModule\Presenters\BasePresenter
 	public function __construct(Model\CategoryManager $categories)
 	{
 		$this->categories = $categories;
-		$this->values = array("name" => "", "parent" => "", "parent_id" => "", "icon" => "");
+		$this->values = array("parent" => "", "parent_id" => "", "icon" => "");
 		$this->id = 0;
 		$this->state = "";
 	}
 
 	public function renderDefault()
 	{
-		$this->template->categories = $this->categories->getAll()->order('name');
+		$this->template->categories = $this->categories->getAll();
+        $this->template->languages = parent::getAllLanguages();
 	}
 
     /*Category form*/
@@ -39,9 +42,16 @@ class CategoryPresenter extends \App\AdminModule\Presenters\BasePresenter
     {
         $form = new Form;
         
-        $form->addText("name", "Meno")
-			 ->setRequired('Meno je povinné')
-			 ->getControlPrototype()->class("form-control");
+        foreach(parent::getAllLanguages() as $lang)
+        {
+            $form->addText("name_". $lang->iso_code, "Meno" . "(" . $lang->iso_code . ")")
+    			 ->getControlPrototype()->class("form-control");
+
+            if($lang->id == parent::getLanguage())
+            {
+                $form["name_". $lang->iso_code]->setRequired('Meno je povinné');
+            }
+        }
         
         $form->addText('icon', "Icon Class *")
         		->setAttribute('class', 'form-control')
@@ -49,7 +59,7 @@ class CategoryPresenter extends \App\AdminModule\Presenters\BasePresenter
         		->setAttribute('value', $this->values['icon'])
         		->setRequired('Ikonka je povinná');
 
-			foreach ($this->categories->getAll(FALSE)->order('name') as $category) 
+			foreach ($this->categories->getAll(FALSE) as $category) 
 			{ 
 				$this->catDepth[$category["id"]]   = $category["depth"];
 			}        
@@ -90,12 +100,20 @@ class CategoryPresenter extends \App\AdminModule\Presenters\BasePresenter
     		if ($adding)
     		{
     			// ADD CATEGORY
-    			$parent = $values['parent']? $values['parent'] : NULL;
+    			$parent = $values['parent']? $values['parent'] : 0;
     			$depth   = $parent? ( $this->catDepth[$parent] + 1 ) : 0;
-    			$this->categories->insert($values['name'], $parent, $values["icon"], $depth);
+    			$this->categories->insert($parent, $values["icon"], $depth);
 
+                //ADD LANGUAGE DATA
                 $lastId = $this->categories->getLastInsertedId();
-                $this->categories->translateData(1, $lastId, $values['name'], 0);
+
+                foreach(parent::getAllLanguages() as $lang) {
+                    if($values['name_' . $lang->iso_code] == NULL && $lang->iso_code != parent::getLanguage())
+                    {
+                        $values['name_' . $lang->iso_code] = 'category_' . $lastId . '_' . 'lang_' . $lang->iso_code;
+                    }
+                    $this->categories->translateData($lang->id, $lastId, $values['name_' . $lang->iso_code], 0);
+                }
     			$this->flashMessage('Kategória úspešne pridaná');
     		}
     		else
@@ -103,7 +121,10 @@ class CategoryPresenter extends \App\AdminModule\Presenters\BasePresenter
 		    	// EDIT CATEGORY
     			$values['depth']   = $values['parent']? ( $this->catDepth[$values['parent']] + 1 ) : 0;
     			$this->categories->edit($categoryId, $values);
+
+                //EDIT LANGUAGE DATA
                 $this->categories->translateData(1, $categoryId, $values['name'], 1);
+
     			$this->flashMessage('Kategória úspešne aktualizovaná');
 
     		}
@@ -118,6 +139,11 @@ class CategoryPresenter extends \App\AdminModule\Presenters\BasePresenter
             if ($e->getMessage() == "CATEGORY_LANG_DOESNT_EXIST")
                 $form->addError('Kategória nemá zaindexovaný preklad');
     	}
+    }
+
+    public function getCategoryLang($categoryId)
+    {
+        return $this->categories->getCategoryLang($categoryId, parent::getLanguage());
     }
 
 	public function actionRemove($categoryId)
