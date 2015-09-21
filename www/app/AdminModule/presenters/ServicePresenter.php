@@ -40,7 +40,7 @@ class ServicePresenter extends \App\AdminModule\Presenters\BasePresenter
              ->setRequired('Názov je povinný')
              ->getControlPrototype()->class("form-control");
 
-        $form->addText("desc", "Popis")
+        $form->addTextArea("desc", "Popis")
              ->setRequired('Popis je povinný')
              ->getControlPrototype()->class("form-control");
 
