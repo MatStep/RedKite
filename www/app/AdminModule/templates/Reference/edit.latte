@@ -1,0 +1,57 @@
+{block content}
+<div class="box box-primary">
+		<div class="box-header with-border">
+			<h2 class="box-title">
+				Upravenie referencie
+			</h2>
+			<a n:href="Reference:" class="pull-right"><i class="fa fa-close"></i></a>
+		</div>
+		<div class="box-body">
+			{form referenceForm}
+			<div n:if="$form->hasErrors()">
+				<ul class="errors">
+					<li n:foreach="$form->errors as $error"><strong>{$error}</strong></li>
+				</ul>
+			</div> 
+			<div class="form-group">
+				<label for="inputName">
+					Názov
+				</label>
+				{input name}
+			</div>
+			{* if no logo add new *}
+			{if $logo_path == NULL}
+				<div class="form-group">
+					<label for="inputLogo">
+						Logo
+					</label>
+					{input logo}
+				</div>
+			{* If has logo show it *}
+			{else}
+				<div class="form-group col-md-3">
+					<a n:href="Reference:removeImage $reference['id']" class="remove">
+						<i id="removeImage" class="fa fa-times fa-time-white-background">
+						</i>
+					</a>
+					<img width="100%" src="{$basePath}/{$logo_path}"/>
+				</div>
+			{/if}
+			<div class="form-group">
+				<label for="inputDesc">
+					Popis
+				</label>
+				{input desc}
+			</div>
+			{input add}
+			{/form}
+		</div>
+	</div>
+
+{* Script for changing active menu *}
+<script>
+	$(function() {
+		unsetAndSetActive('#references', '#listReferences');
+	});
+</script>
+{/block}

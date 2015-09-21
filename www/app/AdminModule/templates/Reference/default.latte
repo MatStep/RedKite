@@ -1,0 +1,71 @@
+{block content}
+<div class="box box-primary">
+	<div class="box-header with-border">
+		<h2 class="box-title">
+			Referencie
+		</h2>
+	</div>
+	<div class="box-body">
+		<!-- Reference VIEW TABLE BEGIN -->
+		<div class="table">
+			<table class="table table-hover">
+				<!-- TABLE HEADER -->
+				<thead>
+					<tr>
+						<th>
+							<input id="headerCheckBox" type="checkbox" class="referenceCheckBox" name="select">
+						</th>
+						<th>
+							Id
+						</th>
+						<th>
+							Logo
+						</th>
+						<th>
+							Názov
+						</th>
+						<th>
+							Popis
+						</th>
+						<th>
+							Možnosti
+						</th>
+					</tr>
+				</thead>
+				<tbody>	<!-- TABLE BODY -->	
+					{foreach $references as $reference}
+					<tr>
+						<td>
+							<input id="reference-check-box-{$reference->id}" type="checkbox" class="referenceCheckBox" name="select">
+						</td>
+						<td>
+							{$reference->id}
+						</td>
+						<td>
+							<img src="{$basePath}/{$reference->logo_path}" alt="{$reference->name}Logo" height="60">
+						</td>
+						<td>
+							{$reference->name}
+						</td>
+						<td>
+							{$reference->desc}
+						</td>
+						<td>
+							<a n:href="Reference:edit $reference->id" style="margin-top: 10px; width: 130px;" class='itemEdit'><i class="fa fa-edit"></i></a>
+							<a n:href="Reference:remove $reference->id" style="margin-top: 10px; width: 130px;" class='itemTrash'><i class="fa fa-trash-o"></i></a>
+						</td>
+					</tr>
+					{/foreach}
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
+
+{* Script for changing active menu *}
+<script>
+	$(function() {
+		unsetAndSetActive('#references', '#listReferences');
+	});
+</script>
+{/block}
