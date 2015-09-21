@@ -35,19 +35,18 @@ CREATE TABLE `category` (
   `parent_id` int(11) NOT NULL DEFAULT '0',
   `icon` varchar(100) NOT NULL,
   `depth` smallint(6) DEFAULT NULL,
-  `name` varchar(30) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-INSERT INTO `category` (`id`, `parent_id`, `icon`, `depth`, `name`) VALUES
-(68,	0,	'oblecenie',	0,	'');
+INSERT INTO `category` (`id`, `parent_id`, `icon`, `depth`) VALUES
+(68,	0,	'oblecenie',	0);
 
 DROP TABLE IF EXISTS `category_lang`;
 CREATE TABLE `category_lang` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `category_id` int(11) NOT NULL,
   `lang_id` int(11) NOT NULL,
-  `name` varchar(30) NOT NULL,
+  `name` varchar(30) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `category_id` (`category_id`),
   KEY `lang_id` (`lang_id`),
@@ -224,6 +223,22 @@ CREATE TABLE `product_image` (
   PRIMARY KEY (`id`),
   KEY `product_id` (`product_id`),
   CONSTRAINT `product_image_ibfk_1` FOREIGN KEY (`product_id`) REFERENCES `product` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+DROP TABLE IF EXISTS `product_lang`;
+CREATE TABLE `product_lang` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `product_id` int(11) NOT NULL,
+  `lang_id` int(11) NOT NULL,
+  `name` varchar(30) NOT NULL,
+  `short_desc` varchar(150) DEFAULT NULL,
+  `desc` text,
+  PRIMARY KEY (`id`),
+  KEY `product_id` (`product_id`),
+  KEY `lang_id` (`lang_id`),
+  CONSTRAINT `product_lang_ibfk_2` FOREIGN KEY (`lang_id`) REFERENCES `lang` (`id`),
+  CONSTRAINT `product_lang_ibfk_1` FOREIGN KEY (`product_id`) REFERENCES `product` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
@@ -433,4 +448,4 @@ INSERT INTO `user` (`id`, `name`, `password`, `email`, `reg_date`, `role`) VALUE
 (1,	'admin',	'$2y$10$LT4tHNVCez2lDkNmS7SUTOYLrn3ySbokG6b5/LjyFakKXKZKqbq5y',	'',	'2015-08-28 21:37:13',	'admin'),
 (2,	'user',	'$2y$10$nIUnGVrnZBvbcoCcnucOYOIEO9hHhCUqtT3nla00dhk1Z5Blfj4bG',	'',	'2015-08-31 13:41:32',	'user');
 
--- 2015-09-21 08:17:19
+-- 2015-09-21 10:01:19
