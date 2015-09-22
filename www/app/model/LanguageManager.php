@@ -35,6 +35,9 @@ class LanguageManager extends Nette\Object
 	/** @var string */
 	public $language;
 
+	/** @var array */
+	public $languagesArray = array();
+
 	/**
 	 * Database and translator constructor
 	 */
@@ -101,6 +104,59 @@ class LanguageManager extends Nette\Object
 	public function setLanguage($lang)
 	{
 		$this->language = $lang;
+	}
+
+
+	/** 
+	 * Get all languages in array
+	 * @return array	Array of languages for select
+	 */
+	public function getAllLanguagesAsArray() 
+	{
+		$languages = self::getAll();
+		$languageArray = array();
+
+		foreach ($languages as $language) {
+			$language = $language->toArray();
+			$language['selectName'] = '';
+			array_push($languageArray, $language);
+		}
+
+		$languages = $languageArray;
+		$languageArray = array();
+
+		// If language is active don't add it to languageArray, language will be added later as first
+		foreach ($languages as $language) 
+		{
+			$language['selectName'] = $language['selectName'] . $language['name'];
+			if($language['id'] == self::getLanguageByName(self::getLanguage())->id)
+			{
+				$language['selectName'] = $language['selectName'] . " (aktívne)";
+				$active = $language['selectName'];
+			}
+			else
+			{
+				array_push($languageArray, $language);
+			}
+		}
+
+		$languages = $languageArray;
+		$languageArray = array();
+		foreach($languages as $language) 
+		{
+			array_push($this->languagesArray,$language);	
+			array_merge($this->languagesArray, $languages);
+		}
+		
+		//Edit languages for select with language name
+		$languageArray[0] = $active;
+		$languages = $this->languagesArray;
+
+		foreach ($languages as $language) 
+		{
+			$languageArray[$language['id']]= $language['selectName'];	
+		}
+		return $languageArray;
 	}
 
 

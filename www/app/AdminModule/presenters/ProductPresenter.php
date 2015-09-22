@@ -37,9 +37,16 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
 	{
 		$form = new Form;
 
-		$form->addText("name", "Názov")
-			 ->setRequired('Názov je povinný')
-			 ->getControlPrototype()->class("form-control");
+		foreach(parent::getAllLanguages() as $lang)
+        {
+            $form->addText("name_". $lang->iso_code, "Názov" . "(" . $lang->iso_code . ")")
+    			 ->getControlPrototype()->class("form-control");
+
+            if($lang->id == parent::getLanguage())
+            {
+                $form["name_". $lang->iso_code]->setRequired('Názov je povinný');
+            }
+        }
 
 		$form->addTextArea("short_desc", "Krátky popis")
 			 ->setRequired('Krátky popis je povinný')
@@ -86,7 +93,20 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
 
 			if ($adding)
 			{
+				//ADD PRODUCT
 				$this->products->insert($values);
+
+				//ADD LANGUAGE DATA
+				$lastId = $this->products->getLastInsertedId();
+
+				foreach(parent::getAllLanguages() as $lang) {
+                    if($values['name_' . $lang->iso_code] == NULL && $lang->iso_code != parent::getLanguage())
+                    {
+                        $values['name_' . $lang->iso_code] = 'product_' . $lastId . '_' . 'lang_' . $lang->iso_code;
+                    }
+                    $this->products->translateData($lang->id, $lastId, $values['name_' . $lang->iso_code], 0);
+                }
+
 				$this->flashMessage('Produkt úspešne pridaný');
 			}
 			else

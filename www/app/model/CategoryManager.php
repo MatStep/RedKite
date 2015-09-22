@@ -25,8 +25,8 @@ class CategoryManager extends Nette\Object
 		CATEGORY_LANG_TABLE = "category_lang",
 		COLUMN_CATEGORY_LANG_ID = "id",
 		COLUMN_CATEGORY_ID = "category_id",
-		COLUMN_FOREIGN_LANG_ID = "lang_id",
-		COLUMN_TRANSLATED_NAME = "name";
+		COLUMN_FK_LANG_ID = "lang_id",
+		COLUMN_NAME = "name";
 
 	/** @var Nette\Database\Context */
 	private $database;
@@ -68,7 +68,9 @@ class CategoryManager extends Nette\Object
 	 */
 	public function getCategory($categoryId)
 	{
-		$category =  $this->database->table(self::CATEGORY_TABLE)->where(self::COLUMN_ID, $categoryId)->fetch();
+		$category =  $this->database->table(self::CATEGORY_TABLE)
+						  ->where(self::COLUMN_ID, $categoryId)
+						  ->fetch();
 
 		if ( !$category )
 		{
@@ -88,7 +90,7 @@ class CategoryManager extends Nette\Object
 	public function sortCategories($categories, $categoryId) 
 	{
 		$i = 0;
-		$subCatArray = array();		
+		$subCatArray = array();	
 		foreach ($categories as $category) 
 		{
 			if ( $category['parent_id'] == $categoryId ) 
@@ -177,7 +179,7 @@ class CategoryManager extends Nette\Object
 
 
 	/** 
-	 * Return lang id
+	 * This method returns all category_lang where FK equals to category_id
 	 * @param string $categoryId   category id
 	 * @return Object			   return category_lang
 	 */
@@ -196,7 +198,7 @@ class CategoryManager extends Nette\Object
 
 
 	/** 
-	 * Return lang id
+	 * This method returns one category_lang where FK equals to category_id and lang_id
 	 * @param string $categoryId   category id
 	 * @param string $langId	   language id
 	 * @return Object			   return category_lang
@@ -205,7 +207,7 @@ class CategoryManager extends Nette\Object
 	{
 		$category_lang = $this->database->table(self::CATEGORY_LANG_TABLE)
 			->where(self::COLUMN_CATEGORY_ID, $categoryId)
-			->where(self::COLUMN_FOREIGN_LANG_ID, $langId)
+			->where(self::COLUMN_FK_LANG_ID, $langId)
 			->fetch();
 
 		if ( !$category_lang )
@@ -308,15 +310,15 @@ class CategoryManager extends Nette\Object
 		{
 			$this->database->table(self::CATEGORY_LANG_TABLE)->insert(array(
 				self::COLUMN_CATEGORY_ID => $categoryId,
-				self::COLUMN_FOREIGN_LANG_ID => $langId,
-				self::COLUMN_TRANSLATED_NAME => $data,
+				self::COLUMN_FK_LANG_ID => $langId,
+				self::COLUMN_NAME => $data,
 				));
 		}
 		else
 		{
-			$category_lang = self::getCategoryLang($categoryId);
+			$category_lang = self::getCategoryLang($categoryId, $langId);
 			$category_lang->update(array(
-				self::COLUMN_TRANSLATED_NAME => $data,
+				self::COLUMN_NAME => $data,
 				));
 		}
 	}

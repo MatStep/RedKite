@@ -14,6 +14,17 @@
 	margin: 0 auto;
 }
 
+.select-lang {
+	border-radius: 0px;
+	box-shadow: none;
+	border: 1px solid white;
+	height: 34px;
+	background-color:inherit;
+	color:white;
+	margin-top:8px;
+	padding:0px 12px;
+}
+
 .main-header-settings form {
 	margin:10px 0px;
 }

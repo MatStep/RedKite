@@ -44,12 +44,12 @@ class CategoryPresenter extends \App\AdminModule\Presenters\BasePresenter
         
         foreach(parent::getAllLanguages() as $lang)
         {
-            $form->addText("name_". $lang->iso_code, "Meno" . "(" . $lang->iso_code . ")")
-    			 ->getControlPrototype()->class("form-control");
 
-            if($lang->id == parent::getLanguage())
+            if($lang->id == parent::getLanguage()->id)
             {
-                $form["name_". $lang->iso_code]->setRequired('Meno je povinné');
+                $form->addText("name_". $lang->iso_code, "Názov" . "(" . $lang->iso_code . ")")
+                     ->getControlPrototype()->class("form-control")
+                     ->setRequired('Názov je povinný');
             }
         }
         
@@ -90,6 +90,8 @@ class CategoryPresenter extends \App\AdminModule\Presenters\BasePresenter
     {
     	$adding = true;
 
+        $currentLanguage = parent::getLanguage();
+
     	if ( isset($this->request->getParameters()['categoryId']) )
     	{
     		$categoryId = $this->getParameter('categoryId');
@@ -102,17 +104,14 @@ class CategoryPresenter extends \App\AdminModule\Presenters\BasePresenter
     			// ADD CATEGORY
     			$parent = $values['parent']? $values['parent'] : 0;
     			$depth   = $parent? ( $this->catDepth[$parent] + 1 ) : 0;
-    			$this->categories->insert($parent, $values["icon"], $depth);
+                $this->categories->insert($parent, $values["icon"], $depth);
 
                 //ADD LANGUAGE DATA
                 $lastId = $this->categories->getLastInsertedId();
 
+                //Add the same for all languages
                 foreach(parent::getAllLanguages() as $lang) {
-                    if($values['name_' . $lang->iso_code] == NULL && $lang->iso_code != parent::getLanguage())
-                    {
-                        $values['name_' . $lang->iso_code] = 'category_' . $lastId . '_' . 'lang_' . $lang->iso_code;
-                    }
-                    $this->categories->translateData($lang->id, $lastId, $values['name_' . $lang->iso_code], 0);
+                    $this->categories->translateData($lang->id, $lastId, $values['name_' . $currentLanguage->iso_code], 0);
                 }
     			$this->flashMessage('Kategória úspešne pridaná');
     		}
@@ -123,7 +122,7 @@ class CategoryPresenter extends \App\AdminModule\Presenters\BasePresenter
     			$this->categories->edit($categoryId, $values);
 
                 //EDIT LANGUAGE DATA
-                $this->categories->translateData(1, $categoryId, $values['name'], 1);
+                    $this->categories->translateData($currentLanguage->id, $categoryId, $values['name_' . $currentLanguage->iso_code], 1);
 
     			$this->flashMessage('Kategória úspešne aktualizovaná');
 
@@ -143,7 +142,7 @@ class CategoryPresenter extends \App\AdminModule\Presenters\BasePresenter
 
     public function getCategoryLang($categoryId)
     {
-        return $this->categories->getCategoryLang($categoryId, parent::getLanguage());
+        return $this->categories->getCategoryLang($categoryId, parent::getLanguage()->id);
     }
 
 	public function actionRemove($categoryId)
@@ -154,18 +153,26 @@ class CategoryPresenter extends \App\AdminModule\Presenters\BasePresenter
 		$this->redirect("Category:");
 	}
 
-	public function actionEdit($categoryId)
+	public function actionEdit($categoryId, $categoryLangId)
 	{
 		$category = $this->categories->getCategory($categoryId);
-
-        $parent = $this->categories->getCategory($category->parent_id);
 
 		$this->template->categoryId = $categoryId;
 
 		$this['categoryForm']->setDefaults($category->toArray());
 
-        $this['categoryForm']['parent']->setDefaultValue($parent);
+        $lang = parent::getLanguage();
 
+        $categoryLang = $this->categories->getCategoryLang($categoryId, $lang->id);
+        $this['categoryForm']['name_' . $lang->iso_code]->setDefaultValue($categoryLang->name);
+
+        $this['categoryForm']->setDefaults($category->toArray());
+
+        if($category->parent_id != 0)
+        {
+            $parent = $this->categories->getCategory($category->parent_id);
+            $this['categoryForm']['parent']->setDefaultValue($parent);
+        }
 	}
 
 }

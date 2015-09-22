@@ -44,12 +44,12 @@ class BasePresenter extends \App\Presenters\BasePresenter
 	    return $template;
 	}
 
-    //method returns Language id
+    //method returns Language
     public function getLanguage()
     {
         $selected = $this->languages->getLanguage();
 
-        return $this->languages->getLanguageByName($selected)->id;
+        return $this->languages->getLanguageByName($selected);
     }
 
     public function getAllLanguages()
@@ -142,4 +142,28 @@ class BasePresenter extends \App\Presenters\BasePresenter
 		$this->flashMessage('Nastavenie dane bolo zmenené');
 		$this->redirect("this");
 	}
+
+    /*Langugage form*/
+    public function createComponentLanguageForm()
+    {
+        $form = new Form;
+
+        $form->getElementPrototype()->class('ajax');
+
+        $languages = $this->languages->getAllLanguagesAsArray();
+
+        $select = $form->addSelect('language', 'Jazyk', $languages)
+                ->setAttribute('class', 'select-lang');
+
+        $form->onSuccess[] = array($this, "languageFormSucceeded");
+
+        return $form;
+    }
+
+    public function languageFormSucceeded($form, $values)
+    {
+        self::changeLanguage($values->iso_code);
+        $this->flashMessage('Nastavenie jazyka bolo zmenené');
+        $this->redirect("this");
+    }
 }

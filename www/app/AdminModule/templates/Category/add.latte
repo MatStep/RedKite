@@ -14,12 +14,10 @@
 				</ul>
 			</div> 
 			<div class="form-group">
-				{foreach $languages as $language}
 					<label for="inputName">
-						Názov ({$language->iso_code})
+						Názov ({$lang})
 					</label>
-					{input name_{$language->iso_code}}
-				{/foreach}
+					{input name_{$lang}}
 			</div>
 			<div class="form-group">
 				<label for="inputIcon">

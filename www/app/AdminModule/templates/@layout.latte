@@ -38,37 +38,37 @@
     <![endif]-->
 
     <script type='text/javascript'>
-	$(function()
-	{
-		var rmWindow = $('#removeWindow');
-		var rmClose  = $('.closeRm');
-		var rmSave   = $('#saveRm');
-		var rmUrl;
+    $(function()
+    {
+    	var rmWindow = $('#removeWindow');
+    	var rmClose  = $('.closeRm');
+    	var rmSave   = $('#saveRm');
+    	var rmUrl;
 
-		$('.itemTrash').click(function()
-		{
-			rmWindow.show();
-			rmUrl = $(this).attr('href');
-			return false;
-		});
+    	$('.itemTrash').click(function()
+    	{
+    		rmWindow.show();
+    		rmUrl = $(this).attr('href');
+    		return false;
+    	});
 
-		rmSave.click(function()
-		{
-			window.location = rmUrl;
-		});
+    	rmSave.click(function()
+    	{
+    		window.location = rmUrl;
+    	});
 
-		rmClose.click(function()
-		{
-			rmWindow.hide();
-		});
-	});
+    	rmClose.click(function()
+    	{
+    		rmWindow.hide();
+    	});
+    });
 
 	//JS for onchange select
 
 	$(function() {
 		$.nette.ext('select-onchange', {
 			load: function() {
-				$('.main-header-settings select').change(function (e) {
+				$('.navbar-custom-menu select').change(function (e) {
 					$(this).closest('form').submit();
 					return false;
 				});
@@ -76,9 +76,9 @@
 		});
 		$.nette.init();
 	});
-</script>
+	</script>
 
-    {block head}{/block}
+	{block head}{/block}
 </head>
 
 <body class="hold-transition skin-red sidebar-mini">
@@ -102,45 +102,50 @@
 					<span class="sr-only">Toggle navigation</span>
 				</a>
 				<div class="navbar-custom-menu">
-            <ul class="nav navbar-nav">
-            	<li class="dropdown tasks-menu">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                  <i class="fa fa-cogs"></i>
-                </a>
-                <ul class="dropdown-menu">
-                  <li class="header">{_default.admin.settings}</li>
-                  <li>
-                    <!-- inner menu: contains the actual data -->
-                    <div class="slimScrollDiv main-header-settings">
-							Dane:
-							{form taxSettings}
-                      			{input tax}
-                      		{/form}
-                      		Mena:
-							{form currencySettings}
-                      			{input currency}
-                      		{/form}
-                      		Jazyk:
-                      		{foreach $languages as $language}
-                      		<a href="{$presenter->changeLanguage($language->iso_code)}">
-                      			{if $presenter->isLangUsed($language->iso_code)}
-                      				<b>{$language->iso_code}</b>
-                      			{else}
-                      				{$language->iso_code}
-                      			{/if}
-                      		</a> |
-                      		{/foreach}
-                    </div>
-                  </li>
-                </ul>
-              </li>
-		        <li title="Log out"class="dropdown user user-menu">
-		          <a class="itemTrash" n:href="Lockscreen:out">
-		            <i class="glyphicon glyphicon-log-out"/>                  
-		          </a>
-		        </li>
-	        </ul>
-          </div>
+					<ul class="nav navbar-nav">
+						<li class="dropdown">
+							{form languageForm}
+								{input language}
+							{/form}
+						</li>
+						<li class="dropdown tasks-menu">
+							<a href="#" class="dropdown-toggle" data-toggle="dropdown">
+								<i class="fa fa-cogs"></i>
+							</a>
+							<ul class="dropdown-menu">
+								<li class="header">{_default.admin.settings}</li>
+								<li>
+									<!-- inner menu: contains the actual data -->
+									<div class="slimScrollDiv main-header-settings">
+										Dane:
+										{form taxSettings}
+											{input tax}
+										{/form}
+										Mena:
+										{form currencySettings}
+											{input currency}
+										{/form}
+										Jazyk:
+										{foreach $languages as $language}
+										<a href="{$presenter->changeLanguage($language->iso_code)}">
+											{if $presenter->isLangUsed($language->iso_code)}
+												<b>{$language->iso_code}</b>
+											{else}
+												{$language->iso_code}
+											{/if}
+										</a> |
+										{/foreach}
+									</div>
+								</li>
+							</ul>
+						</li>
+						<li title="Log out"class="dropdown user user-menu">
+							<a class="itemTrash" n:href="Lockscreen:out">
+								<i class="glyphicon glyphicon-log-out"/>                  
+							</a>
+						</li>
+					</ul>
+				</div>
 			</nav>
 		</header>
 
@@ -290,24 +295,24 @@
 			<!-- Default to the left -->
 			<strong>Copyright &copy; 2015 <a href="#">RedKite</a>.</strong> All rights reserved.
 		</footer>
-</div><!-- ./wrapper -->
+	</div><!-- ./wrapper -->
 
 
-{block scripts}
+	{block scripts}
 
-<!-- Scripts start -->
+	<!-- Scripts start -->
 
-<!-- REQUIRED JS SCRIPTS -->
+	<!-- REQUIRED JS SCRIPTS -->
 
-<!-- Bootstrap 3.3.5 -->
-<script src="{$basePath}/adminCnt/bootstrap/js/bootstrap.min.js"></script>
-<!-- AdminLTE App -->
-<script src="{$basePath}/adminCnt/dist/js/app.min.js"></script>
+	<!-- Bootstrap 3.3.5 -->
+	<script src="{$basePath}/adminCnt/bootstrap/js/bootstrap.min.js"></script>
+	<!-- AdminLTE App -->
+	<script src="{$basePath}/adminCnt/dist/js/app.min.js"></script>
 
-<script src="//nette.github.io/resources/js/netteForms.min.js"></script>
-<script src="{$basePath}/js/main.js"></script>
-<!-- Scripts end -->
+	<script src="//nette.github.io/resources/js/netteForms.min.js"></script>
+	<script src="{$basePath}/js/main.js"></script>
+	<!-- Scripts end -->
 
-{/block}
+	{/block}
 </body>
 </html>
