@@ -42,7 +42,7 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
             $form->addText("name_". $lang->iso_code, "Názov" . "(" . $lang->iso_code . ")")
     			 ->getControlPrototype()->class("form-control");
 
-            if($lang->id == parent::getLanguage())
+            if($lang->id == parent::getLanguage()->id)
             {
                 $form["name_". $lang->iso_code]->setRequired('Názov je povinný');
             }
@@ -100,7 +100,7 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
 				$lastId = $this->products->getLastInsertedId();
 
 				foreach(parent::getAllLanguages() as $lang) {
-                    if($values['name_' . $lang->iso_code] == NULL && $lang->iso_code != parent::getLanguage())
+                    if($values['name_' . $lang->iso_code] == NULL && $lang->iso_code != parent::getLanguage()->iso_code)
                     {
                         $values['name_' . $lang->iso_code] = 'product_' . $lastId . '_' . 'lang_' . $lang->iso_code;
                     }
