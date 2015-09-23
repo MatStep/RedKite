@@ -162,8 +162,9 @@ class BasePresenter extends \App\Presenters\BasePresenter
 
     public function languageFormSucceeded($form, $values)
     {
-        self::changeLanguage($values->iso_code);
+        //need to get language code from values->language that contain id
+        $langCode = $this->languages->getLanguageById($values->language)->iso_code;
         $this->flashMessage('Nastavenie jazyka bolo zmenené');
-        $this->redirect("this");
+        $this->redirectUrl(self::changeLanguage($langCode));
     }
 }

@@ -80,6 +80,24 @@ class LanguageManager extends Nette\Object
 
 
 	/**
+	 * Method returns language selected from DB by id
+	 * @param int $code 	id of language
+	 * @return Object		Current language from database
+	 */
+	public function getLanguageById($id)
+	{
+		$language =  $this->database->table(self::LANGUAGE_TABLE)->where(self::COLUMN_ID, $id)->fetch();
+
+		if ( !$language )
+		{
+			throw new Nette\Application\BadRequestException("DOESNT_EXIST");
+		}
+
+		return $language;
+	}
+
+
+	/**
 	 * Method returns language selected from DB by code
 	 * @param string $code 	Iso code
 	 * @return Object		Current language from database
