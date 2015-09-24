@@ -1,0 +1,62 @@
+{block content}
+<div class="box box-primary">
+	<div class="box-header with-border">
+		<h2 class="box-title">
+			Dodávatelia
+		</h2>
+	</div>
+	<div class="box-body">
+		<!-- supplier VIEW TABLE BEGIN -->
+		<div class="table">
+			<table class="table table-hover">
+				<!-- TABLE HEADER -->
+				<thead>
+					<tr>
+						<th>
+							<input id="headerCheckBox" type="checkbox" class="supplierCheckBox" name="select">
+						</th>
+						<th>
+							Id
+						</th>
+						<th>
+							Názov
+						</th>
+						<th>
+							Dátum začatia spolupráce
+						</th>
+					</tr>
+				</thead>
+				<tbody>	<!-- TABLE BODY -->	
+					{foreach $suppliers as $supplier}
+					<tr>
+						<td>
+							<input id="supplier-check-box-{$supplier->id}" type="checkbox" class="supplierCheckBox" name="select">
+						</td>
+						<td>
+							{$supplier->id}
+						</td>
+						<td>
+							{$supplier->name}
+						</td>
+						<td>
+							{$supplier->date_from}
+						</td>
+						<td>
+							<a n:href="Supplier:edit $supplier->id" style="margin-top: 10px; width: 130px;" class='itemEdit'><i class="fa fa-edit"></i></a>
+							<a n:href="Supplier:remove $supplier->id" style="margin-top: 10px; width: 130px;" class='itemTrash'><i class="fa fa-trash-o"></i></a>
+						</td>
+					</tr>
+					{/foreach}
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
+
+{* Script for changing active menu *}
+<script>
+	$(function() {
+		unsetAndSetActive('#suppliers', '#listSuppliers');
+	});
+</script>
+{/block}

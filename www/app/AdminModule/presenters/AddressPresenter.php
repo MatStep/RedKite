@@ -24,7 +24,6 @@ class AddressPresenter extends \App\AdminModule\Presenters\BasePresenter
 	public function __construct(Model\AddressManager $addresses)
 	{
 		$this->addresses = $addresses;
-		$this->values = array("name" => "", "logo_path" => "");
 		$this->id = 0;
 	}
 
@@ -47,19 +46,19 @@ class AddressPresenter extends \App\AdminModule\Presenters\BasePresenter
 			 ->setRequired('Ulica je povinná')
 			 ->getControlPrototype()->class("form-control");
 
-		$form->addTextArea("street_no", "Číslo ulice")
+		$form->addText("street_no", "Číslo ulice")
 			 ->setRequired('Číslo ulice je povinné')
 			 ->getControlPrototype()->class("form-control");
 
-		$form->addTextArea("city", "Mesto")
+		$form->addText("city", "Mesto")
 			 ->setRequired('Mesto je povinné')
 			 ->getControlPrototype()->class("form-control");
 
-		$form->addTextArea("country", "Krajina")
+		$form->addText("country", "Krajina")
 			 ->setRequired('Krajina je povinná')
 			 ->getControlPrototype()->class("form-control");
 
-		$form->addTextArea("zip_code", "PSČ")
+		$form->addText("zip_code", "PSČ")
 			 ->setRequired('PSČ je povinné')
 			 ->getControlPrototype()->class("form-control");
 
