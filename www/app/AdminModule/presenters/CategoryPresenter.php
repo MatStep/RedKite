@@ -47,7 +47,7 @@ class CategoryPresenter extends \App\AdminModule\Presenters\BasePresenter
 
             if($lang->id == parent::getLanguage()->id)
             {
-                $form->addText("name_". $lang->iso_code, "Názov" . "(" . $lang->iso_code . ")")
+                $form->addText("name", "Názov" . "(" . $lang->iso_code . ")")
                      ->getControlPrototype()->class("form-control")
                      ->setRequired('Názov je povinný');
             }
@@ -111,7 +111,7 @@ class CategoryPresenter extends \App\AdminModule\Presenters\BasePresenter
 
                 //Add the same for all languages
                 foreach(parent::getAllLanguages() as $lang) {
-                    $this->categories->translateData($lang->id, $lastId, $values['name_' . $currentLanguage->iso_code], 0);
+                    $this->categories->translateData($lang->id, $lastId, $values['name'], 0);
                 }
     			$this->flashMessage('Kategória úspešne pridaná');
     		}
@@ -122,7 +122,7 @@ class CategoryPresenter extends \App\AdminModule\Presenters\BasePresenter
     			$this->categories->edit($categoryId, $values);
 
                 //EDIT LANGUAGE DATA
-                    $this->categories->translateData($currentLanguage->id, $categoryId, $values['name_' . $currentLanguage->iso_code], 1);
+                $this->categories->translateData($currentLanguage->id, $categoryId, $values['name'], 1);
 
     			$this->flashMessage('Kategória úspešne aktualizovaná');
 
@@ -164,7 +164,7 @@ class CategoryPresenter extends \App\AdminModule\Presenters\BasePresenter
         $lang = parent::getLanguage();
 
         $categoryLang = $this->categories->getCategoryLang($categoryId, $lang->id);
-        $this['categoryForm']['name_' . $lang->iso_code]->setDefaultValue($categoryLang->name);
+        $this['categoryForm']['name']->setDefaultValue($categoryLang->name);
 
         $this['categoryForm']->setDefaults($category->toArray());
 

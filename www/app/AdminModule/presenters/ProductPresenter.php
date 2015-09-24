@@ -39,22 +39,19 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
 
 		foreach(parent::getAllLanguages() as $lang)
         {
-            $form->addText("name_". $lang->iso_code, "Názov" . "(" . $lang->iso_code . ")")
-    			 ->getControlPrototype()->class("form-control");
-
             if($lang->id == parent::getLanguage()->id)
             {
-                $form["name_". $lang->iso_code]->setRequired('Názov je povinný');
+                $form->addText("name", "Názov" . "(" . $lang->iso_code . ")")
+                     ->getControlPrototype()->class("form-control")
+                     ->setRequired('Názov je povinný');
+                $form->addText("short_desc", "Krátky popis" . "(" . $lang->iso_code . ")")
+                     ->getControlPrototype()->class("form-control")
+                     ->setRequired('Krátky popis je povinný');
+                $form->addText("desc", "Popis" . "(" . $lang->iso_code . ")")
+                     ->getControlPrototype()->class("form-control")
+                     ->setRequired('Popis je povinný');
             }
         }
-
-		$form->addTextArea("short_desc", "Krátky popis")
-			 ->setRequired('Krátky popis je povinný')
-			 ->getControlPrototype()->class("form-control");
-
-		$form->addTextArea("desc", "Popis")
-			 ->setRequired('Popis je povinný')
-			 ->getControlPrototype()->class("form-control");
 
 		$form->addText("price_sell", "Cena")
 			 ->setType('number')
@@ -78,6 +75,7 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
 	public function productFormSucceeded($form, $values)
 	{
 		$adding = true;
+		$currentLanguage = parent::getLanguage();
 
 		if( $form['status']->getValue() == 'checked')
 		{
@@ -99,19 +97,21 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
 				//ADD LANGUAGE DATA
 				$lastId = $this->products->getLastInsertedId();
 
-				foreach(parent::getAllLanguages() as $lang) {
-                    if($values['name_' . $lang->iso_code] == NULL && $lang->iso_code != parent::getLanguage()->iso_code)
-                    {
-                        $values['name_' . $lang->iso_code] = 'product_' . $lastId . '_' . 'lang_' . $lang->iso_code;
-                    }
-                    $this->products->translateData($lang->id, $lastId, $values['name_' . $lang->iso_code], 0);
+				//Add the same for all languages
+                foreach(parent::getAllLanguages() as $lang) {
+                    $this->products->translateData($lang->id, $lastId, $values, 0);
                 }
 
 				$this->flashMessage('Produkt úspešne pridaný');
 			}
 			else
 			{
+				//EDIT PRODUCT
 				$this->products->edit($productId, $values);
+
+				//EDIT LANGUAGE DATA
+                $this->products->translateData($currentLanguage, $productId, $values, 1);
+
 				$this->flashMessage('Produkt bol aktualizovaný');
 			}
 
@@ -121,6 +121,11 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
 				$form->addError('Produkt neexistuje');
 		}
 	}
+
+	public function getProductLang($productId)
+    {
+        return $this->products->getProductLang($productId, parent::getLanguage()->id);
+    }
 
 	public function actionRemove($productId)
 	{

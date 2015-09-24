@@ -147,7 +147,6 @@ class ProductManager extends Nette\Object
 			self::COLUMN_DESC => $values->desc,
 			self::COLUMN_STATUS => $values->status,
 			self::COLUMN_PRICE_SELL => $values->price_sell,
-			self::COLUMN_BRAND_ID => $values->brand_id,
 			));
 	}
 
@@ -178,7 +177,7 @@ class ProductManager extends Nette\Object
 		}
 		else
 		{
-			$product_lang = self::getProductLang($productId);
+			$product_lang = self::getProductLang($productId, $langId);
 			$product_lang->update(array(
 				self::COLUMN_TNAME => $data['name'],
 				self::COLUMN_TSHORT_DESC => $data['short_desc'],

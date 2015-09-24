@@ -45,10 +45,10 @@
 							{$product->id}
 						</td>
 						<td>
-							{$product->name}
+							{$presenter->getProductLang($product->id)->name}
 						</td>
 						<td>
-							{$product->short_desc}
+							{$presenter->getProductLang($product->id)->short_desc}
 						</td>
 						<td>
 							{* Currency from currency settings *}
