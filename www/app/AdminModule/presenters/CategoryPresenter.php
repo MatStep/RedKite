@@ -153,20 +153,16 @@ class CategoryPresenter extends \App\AdminModule\Presenters\BasePresenter
 		$this->redirect("Category:");
 	}
 
-	public function actionEdit($categoryId, $categoryLangId)
+	public function actionEdit($categoryId)
 	{
 		$category = $this->categories->getCategory($categoryId);
+        $lang = parent::getLanguage();
+        $categoryLang = $this->categories->getCategoryLang($categoryId, $lang->id);
 
 		$this->template->categoryId = $categoryId;
 
 		$this['categoryForm']->setDefaults($category->toArray());
-
-        $lang = parent::getLanguage();
-
-        $categoryLang = $this->categories->getCategoryLang($categoryId, $lang->id);
         $this['categoryForm']['name']->setDefaultValue($categoryLang->name);
-
-        $this['categoryForm']->setDefaults($category->toArray());
 
         if($category->parent_id != 0)
         {

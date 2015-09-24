@@ -306,6 +306,12 @@ class CategoryManager extends Nette\Object
 	 */
 	public function translateData($langId, $categoryId, $data, $method)
 	{
+		//Checks if Category name in the language exists
+		// if ($this->database->table(self::CATEGORY_LANG_TABLE)
+		// 	->where(self::COLUMN_NAME, $data)
+		// 	->where(self::COLUMN_FK_LANG_ID, $langId)->count() > 0)
+		// 	throw new Nette\Application\BadRequestException("NAME_EXISTS");
+
 		if($method == '0')
 		{
 			$this->database->table(self::CATEGORY_LANG_TABLE)->insert(array(

@@ -114,9 +114,6 @@ class ProductManager extends Nette\Object
 
 	public function insert($values)
 	{
-		if ($this->database->table(self::PRODUCT_TABLE)->where(self::COLUMN_NAME, $values->name)->count() > 0)
-			throw new Nette\Application\BadRequestException("NAME_EXISTS");
-
 		$data = array();
 		$data["status"] = $values->status;
 		$data["price_sell"] = $values->price_sell;
@@ -156,6 +153,7 @@ class ProductManager extends Nette\Object
 	 */
 	public function translateData($langId, $productId, $data, $method)
 	{
+
 		if($method == '0')
 		{
 			$this->database->table(self::PRODUCT_LANG_TABLE)->insert(array(
