@@ -14,9 +14,6 @@ class ProductManager extends Nette\Object
 	const 
 		PRODUCT_TABLE = 'product',
 		COLUMN_ID = 'id',
-		COLUMN_NAME = 'name',
-		COLUMN_SHORT_DESC = 'short_desc',
-		COLUMN_DESC = 'desc',
 		COLUMN_STATUS = 'status',
 		COLUMN_ORDER = 'order',
 		COLUMN_ADD_DATE = 'add_date',
@@ -32,9 +29,9 @@ class ProductManager extends Nette\Object
 		COLUMN_PRODUCT_LANG_ID = "id",
 		COLUMN_PRODUCT_ID = "product_id",
 		COLUMN_FK_LANG_ID = "lang_id",
-		COLUMN_TNAME = 'name',
-		COLUMN_TSHORT_DESC = 'short_desc',
-		COLUMN_TDESC = 'desc';
+		COLUMN_NAME = 'name',
+		COLUMN_SHORT_DESC = 'short_desc',
+		COLUMN_DESC = 'desc';
 
 	/** @var Nette\Database\Context */
 	private $database;
@@ -121,9 +118,6 @@ class ProductManager extends Nette\Object
 			throw new Nette\Application\BadRequestException("NAME_EXISTS");
 
 		$data = array();
-		$data["name"]  = $values->name;
-		$data["short_desc"] = $values->short_desc;
-		$data["desc"] = $values->desc;
 		$data["status"] = $values->status;
 		$data["price_sell"] = $values->price_sell;
 		$data["brand_id"] = 1;//$values->brand_id;
@@ -142,9 +136,6 @@ class ProductManager extends Nette\Object
 		}
 
 		$product->update(array(
-			self::COLUMN_NAME => $values->name,
-			self::COLUMN_SHORT_DESC => $values->short_desc,
-			self::COLUMN_DESC => $values->desc,
 			self::COLUMN_STATUS => $values->status,
 			self::COLUMN_PRICE_SELL => $values->price_sell,
 			));
@@ -170,18 +161,18 @@ class ProductManager extends Nette\Object
 			$this->database->table(self::PRODUCT_LANG_TABLE)->insert(array(
 				self::COLUMN_PRODUCT_ID => $productId,
 				self::COLUMN_FK_LANG_ID => $langId,
-				self::COLUMN_TNAME => $data['name'],
-				self::COLUMN_TSHORT_DESC => $data['short_desc'],
-				self::COLUMN_TDESC => $data['desc'],
+				self::COLUMN_NAME => $data['name'],
+				self::COLUMN_SHORT_DESC => $data['short_desc'],
+				self::COLUMN_DESC => $data['desc'],
 				));
 		}
 		else
 		{
 			$product_lang = self::getProductLang($productId, $langId);
 			$product_lang->update(array(
-				self::COLUMN_TNAME => $data['name'],
-				self::COLUMN_TSHORT_DESC => $data['short_desc'],
-				self::COLUMN_TDESC => $data['desc'],
+				self::COLUMN_NAME => $data['name'],
+				self::COLUMN_SHORT_DESC => $data['short_desc'],
+				self::COLUMN_DESC => $data['desc'],
 				));
 		}
 	}
