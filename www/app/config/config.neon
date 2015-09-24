@@ -48,6 +48,9 @@ services:
 	addresses:
 		class: App\Model\AddressManager
 
+	suppliers:
+		class: App\Model\SupplierManager
+
 	languages:
 		class: App\Model\LanguageManager
 		
