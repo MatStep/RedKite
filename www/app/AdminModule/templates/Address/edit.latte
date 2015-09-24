@@ -1,0 +1,57 @@
+{block content}
+<div class="box box-primary">
+		<div class="box-header with-border">
+			<h2 class="box-title">
+				Editovanie adresy
+			</h2>
+			<a n:href="Address:" class="pull-right"><i class="fa fa-close"></i></a>
+		</div>
+		<div class="box-body">
+			{form addressForm}
+			<div n:if="$form->hasErrors()">
+				<ul class="errors">
+					<li n:foreach="$form->errors as $error"><strong>{$error}</strong></li>
+				</ul>
+			</div> 
+			<div class="form-group">
+				<label for="inputStreet">
+					Ulica
+				</label>
+				{input street}
+			</div>
+			<div class="form-group">
+				<label for="inputStreet_no">
+					Číslo ulice
+				</label>
+				{input street_no}
+			</div>
+			<div class="form-group">
+				<label for="inputCity">
+					Mesto
+				</label>
+				{input city}
+			</div>
+			<div class="form-group">
+				<label for="inputCountry">
+					Krajina
+				</label>
+				{input country}
+			</div>
+			<div class="form-group">
+				<label for="inputZip_code">
+					PSČ
+				</label>
+				{input zip_code}
+			</div>
+			{input edit}
+			{/form}
+		</div>
+	</div>
+
+{* Script for changing active menu *}
+<script>
+	$(function() {
+		unsetAndSetActive('#addresses', '#addAddress');
+	});
+</script>
+{/block}

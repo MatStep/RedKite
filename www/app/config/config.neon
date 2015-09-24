@@ -45,6 +45,9 @@ services:
 	references:
 		class: App\Model\ReferenceManager
 
+	addresses:
+		class: App\Model\AddressManager
+
 	languages:
 		class: App\Model\LanguageManager
 		
