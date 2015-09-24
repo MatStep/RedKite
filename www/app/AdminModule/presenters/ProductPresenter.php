@@ -23,7 +23,7 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
 	public function __construct(Model\ProductManager $products)
 	{
 		$this->products = $products;
-		$this->values = array("name" => "", "short_desc" => "", "desc" => "", "status" => "", "order" => "", "price_sell" => "");
+		$this->values = array("status" => "", "order" => "", "price_sell" => "");
 		$this->id = 0;
 	}
 
@@ -47,7 +47,7 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
                 $form->addText("short_desc", "Krátky popis" . "(" . $lang->iso_code . ")")
                      ->getControlPrototype()->class("form-control")
                      ->setRequired('Krátky popis je povinný');
-                $form->addText("desc", "Popis" . "(" . $lang->iso_code . ")")
+                $form->addTextArea("desc", "Popis" . "(" . $lang->iso_code . ")")
                      ->getControlPrototype()->class("form-control")
                      ->setRequired('Popis je povinný');
             }
@@ -118,7 +118,7 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
 				$this->redirect("Product:");
 		} catch (Nette\Application\BadRequestException $e) {
 			if ($e->getMessage() == "NAME_EXISTS")
-				$form->addError('Produkt neexistuje');
+				$form->addError('Názov produktu už existuje');
 		}
 	}
 
@@ -137,10 +137,15 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
 	public function actionEdit($productId)
 	{
 		$product = $this->products->getProduct($productId);
+		$lang = parent::getLanguage();
+		$productLang = $this->products->getProductLang($productId, $lang->id);
 
 		$this->template->productId = $productId;
 
 		$this['productForm']->setDefaults($product->toArray());
+		$this['productForm']['name']->setDefaultValue($productLang->name);
+		$this['productForm']['short_desc']->setDefaultValue($productLang->short_desc);
+		$this['productForm']['desc']->setDefaultValue($productLang->desc);
 
 	}
 }
