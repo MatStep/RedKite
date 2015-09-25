@@ -138,8 +138,19 @@ class ProductManager extends Nette\Object
 			));
 	}
 
-	public function remove($id, $state = "parent")
+	public function remove($id)
 	{
+		// delete all rows where is product located in product lang
+
+		$allProductLang = self::getAllProductLang($id);
+
+		while($allProductLang->count() > 0) {
+			foreach($allProductLang as $productLang)
+			{
+				$productLang->delete();
+			}
+		}
+		
 		return $this->database->table(self::PRODUCT_TABLE)->where(self::COLUMN_ID, $id)->delete();
 	}
 
