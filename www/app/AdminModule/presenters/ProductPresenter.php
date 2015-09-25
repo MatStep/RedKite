@@ -14,6 +14,9 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
 	/** @var \App\Model\UserManager @inject */
 	public $userManager;
 
+	/** @var \App\Model\BrandManager @inject */
+	public $brandManager;
+
 	private $products;
 
 	private $values;
@@ -37,6 +40,8 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
 	{
 		$form = new Form;
 
+		$brandsArray = self::createBrandsArrayForSelect();
+
 		foreach(parent::getAllLanguages() as $lang)
         {
             if($lang->id == parent::getLanguage()->id)
@@ -56,6 +61,9 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
 			 ->setType('number')
 			 ->setRequired('Cena je povinná')
 			 ->addRule(Form::FLOAT, "Kurz musí byť číslo")
+			 ->getControlPrototype()->class("form-control");
+
+		$form->addSelect("brand", "Značka", $brandsArray)
 			 ->getControlPrototype()->class("form-control");
 
 		$form->addCheckbox("status", "");
@@ -122,6 +130,22 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
 		}
 	}
 
+	private function createBrandsArrayForSelect()
+	{
+		$brands = $this->brandManager->getAll();
+
+		$brandsArray = array();
+
+		$brandsArray["default"] = "--";
+
+		foreach ( $brands as $brand )
+		{
+			$brandsArray[$brand->id] = $brand->name;
+		}
+
+		return $brandsArray;
+	}
+
 	public function getProductLang($productId)
     {
         return $this->products->getProductLang($productId, parent::getLanguage()->id);
@@ -146,6 +170,7 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
 		$this['productForm']['name']->setDefaultValue($productLang->name);
 		$this['productForm']['short_desc']->setDefaultValue($productLang->short_desc);
 		$this['productForm']['desc']->setDefaultValue($productLang->desc);
+		$this['productForm']['brand']->setDefaultValue($product->brand);
 
 	}
 }

@@ -117,7 +117,7 @@ class ProductManager extends Nette\Object
 		$data = array();
 		$data["status"] = $values->status;
 		$data["price_sell"] = $values->price_sell;
-		$data["brand_id"] = 1;//$values->brand_id;
+		$data["brand_id"] = $values->brand_id;
 
 		return $this->database->table(self::PRODUCT_TABLE)->insert($data);
 
@@ -135,6 +135,7 @@ class ProductManager extends Nette\Object
 		$product->update(array(
 			self::COLUMN_STATUS => $values->status,
 			self::COLUMN_PRICE_SELL => $values->price_sell,
+			self::COLUMN_BRAND_ID => $values->brand,
 			));
 	}
 
