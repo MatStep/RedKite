@@ -1,5 +1,5 @@
 {block content}
-	<div class="box box-primary">
+	<link rel="stylesheet" type="text/css" href="https://cdn.ckeditor.com/4.4.3/standard/skins/moono/editor_gecko.css?t=E6FD">
 		<div class="box-header with-border">
 			<h2 class="box-title">
 				Pridanie produktu
@@ -53,5 +53,10 @@
 	$(function() {
 		unsetAndSetActive('#products', '#addProduct');
 	});
+</script>
+<script src="//cdn.ckeditor.com/4.4.7/standard/ckeditor.js"></script>
+<script>
+	CKEDITOR.replace('frm-productForm-short_desc');
+    CKEDITOR.replace('frm-productForm-desc');
 </script>
 {/block}
