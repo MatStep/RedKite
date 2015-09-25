@@ -1,4 +1,9 @@
 {block content}
+	<!-- Date Picker -->
+    <link href="{$basePath}/adminCnt/plugins/datepicker/datepicker3.css" rel="stylesheet" type="text/css" />
+    <!-- Daterange picker -->
+    <link href="{$basePath}/adminCnt/plugins/daterangepicker/daterangepicker-bs3.css" rel="stylesheet" type="text/css" />
+    
 	<div class="box box-primary">
 		<div class="box-header with-border">
 			<h2 class="box-title">
@@ -25,6 +30,51 @@
 				</label>
 				{input date_from}
 			</div>
+			<div class="form-group">					
+				<label for="inputAddress_id">
+					Adresa
+				</label>
+				{input address_id}
+			</div>
+			<div class="new-address">
+				<div class="form-group">					
+					<label for="inputStreet">
+						Ulica
+					</label>
+					{input street}
+				</div>
+				<div class="form-group">					
+					<label for="inputStreet_no">
+						Číslo ulice
+					</label>
+					{input street_no}
+				</div>
+				<div class="form-group">					
+					<label for="inputZip_code">
+						PSČ
+					</label>
+					{input zip_code}
+				</div>
+				<div class="form-group">					
+					<label for="inputCity">
+						Mesto
+					</label>
+					{input city}
+				</div>
+				<div class="form-group">					
+					<label for="inputCountry">
+						Krajina
+					</label>
+					{input country}
+				</div>
+			</div>
+			<div class="form-group">	
+				<label for="nothing">
+				</label>
+				<button class="btn btn-primary form-control add-address">
+					Pridať novú adresu
+				</button>
+			</div>
 			{input add}
 			{/form}
 		</div>
@@ -36,4 +86,44 @@
 		unsetAndSetActive('#suppliers', '#addSupplier');
 	});
 </script>
+
+<!-- add new address script -->
+<script>
+	$(function(){
+		$(".new-address").hide();
+	});
+
+	$(".add-address").click(function(){
+		var selectValue = $("#frm-supplierForm-address_id").val();
+
+		$(".new-address").toggle();
+
+		if ( $(".new-address").is(":visible") )
+		{
+			$("#frm-supplierForm-address_id").val("default").toggle().prev("label").toggle();
+			$(this).text("Zrušiť pridanie novej adresy");
+		}
+		else
+		{
+			$("#frm-supplierForm-address_id").val("default").toggle().prev("label").toggle();
+			$(this).text("Pridať novú adresu");
+		}
+
+		return false;
+	});
+</script>
+<!-- datepicker script -->
+<script>
+	$(function(){
+		$("#frm-supplierForm-date_from").datepicker({
+			format: 'dd.mm.yyyy',
+			todayHighlight: 'true',
+			autoclose: 'true',
+		});
+	});
+</script><!-- daterangepicker -->
+    <script src="{$basePath}/adminCnt/plugins/daterangepicker/daterangepicker.js" type="text/javascript"></script>
+    <!-- datepicker -->
+    <script src="{$basePath}/adminCnt/plugins/datepicker/bootstrap-datepicker.js" type="text/javascript"></script>
+
 {/block}

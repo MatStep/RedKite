@@ -39,7 +39,7 @@
 							{$supplier->name}
 						</td>
 						<td>
-							{$supplier->date_from}
+							{$supplier->date_from|date:'d.m.Y'}
 						</td>
 						<td>
 							<a n:href="Supplier:edit $supplier->id" style="margin-top: 10px; width: 130px;" class='itemEdit'><i class="fa fa-edit"></i></a>
