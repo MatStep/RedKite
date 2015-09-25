@@ -24,7 +24,7 @@ class ReferencePresenter extends \App\AdminModule\Presenters\BasePresenter
 	public function __construct(Model\ReferenceManager $references)
 	{
 		$this->references = $references;
-		$this->values = array("name" => "", "logo_path" => "");
+		$this->values = array("logo_path" => "");
 		$this->id = 0;
 	}
 
@@ -45,13 +45,17 @@ class ReferencePresenter extends \App\AdminModule\Presenters\BasePresenter
 	{
 		$form = new Form;
 
-		$form->addText("name", "Názov")
-			 ->setRequired('Názov je povinný')
-			 ->getControlPrototype()->class("form-control");
-
-		$form->addTextArea("desc", "Popis")
-			 ->setRequired('Popis je povinný')
-			 ->getControlPrototype()->class("form-control");
+		foreach(parent::getAllLanguages() as $lang)
+        {
+            if($lang->id == parent::getLanguage()->id)
+            {
+                $form->addText("name", "Názov" . "(" . $lang->iso_code . ")")
+                     ->getControlPrototype()->class("form-control")
+                     ->setRequired('Názov je povinný');
+                $form->addTextArea("desc", "Popis" . "(" . $lang->iso_code . ")")
+                     ->getControlPrototype()->class("form-control");
+            }
+        }
 
 		$form->addUpload("logo", "Logo")
 			 ->addCondition(Form::FILLED)
@@ -72,6 +76,7 @@ class ReferencePresenter extends \App\AdminModule\Presenters\BasePresenter
 	public function referenceFormSucceeded($form, $values)
 	{
 		$adding = true;
+		$currentLanguage = parent::getLanguage();
 		
 		try {
 			if ( isset($this->request->getParameters()['referenceId']) )
@@ -82,37 +87,47 @@ class ReferencePresenter extends \App\AdminModule\Presenters\BasePresenter
 
 			if ($adding)
 			{
+				//ADD REFERENCE
 				$this->references->insert($values);
-				$this->flashMessage('Logo úspešne pridané');
+
+				//ADD LANGUAGE DATA
+				$lastId = $this->references->getLastInsertedId();
+
+				//Add the same for all languages
+                foreach(parent::getAllLanguages() as $lang) {
+                    $this->references->translateData($lang->id, $lastId, $values, 0);
+                }
+
+				$this->flashMessage('Referencia úspešne pridaná');
 			}
 			else
 			{
+				//EDIT REFERENCE
 				$this->references->edit($referenceId, $values);
-				$this->flashMessage('Logo bolo aktualizované');
+
+				//EDIT LANGUAGE DATA
+                $this->references->translateData($currentLanguage, $referenceId, $values, 1);
+
+				$this->flashMessage('Referencia bola aktualizovaná');
 			}
 
 				$this->redirect("Reference:");
 		} catch (Nette\Application\BadRequestException $e) {
 			if ($e->getMessage() == "NAME_EXISTS")
-				$form->addError('Logo neexistuje');
+				$form->addError('Referencia neexistuje');
 		}
 	}
+
+	public function getReferenceLang($referenceId)
+    {
+        return $this->references->getReferenceLang($referenceId, parent::getLanguage()->id);
+    }
 
 	public function actionRemove($referenceId)
 	{
 			$this->references->remove($referenceId);
-			$this->flashMessage('Logo bolo úspešne vymazané');
+			$this->flashMessage('Referencia bola úspešne vymazaná');
 			$this->redirect("Reference:");
-	}
-
-	public function actionEdit($referenceId)
-	{
-		$reference = $this->references->getReference($referenceId);
-
-		$this->template->referenceId = $referenceId;
-
-		$this['referenceForm']->setDefaults($reference->toArray());
-
 	}
 
 	public function actionRemoveImage($referenceId)
@@ -121,5 +136,19 @@ class ReferencePresenter extends \App\AdminModule\Presenters\BasePresenter
 
 		$this->flashMessage('Obrázok bol úspešne vymazaný');
 		$this->redirect('Reference:Edit', $referenceId);
+	}
+
+	public function actionEdit($referenceId)
+	{
+		$reference = $this->references->getReference($referenceId);
+		$lang = parent::getLanguage();
+		$referenceLang = $this->references->getReferenceLang($referenceId, $lang->id);
+
+		$this->template->referenceId = $referenceId;
+
+		$this['referenceForm']->setDefaults($reference->toArray());
+		$this['referenceForm']['logo']->setDefaultValue($reference->logo_path);
+		$this['referenceForm']['name']->setDefaultValue($referenceLang->name);
+		$this['referenceForm']['desc']->setDefaultValue($referenceLang->desc);
 	}
 }

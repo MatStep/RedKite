@@ -84,11 +84,15 @@ class BrandManager extends Nette\Object
 		if($values->logo == "")
 			$imgUrl = "";
 		else
+		{
 			$imgUrl = $this->imageManager->getImage($values->logo, "brands");
+			$brand->update(array(
+			self::COLUMN_LOGO_PATH => $imgUrl,
+			));
+		}
 
 		$brand->update(array(
 			self::COLUMN_NAME => $values->name,
-			self::COLUMN_LOGO_PATH => $imgUrl,
 			));
 	}
 

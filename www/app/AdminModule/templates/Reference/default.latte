@@ -25,9 +25,6 @@
 							Názov
 						</th>
 						<th>
-							Popis
-						</th>
-						<th>
 							Možnosti
 						</th>
 					</tr>
@@ -42,13 +39,10 @@
 							{$reference->id}
 						</td>
 						<td>
-							<img src="{$basePath}/{$reference->logo_path}" alt="{$reference->name}Logo" height="60">
+							<img src="{$basePath}/{$reference->logo_path}" alt="{$presenter->getReferenceLang($reference->id)->name}Logo" height="60">
 						</td>
 						<td>
-							{$reference->name}
-						</td>
-						<td>
-							{$reference->desc}
+							{$presenter->getReferenceLang($reference->id)->name}
 						</td>
 						<td>
 							<a n:href="Reference:edit $reference->id" style="margin-top: 10px; width: 130px;" class='itemEdit'><i class="fa fa-edit"></i></a>

@@ -96,9 +96,10 @@ class BrandPresenter extends \App\AdminModule\Presenters\BasePresenter
 
 	public function actionRemove($brandId)
 	{
-			$this->brands->remove($brandId);
-			$this->flashMessage('Logo bolo úspešne vymazané');
-			$this->redirect("Brand:");
+		$this->brands->remove($brandId);
+
+		$this->flashMessage('Logo bolo úspešne vymazané');
+		$this->redirect("Brand:");
 	}
 
 	public function actionRemoveImage($brandId)

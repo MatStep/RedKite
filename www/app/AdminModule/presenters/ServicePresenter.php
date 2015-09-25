@@ -21,7 +21,7 @@ class ServicePresenter extends \App\AdminModule\Presenters\BasePresenter
 	public function __construct(Model\ServiceManager $services)
 	{
 		$this->services = $services;
-		$this->values = array("name" => "", "desc" => "", "img_path" => "");
+		$this->values = array("img_path" => "");
 		$this->id = 0;
 
 	}

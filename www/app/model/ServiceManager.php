@@ -119,8 +119,6 @@ class ServiceManager extends Nette\Object
 
 	public function insert($values)
 	{
-		if ($this->database->table(self::SERVICE_TABLE)->where(self::COLUMN_NAME, $values->name)->count() > 0)
-			throw new Nette\Application\BadRequestException("NAME_EXISTS");
 
 		if($values->image == "")
 			$imgUrl = "";
@@ -146,11 +144,12 @@ class ServiceManager extends Nette\Object
 		if($values->image == "")
 			$imgUrl = "";
 		else
+		{
 			$imgUrl = $this->imageManager->getImage($values->image, "services");
-
-		$service->update(array(
+			$service->update(array(
 			self::COLUMN_IMG_PATH => $imgUrl,
 			));
+		}
 	}
 
 	public function remove($id)
