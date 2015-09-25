@@ -47,6 +47,13 @@ class BrandManager extends Nette\Object
 		return $brand;
 	}
 
+	public function getImage($id)
+	{
+		return $this->database->table(self::BRAND_TABLE)
+			->where(self::COLUMN_ID, $id)
+			->fetch()[self::COLUMN_LOGO_PATH];
+	}
+
 	public function insert($values)
 	{
 		if ($this->database->table(self::BRAND_TABLE)->where(self::COLUMN_NAME, $values->name)->count() > 0)
@@ -88,13 +95,6 @@ class BrandManager extends Nette\Object
 	public function remove($id)
 	{
 		return $this->database->table(self::BRAND_TABLE)->where(self::COLUMN_ID, $id)->delete();
-	}
-
-	public function getImage($id)
-	{
-		return $this->database->table(self::BRAND_TABLE)
-			->where(self::COLUMN_ID, $id)
-			->fetch()[self::COLUMN_LOGO_PATH];
 	}
 
 	public function removeImage($id)

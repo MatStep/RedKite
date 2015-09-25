@@ -48,8 +48,7 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
                      ->getControlPrototype()->class("form-control")
                      ->setRequired('Krátky popis je povinný');
                 $form->addTextArea("desc", "Popis" . "(" . $lang->iso_code . ")")
-                     ->getControlPrototype()->class("form-control")
-                     ->setRequired('Popis je povinný');
+                     ->getControlPrototype()->class("form-control");
             }
         }
 
@@ -116,6 +115,7 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
 			}
 
 				$this->redirect("Product:");
+				
 		} catch (Nette\Application\BadRequestException $e) {
 			if ($e->getMessage() == "NAME_EXISTS")
 				$form->addError('Názov produktu už existuje');

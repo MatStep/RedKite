@@ -22,7 +22,7 @@
 							Názov
 						</th>
 						<th>
-							Popis
+							Obrázok
 						</th>
 						<th>
 							Možnosti
@@ -39,10 +39,10 @@
 							{$service->id}
 						</td>
 						<td>
-							{$service->name}
+							{$presenter->getServiceLang($service->id)->name}
 						</td>
 						<td>
-							{$service->desc}
+							<img src="{$basePath}/{$service->img_path}" alt="{$presenter->getServiceLang($service->id)->name}Image" height="60">
 						</td>
 						<td>
 							<a n:href="Service:edit $service->id" style="margin-top: 10px; width: 130px;" class='itemEdit'><i class="fa fa-edit"></i></a>

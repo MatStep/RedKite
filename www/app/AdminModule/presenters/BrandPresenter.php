@@ -101,6 +101,14 @@ class BrandPresenter extends \App\AdminModule\Presenters\BasePresenter
 			$this->redirect("Brand:");
 	}
 
+	public function actionRemoveImage($brandId)
+	{
+		$this->brands->removeImage($brandId);
+
+		$this->flashMessage('Obrázok bol úspešne vymazaný');
+		$this->redirect('Brand:Edit', $brandId);
+	}
+
 	public function actionEdit($brandId)
 	{
 		$brand = $this->brands->getBrand($brandId);
@@ -109,13 +117,5 @@ class BrandPresenter extends \App\AdminModule\Presenters\BasePresenter
 
 		$this['brandForm']->setDefaults($brand->toArray());
 
-	}
-
-	public function actionRemoveImage($brandId)
-	{
-		$this->brands->removeImage($brandId);
-
-		$this->flashMessage('Obrázok bol úspešne vymazaný');
-		$this->redirect('Brand:Edit', $brandId);
 	}
 }

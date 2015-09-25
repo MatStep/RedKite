@@ -15,16 +15,34 @@
 			</div> 
 			<div class="form-group">
 				<label for="inputName">
-					Názov
+					Názov ({$lang})
 				</label>
 				{input name}
 			</div>
 			<div class="form-group">
 				<label for="inputName">
-					Popis
+					Popis ({$lang})
 				</label>
 				{input desc}
 			</div>
+			{* if no image add new *}
+			{if $img_path == NULL}
+				<div class="form-group">
+					<label for="inputImage">
+						Obrázok
+					</label>
+					{input image}
+				</div>
+			{* If has image show it *}
+			{else}
+				<div class="form-group col-md-3">
+					<a n:href="Service:removeImage $service['id']" class="remove">
+						<i id="removeImage" class="fa fa-times fa-time-white-background">
+						</i>
+					</a>
+					<img width="100%" src="{$basePath}/{$img_path}"/>
+				</div>
+			{/if}
 			{input edit}
 			{/form}
 		</div>
