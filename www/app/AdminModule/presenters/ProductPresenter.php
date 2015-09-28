@@ -17,6 +17,12 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
 	/** @var \App\Model\BrandManager @inject */
 	public $brandManager;
 
+	/** @var \App\Model\SupplierManager @inject */
+	public $supplierManager;
+
+	/** @var App\Model\LanguageManager */
+    public $languages;
+
 	private $products;
 
 	private $values;
@@ -41,6 +47,7 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
 		$form = new Form;
 
 		$brandsArray = self::createBrandsArrayForSelect();
+		$suppliersArray = self::createSuppliersArrayForSelect();
 
 		foreach(parent::getAllLanguages() as $lang)
         {
@@ -60,10 +67,19 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
 		$form->addText("price_sell", "Cena")
 			 ->setType('number')
 			 ->setRequired('Cena je povinná')
-			 ->addRule(Form::FLOAT, "Kurz musí byť číslo")
+			 ->addRule(Form::FLOAT, "Cena musí byť číslo")
+			 ->getControlPrototype()->class("form-control");
+
+		$form->addText("price_buy", "Cena")
+			 ->setType('number')
+			 ->addRule(Form::FLOAT, "Cena musí byť číslo")
 			 ->getControlPrototype()->class("form-control");
 
 		$form->addSelect("brand", "Značka", $brandsArray)
+			 ->setRequired('Značka je povinná')
+			 ->getControlPrototype()->class("form-control");
+
+		$form->addSelect("supplier", "Dodávateľ", $suppliersArray)
 			 ->getControlPrototype()->class("form-control");
 
 		$form->addCheckbox("status", "");
@@ -101,23 +117,12 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
 				//ADD PRODUCT
 				$this->products->insert($values);
 
-				//ADD LANGUAGE DATA
-				$lastId = $this->products->getLastInsertedId();
-
-				//Add the same for all languages
-                foreach(parent::getAllLanguages() as $lang) {
-                    $this->products->translateData($lang->id, $lastId, $values, 0);
-                }
-
 				$this->flashMessage('Produkt úspešne pridaný');
 			}
 			else
 			{
 				//EDIT PRODUCT
 				$this->products->edit($productId, $values);
-
-				//EDIT LANGUAGE DATA
-                $this->products->translateData($currentLanguage, $productId, $values, 1);
 
 				$this->flashMessage('Produkt bol aktualizovaný');
 			}
@@ -136,7 +141,7 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
 
 		$brandsArray = array();
 
-		$brandsArray["default"] = "--";
+		$brandsArray[''] = "--";
 
 		foreach ( $brands as $brand )
 		{
@@ -144,6 +149,22 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
 		}
 
 		return $brandsArray;
+	}
+
+	private function createSuppliersArrayForSelect()
+	{
+		$suppliers = $this->supplierManager->getAll();
+
+		$suppliersArray = array();
+
+		$suppliersArray[''] = "--";
+
+		foreach ( $suppliers as $supplier )
+		{
+			$suppliersArray[$supplier->id] = $supplier->name;
+		}
+
+		return $suppliersArray;
 	}
 
 	public function getProductLang($productId)
@@ -163,14 +184,18 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
 		$product = $this->products->getProduct($productId);
 		$lang = parent::getLanguage();
 		$productLang = $this->products->getProductLang($productId, $lang->id);
+		//Now is there only one row, status is not mentioned
+		$productSupplier = $this->products->getAllProductSupplier($productId)->fetch();
 
 		$this->template->productId = $productId;
 
 		$this['productForm']->setDefaults($product->toArray());
+		$this['productForm']['price_buy']->setDefaultValue($productSupplier->price_buy);
 		$this['productForm']['name']->setDefaultValue($productLang->name);
 		$this['productForm']['short_desc']->setDefaultValue($productLang->short_desc);
 		$this['productForm']['desc']->setDefaultValue($productLang->desc);
 		$this['productForm']['brand']->setDefaultValue($product->brand);
+		$this['productForm']['supplier']->setDefaultValue($productSupplier->supplier_id);
 
 	}
 }

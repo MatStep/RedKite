@@ -1,4 +1,5 @@
 {block content}
+	<div class="box box-primary">
 		<div class="box-header with-border">
 			<h2 class="box-title">
 				Pridanie produktu
@@ -19,28 +20,42 @@
 				{input name}
 			</div>
 			<div class="form-group">
-				<label for="inputValue">
+				<label for="inputShortDesc">
 					Krátky popis ({$lang})
 				</label>
 				{input short_desc}
 			</div>
 			<div class="form-group">
-				<label for="inputName">
+				<label for="inputDesc">
 					Popis ({$lang})
 				</label>
 				{input desc}
 			</div>
-			<div class="form-group">
-				<label for="inputName">
-					Cena v eur bez DPH
-				</label>
-				{input price_sell}
+			<div class="row">
+				<div class="form-group col-md-6">
+					<label for="inputPriceBuy">
+						Nákupná cena v eur bez DPH
+					</label>
+					{input price_buy}
+				</div>
+				<div class="form-group col-md-6">
+					<label for="inputPriceSell">
+						Predajná cena v eur bez DPH
+					</label>
+					{input price_sell}
+				</div>
 			</div>
 			<div class="form-group">
 				<label for="inputBrand">
 					Značka
 				</label>
 				{input brand}
+			</div>
+			<div class="form-group">
+				<label for="inputSupplier">
+					Dodávateľ
+				</label>
+				{input supplier}
 			</div>
 			<div class="form-group">
 				<label for="inputName">
@@ -60,7 +75,6 @@
 	});
 </script>
 <script>
-	CKEDITOR.replace('frm-productForm-short_desc');
     CKEDITOR.replace('frm-productForm-desc');
 </script>
 {/block}

@@ -19,12 +19,28 @@ class ProductManager extends Nette\Object
 		COLUMN_ADD_DATE = 'add_date',
 		COLUMN_PRICE_SELL = 'price_sell',
 
+		//BRAND
 		BRAND_TABLE = 'brand',
 		COLUMN_BRAND_ID = 'brand_id',
 
+		//SUPPLIER
+		SUPPLIER_TABLE = 'supplier',
+		COLUMN_SUPPLIER_ID = 'id',
+		COLUMN_SUPPLIER_NAME = 'name',
+
+		//PRODUCT_SUPPLIER
+		PRODUCT_SUPPLIER_TABLE = 'product_supplier',
+		COLUMN_PRODUCT_SUPPLIER_ID = 'id',
+		COLUMN_FK_S_PRODUCT_ID = 'product_id',
+		COLUMN_FK_SUPPLIER_ID = 'supplier_id',
+		COLUMN_PRICE_BUY = 'price_buy',
+		COLUMN_P_S_STATUS = 'status',
+
+		//LANG
 		LANG_TABLE = 'lang',
 		COLUMN_LANG_ID = 'id',
 
+		//PRODUCT_LANG
 		PRODUCT_LANG_TABLE = "product_lang",
 		COLUMN_PRODUCT_LANG_ID = "id",
 		COLUMN_PRODUCT_ID = "product_id",
@@ -36,9 +52,13 @@ class ProductManager extends Nette\Object
 	/** @var Nette\Database\Context */
 	private $database;
 
-	public function __construct(Nette\Database\Context $database)
+	/** @var \App\Model\LanguageManager @inject */
+	public $languages;
+
+	public function __construct(Nette\Database\Context $database, LanguageManager $languages)
 	{
 		$this->database   = $database;
+		$this->languages  = $languages;
 	}
 
 	public function getAll()
@@ -58,24 +78,48 @@ class ProductManager extends Nette\Object
 
 		return $product;
 	}
-	
 
-	/**
-	 * This method returns last inserted row
-	 * @return int	return id of last inserted row
-	*/
-	function getLastInsertedId()
+
+	/** 
+	 * This method returns all product_supplier where FK equals to product_id
+	 * @param string $productId   product id
+	 * @param string $supplierId  supplier id
+	 * @return Object			  return product_supplier
+	 */
+	public function getAllProductSupplier($productId)
 	{
-		$id = $this->database->query("SELECT LAST_INSERT_ID()")->fetchField();
+		$product_supplier = $this->database->table(self::PRODUCT_SUPPLIER_TABLE)
+			->where(self::COLUMN_FK_S_PRODUCT_ID, $productId);
 
-		return $id;
+		return $product_supplier;
+	}
+
+
+	/** 
+	 * This method returns one product_supplier where FK equals to product_id and supplier_id
+	 * @param string $productId   product id
+	 * @return Object			   return product_supplier
+	 */
+	public function getProductSupplier($productId, $supplierId)
+	{
+		$product_supplier = $this->database->table(self::PRODUCT_SUPPLIER_TABLE)
+			->where(self::COLUMN_FK_S_PRODUCT_ID, $productId)
+			->where(self::COLUMN_FK_SUPPLIER_ID, $supplierId)
+			->fetch();
+
+		if ( !$product_supplier )
+		{
+			throw new Nette\Application\BadRequestException("PRODUCT_SUPPLIER_DOESNT_EXIST");
+		}
+
+		return $product_supplier;
 	}
 
 
 	/** 
 	 * This method returns all product_lang where FK equals to product_id
 	 * @param string $productId   product id
-	 * @return Object			   return product_lang
+	 * @return Object			  return product_lang
 	 */
 	public function getAllProductLang($productId)
 	{
@@ -94,8 +138,8 @@ class ProductManager extends Nette\Object
 	/** 
 	 * This method returns one product_lang where FK equals to product_id and lang_id
 	 * @param string $productId   product id
-	 * @param string $langId	   language id
-	 * @return Object			   return product_lang
+	 * @param string $langId	  language id
+	 * @return Object			  return product_lang
 	 */
 	public function getProductLang($productId, $langId)
 	{
@@ -117,15 +161,36 @@ class ProductManager extends Nette\Object
 		$data = array();
 		$data["status"] = $values->status;
 		$data["price_sell"] = $values->price_sell;
-		$data["brand_id"] = $values->brand_id;
+		$data["brand_id"] = $values->brand;
 
-		return $this->database->table(self::PRODUCT_TABLE)->insert($data);
+		$product = $this->database->table(self::PRODUCT_TABLE)->insert($data);
 
+		//insert foreign tables
+
+		if($values->supplier != '')
+		{
+			$this->database->table(self::PRODUCT_SUPPLIER_TABLE)
+				 ->insert(array(
+				 	'product_id' => $product->id,
+				 	'supplier_id' => $values->supplier,
+				 	'price_buy'	=> $values->price_buy,
+				 	'status' => 1,
+				 	));
+		}
+
+		//ADD LANGUAGE DATA
+        foreach($this->languages->getAllActive() as $lang) {
+            self::translateData($lang->id, $product->id, $values, 0);
+        }
+
+		return $product;
 	}
 
 	public function edit($id, $values)
 	{
 		$product = $this->database->table(self::PRODUCT_TABLE)->where(self::COLUMN_ID, $id);
+
+		$currentLanguage = $this->languages->getLanguageByName($this->languages->getLanguage());
 
 		if (!$product)
 		{
@@ -137,6 +202,20 @@ class ProductManager extends Nette\Object
 			self::COLUMN_PRICE_SELL => $values->price_sell,
 			self::COLUMN_BRAND_ID => $values->brand,
 			));
+
+		//update foreign tables
+		$this->database->table(self::PRODUCT_SUPPLIER_TABLE)
+			 ->insert(array(
+			 	'product_id' => $product->id,
+			 	'supplier_id' => $values->supplier,
+			 	'price_buy'	=> $values->price_buy,
+			 	'status' => 1,
+			 	));
+
+		//EDIT LANGUAGE DATA
+        self::translateData($currentLanguage, $id, $values, 1);
+
+        return $product;
 	}
 
 	public function remove($id)
@@ -149,6 +228,17 @@ class ProductManager extends Nette\Object
 			foreach($allProductLang as $productLang)
 			{
 				$productLang->delete();
+			}
+		}
+
+		// delete all rows where is product located in product supplier
+
+		$allProductSupplier = self::getAllProductSupplier($id);
+
+		while($allProductSupplier->count() > 0) {
+			foreach($allProductSupplier as $productSupplier)
+			{
+				$productSupplier->delete();
 			}
 		}
 		
