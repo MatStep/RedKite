@@ -24,6 +24,9 @@ services:
 	- App\Forms\SignFormFactory
 	router: App\RouterFactory::createRouter
 
+	model:
+		class: App\Model\AppModel
+
 	categories:
 		class: App\Model\CategoryManager
 		

@@ -80,6 +80,7 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
 			 ->getControlPrototype()->class("form-control");
 
 		$form->addSelect("supplier", "Dodávateľ", $suppliersArray)
+			 ->setRequired('Dodávateľ je povinný')
 			 ->getControlPrototype()->class("form-control");
 
 		$form->addCheckbox("status", "");
@@ -169,23 +170,22 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
 
 	public function getProductLang($productId)
     {
-        return $this->products->getProductLang($productId, parent::getLanguage()->id);
+        return $this->products->model->getFirstSecond($productId, parent::getLanguage()->id, 'product', 'lang');
     }
 
 	public function actionRemove($productId)
 	{
-			$this->products->remove($productId);
-			$this->flashMessage('Produkt bol úspešne vymazaný');
-			$this->redirect("Product:");
+		$this->products->remove($productId);
+		$this->flashMessage('Produkt bol úspešne vymazaný');
+		$this->redirect("Product:");
 	}
 
 	public function actionEdit($productId)
 	{
 		$product = $this->products->getProduct($productId);
-		$lang = parent::getLanguage();
-		$productLang = $this->products->getProductLang($productId, $lang->id);
+		$productLang = self::getProductLang($productId);
 		//Now is there only one row, status is not mentioned
-		$productSupplier = $this->products->getAllProductSupplier($productId)->fetch();
+		$productSupplier = $this->products->model->getAllFirstSecond($productId, 'product', 'supplier')->fetch();
 
 		$this->template->productId = $productId;
 
