@@ -14,6 +14,9 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
 	/** @var \App\Model\UserManager @inject */
 	public $userManager;
 
+	/** @var \App\Model\CategoryManager @inject */
+	public $categoryManager;
+
 	/** @var \App\Model\BrandManager @inject */
 	public $brandManager;
 
@@ -46,6 +49,7 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
 	{
 		$form = new Form;
 
+		$categoriesArray = $this->categoryManager->getAllCategoriesAsArray();
 		$brandsArray = self::createBrandsArrayForSelect();
 		$suppliersArray = self::createSuppliersArrayForSelect();
 
@@ -73,6 +77,10 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
 		$form->addText("price_buy", "Cena")
 			 ->setType('number')
 			 ->addRule(Form::FLOAT, "Cena musí byť číslo")
+			 ->getControlPrototype()->class("form-control");
+
+		$form->addMultiSelect("category", "Kategórie", $categoriesArray)
+			 ->setRequired('Značka je povinná')
 			 ->getControlPrototype()->class("form-control");
 
 		$form->addSelect("brand", "Značka", $brandsArray)
@@ -184,6 +192,7 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
 	{
 		$product = $this->products->getProduct($productId);
 		$productLang = self::getProductLang($productId);
+		$productCategory = $this->products->model->getAllFirstSecond($productId, 'product', 'category')->fetch();
 		//Now is there only one row, status is not mentioned
 		$productSupplier = $this->products->model->getAllFirstSecond($productId, 'product', 'supplier')->fetch();
 
@@ -194,6 +203,7 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
 		$this['productForm']['name']->setDefaultValue($productLang->name);
 		$this['productForm']['short_desc']->setDefaultValue($productLang->short_desc);
 		$this['productForm']['desc']->setDefaultValue($productLang->desc);
+		$this['productForm']['category']->setDefaultValue($productCategory->category_id);
 		$this['productForm']['brand']->setDefaultValue($product->brand);
 		$this['productForm']['supplier']->setDefaultValue($productSupplier->supplier_id);
 

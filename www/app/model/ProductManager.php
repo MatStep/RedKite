@@ -94,6 +94,13 @@ class ProductManager extends Nette\Object
 
 		//insert foreign tables
 
+		foreach($values->category as $category) {
+			$this->database->table('product_category')
+				 ->insert(array(
+				 	'product_id' => $product->id,
+				 	'category_id' => $category,
+				 	));
+		}
 
 		$this->database->table(self::PRODUCT_SUPPLIER_TABLE)
 			 ->insert(array(
@@ -102,7 +109,6 @@ class ProductManager extends Nette\Object
 			 	'price_buy'	=> $values->price_buy,
 			 	'status' => 1,
 			 	));
-
 
 		//ADD LANGUAGE DATA
         foreach($this->languages->getAllActive() as $lang) {
@@ -130,15 +136,32 @@ class ProductManager extends Nette\Object
 			));
 
 		//update foreign tables
+		
+		$allProductCategory = $this->model->getAllFirstSecond($id,'product','category', 0);
 
-		$this->database->table(self::PRODUCT_SUPPLIER_TABLE)
+		while($allProductCategory->count() > 0) {
+			foreach($allProductCategory as $productCategory)
+			{
+				$productCategory->delete();
+			}
+		}
+
+		foreach($values->category as $category) {
+
+			$this->database->table('product_category')
+			 ->insert(array(
+			 	'product_id' => $id,
+			 	'category_id' => $category,
+			 	));
+		}
+
+		$this->database->table(self::PRODUCT_SUPPLIER_TABLE)->where('product_id', $id)
 			 ->update(array(
 			 	'product_id' => $id,
 			 	'supplier_id' => $values->supplier,
 			 	'price_buy'	=> $values->price_buy,
 			 	'status' => 1,
 			 	));
-
 
 		//EDIT LANGUAGE DATA
         self::translateData($currentLanguage, $id, $values, 1);
@@ -156,6 +179,17 @@ class ProductManager extends Nette\Object
 			foreach($allProductLang as $productLang)
 			{
 				$productLang->delete();
+			}
+		}
+
+		// delete all rows where is product located in product category
+
+		$allProductCategory = $this->model->getAllFirstSecond($id,'product','category', 0);
+
+		while($allProductCategory->count() > 0) {
+			foreach($allProductCategory as $productCategory)
+			{
+				$productCategory->delete();
 			}
 		}
 
