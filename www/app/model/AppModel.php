@@ -76,4 +76,14 @@ class AppModel extends Nette\Object
 
 		return $first_second;
 	}
+
+	public function orderItems($table, $itemId, $itemOrder)
+	 {
+		for ( $i = 0; $i < count($itemOrder); $i++ ) 
+		{
+			$this->database->table($table)
+				 ->where('id = ?', $itemOrder[$i])
+				 ->update(array('order' => $i + 1));
+		}
+	}
 }

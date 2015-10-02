@@ -31,6 +31,9 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
 	private $values;
 
 	private $id;
+
+	const
+		PRODUCT_IMG_FOLDER = '{$basePath}/images/products/';
 	
 	public function __construct(Model\ProductManager $products)
 	{
@@ -192,7 +195,12 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
 	{
 		$product = $this->products->getProduct($productId);
 		$productLang = self::getProductLang($productId);
-		$productCategory = $this->products->model->getAllFirstSecond($productId, 'product', 'category')->fetch();
+		$productCategory = $this->products->model->getAllFirstSecond($productId, 'product', 'category');
+		$pArray = array();
+		foreach($productCategory as $productCat)
+		{
+			array_push($pArray, $productCat->category_id);
+		}
 		//Now is there only one row, status is not mentioned
 		$productSupplier = $this->products->model->getAllFirstSecond($productId, 'product', 'supplier')->fetch();
 
@@ -203,7 +211,7 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
 		$this['productForm']['name']->setDefaultValue($productLang->name);
 		$this['productForm']['short_desc']->setDefaultValue($productLang->short_desc);
 		$this['productForm']['desc']->setDefaultValue($productLang->desc);
-		$this['productForm']['category']->setDefaultValue($productCategory->category_id);
+		$this['productForm']['category']->setDefaultValue($pArray);
 		$this['productForm']['brand']->setDefaultValue($product->brand);
 		$this['productForm']['supplier']->setDefaultValue($productSupplier->supplier_id);
 

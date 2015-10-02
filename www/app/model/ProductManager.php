@@ -55,14 +55,18 @@ class ProductManager extends Nette\Object
 	/** @var \App\Model\AppModel @inject */
 	public $model;
 
+	/** @var \App\Model\ImageManager */
+	public $imageManager;
+
 	/** @var \App\Model\LanguageManager @inject */
 	public $languages;
 
-	public function __construct(Nette\Database\Context $database, LanguageManager $languages, AppModel $model)
+	public function __construct(Nette\Database\Context $database, LanguageManager $languages, AppModel $model, \App\Model\ImageManager $imageManager)
 	{
 		$this->database   = $database;
 		$this->languages  = $languages;
 		$this->model	  = $model;
+		$this->imageManager = $imageManager;
 	}
 
 	public function getAll()
@@ -81,6 +85,12 @@ class ProductManager extends Nette\Object
 		}
 
 		return $product;
+	}
+
+	public function getProductImages($productId) 
+	{
+		return $this->database->table('product_image')
+			->where('product_id = ?', $productId)->order('order');
 	}
 
 	public function insert($values)
@@ -236,6 +246,118 @@ class ProductManager extends Nette\Object
 				self::COLUMN_SHORT_DESC => $data['short_desc'],
 				self::COLUMN_DESC => $data['desc'],
 				));
+		}
+	}
+
+	public function addDefaultImage($productId)
+	{
+        $imgUrl = 'images/products/default_product.jpg';
+
+        $name = 'default';
+
+        $this->database->table('product_image')
+        	->insert(array(
+        		'product_id' => $productId,
+        		'name' => $name,
+        		'path' => $imgUrl,
+        		'order' => 1
+        	));		
+	}
+
+	public function addProductImage($productId, $values) 
+	{	
+		//removes the default image if it is there
+		self::removeDefaultImage($productId);
+
+		$file = $values->image;
+
+		$image = $this->database->table('product_image')
+        	->insert(array(
+        		'product_id' => $productId,
+        		'name' => $file->name,
+        		'order' => $values->order
+        	));
+
+        $imgUrl = $this->imageManager->getImage($file, "products");
+
+        $this->database->table('product_image')
+        	 ->where('product_id = ? AND id = ?', $productId, $image->id)
+        	 ->update(array('path' => $imgUrl));
+	}
+
+	public function orderImages($productId, $imageOrder)
+	 {
+		for ( $i = 0; $i < count($imageOrder); $i++ ) 
+		{
+			$this->database->table('product_image')
+				 ->where('id = ?', $imageOrder[$i])
+				 ->update(array('order' => $i + 1));
+		}
+	}
+
+	public function removeDefaultImage($productId)
+	{
+		$defaultImagePath = 'path';
+		
+		$this->database->table('product_image')
+			 ->where('product_id = ? AND path = ?', $productId, $defaultImagePath)
+			 ->delete();
+	}
+
+	function removeProductImages($productId)
+	{
+		//gets all product images
+		$productImages = $this->database->table('product_image')
+			->where('product_id = ?', $productId);
+
+		
+		//deletes each of them one by one also from the server and DB
+		foreach ($productImages as $productImage)
+		{
+			//delete from server
+			unlink($productImage->path);
+			//delete from DB
+			$productImage->delete();
+		}
+	}
+
+	public function removeProductImage($productId, $imageId) 
+	{
+		//get the image to be deleted
+		$image = $this->database->table('product_image')
+					  ->where('id = ?', $imageId)->fetch();
+		//delete the image
+		$this->database->table('product_image')
+			 ->where('id = ?', $imageId)->delete();
+		//get all product images
+		$productImages = self::getProductImages($productId);
+		/*
+			if the deleted image order was 1 then reorder
+			the remaining images
+		 */
+		if ( $image->order == "1" )
+		{
+			$reorderArray = array();
+			foreach ($productImages as $productImage)
+			{
+				array_push($reorderArray, $productImage->id);
+			}
+			$this->model->orderImages('product_image', $productId, $reorderArray);
+		}
+
+		//remove image from server only if it is not the default image
+		if ( $image->path != 'path' )
+		{
+			unlink($image->path);
+		}
+
+		/*
+			if the deleted image was the only product image
+			add default image to the product
+		 */
+		if ( count($productImages) == 0 )
+		{
+			self::addDefaultImage($productId);
 		}
 	}
 }
