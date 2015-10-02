@@ -47,6 +47,11 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
 		$this->template->products = $this->products->getAll();
 	}
 
+	public function renderEdit($productId)
+	{
+		$this->template->images = $this->products->getProductImages($productId);
+	}
+
 	/*Product form*/
 	public function createComponentProductForm()
 	{
@@ -147,6 +152,43 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
 		}
 	}
 
+	public function createComponentProductImageForm()
+	{
+		$form = new Form;
+
+		$form->addUpload('image','Obrázok')
+			 ->setRequired('Nahranie obrázku je povinné')
+			 ->addCondition(Form::FILLED)
+			 ->addRule(Form::IMAGE, 'Nepodporovaný formát obrázku');
+
+		$form->addSubmit("add", "Pridať obrázok")
+			 ->getControlPrototype()->class("btn btn-primary pull-right");
+
+		$form->onSuccess[] = array($this, "productImageFormSucceeded");
+
+		return $form;
+	}
+
+	public function productImageFormSucceeded($form, $values) 
+	{
+		$productId = $this->request->getParameters()['productId'];
+
+		$images = $this->products->getProductImages($productId)
+					   ->where('path != ?', 'images/productimages/default_product.jpg');
+		
+		if ( count($images) == 0 ) 
+		{
+			$values->order = 1;
+		}
+		else 
+		{
+			$values->order = count($images) + 1;
+		}
+
+		$this->products->addProductImage($productId, $values);
+		$this->redirect('Product:edit', $productId);
+	}
+
 	private function createBrandsArrayForSelect()
 	{
 		$brands = $this->brandManager->getAll();
@@ -183,6 +225,13 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
     {
         return $this->products->model->getFirstSecond($productId, parent::getLanguage()->id, 'product', 'lang');
     }
+
+    public function actionImageRemove($productId, $imageId) 
+	{
+		$this->products->removeProductImage($productId, $imageId);
+		$this->flashMessage('Obrázok úspešne vymazaný');
+		$this->redirect('Product:edit', $productId);
+	}
 
 	public function actionRemove($productId)
 	{

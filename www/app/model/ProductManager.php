@@ -104,6 +104,7 @@ class ProductManager extends Nette\Object
 
 		//insert foreign tables
 
+		// Table product_category
 		foreach($values->category as $category) {
 			$this->database->table('product_category')
 				 ->insert(array(
@@ -112,6 +113,7 @@ class ProductManager extends Nette\Object
 				 	));
 		}
 
+		// Table product_supplier
 		$this->database->table(self::PRODUCT_SUPPLIER_TABLE)
 			 ->insert(array(
 			 	'product_id' => $product->id,
@@ -119,6 +121,8 @@ class ProductManager extends Nette\Object
 			 	'price_buy'	=> $values->price_buy,
 			 	'status' => 1,
 			 	));
+
+		self::addDefaultImage($product->id);
 
 		//ADD LANGUAGE DATA
         foreach($this->languages->getAllActive() as $lang) {
@@ -251,7 +255,7 @@ class ProductManager extends Nette\Object
 
 	public function addDefaultImage($productId)
 	{
-        $imgUrl = 'images/products/default_product.jpg';
+        $imgUrl = 'images/products/default_image.png';
 
         $name = 'default';
 
@@ -342,7 +346,7 @@ class ProductManager extends Nette\Object
 			{
 				array_push($reorderArray, $productImage->id);
 			}
-			$this->model->orderImages('product_image', $productId, $reorderArray);
+			$this->model->orderItems('product_image', $productId, $reorderArray);
 		}
 
 		//remove image from server only if it is not the default image

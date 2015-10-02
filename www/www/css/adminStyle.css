@@ -33,7 +33,11 @@
 	color: #888;
 }
 
-.remove {
+.nav li .remove {
+	padding: 0px;
+}
+
+.remove, .nav li .remove {
 	position: absolute;
 	right: 0;
 	color: #B20000;

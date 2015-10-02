@@ -1,86 +1,152 @@
 {block content}
-	<div class="box box-primary">
-		<div class="box-header with-border">
-			<h2 class="box-title">
-				Editovanie produktu
-			</h2>
-			<a n:href="Product:" class="pull-right"><i class="fa fa-close"></i></a>
-		</div>
-		<div class="box-body">
-			{form productForm}
-			<div n:if="$form->hasErrors()">
-				<ul class="errors">
-					<li n:foreach="$form->errors as $error"><strong>{$error}</strong></li>
-				</ul>
-			</div> 
-			<div class="form-group">
-				<label for="inputName">
-					Názov ({$lang})
-				</label>
-				{input name}
-			</div>
-			<div class="form-group">
-				<label for="inputValue">
-					Krátky popis ({$lang})
-				</label>
-				{input short_desc}
-			</div>
-			<div class="form-group">
-				<label for="inputName">
-					Popis ({$lang})
-				</label>
-				{input desc}
-			</div>
-			<div class="row">
-				<div class="form-group col-md-6">
-					<label for="inputPriceBuy">
-						Nákupná cena v eur bez DPH
-					</label>
-					{input price_buy}
+<div class="nav-tabs-custom">
+	<ul class="nav nav-tabs pull-right">
+		<li class="pull-left header">
+			Editovanie produktu
+		</li>
+		<a n:href="Product:" class="pull-right"><i class="fa fa-close"></i></a>
+		<li class="active">
+			<a data-toggle="tab" href="#info">
+				Základné informácie
+			</a>
+		</li>
+		<li>
+			<a id="image-tab-view" data-toggle="tab" href="#images">
+				Obrázky
+			</a>
+		</li>
+	</ul>
+	<div class="tab-content">
+		<!-- INFO TAB BEGIN -->
+		<div id="info" class="tab-pane active">
+			<!-- EDIT BOX BEGIN -->
+			<div class="box box-primary">
+				<div class="box-body">
+					{form productForm}
+					<div n:if="$form->hasErrors()">
+						<ul class="errors">
+							<li n:foreach="$form->errors as $error"><strong>{$error}</strong></li>
+						</ul>
+					</div> 
+					<div class="form-group">
+						<label for="inputName">
+							Názov ({$lang})
+						</label>
+						{input name}
+					</div>
+					<div class="form-group">
+						<label for="inputValue">
+							Krátky popis ({$lang})
+						</label>
+						{input short_desc}
+					</div>
+					<div class="form-group">
+						<label for="inputName">
+							Popis ({$lang})
+						</label>
+						{input desc}
+					</div>
+					<div class="row">
+						<div class="form-group col-md-6">
+							<label for="inputPriceBuy">
+								Nákupná cena v eur bez DPH
+							</label>
+							{input price_buy}
+						</div>
+						<div class="form-group col-md-6">
+							<label for="inputPriceSell">
+								Predajná cena v eur bez DPH
+							</label>
+							{input price_sell}
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="inputCategory">
+							Kategórie
+						</label>
+						{input category}
+					</div>
+					<div class="form-group">
+						<label for="inputBrand">
+							Značka
+						</label>
+						{input brand}
+					</div>
+					<div class="form-group">
+						<label for="inputSupplier">
+							Dodávateľ
+						</label>
+						{input supplier}
+					</div>
+					<div class="form-group">
+						<label for="inputName">
+							Status
+						</label>
+						{input status}
+					</div>
+					{input edit}
+					{/form}
 				</div>
-				<div class="form-group col-md-6">
-					<label for="inputPriceSell">
-						Predajná cena v eur bez DPH
-					</label>
-					{input price_sell}
-				</div>
 			</div>
-			<div class="form-group">
-				<label for="inputCategory">
-					Kategórie
-				</label>
-				{input category}
-			</div>
-			<div class="form-group">
-				<label for="inputBrand">
-					Značka
-				</label>
-				{input brand}
-			</div>
-			<div class="form-group">
-				<label for="inputSupplier">
-					Dodávateľ
-				</label>
-				{input supplier}
-			</div>
-			<div class="form-group">
-				<label for="inputName">
-					Status
-				</label>
-				{input status}
-			</div>
-			{input edit}
-			{/form}
 		</div>
+		<!-- INFO TAB END -->
+		<!-- IMAGES TAB BEING -->
+			<div id="images" class="tab-pane">
+				<div class="box box-primary">	
+					{form productImageForm}
+					<div n:if="$form->hasErrors()">
+						<ul class="errors">
+							<li n:foreach="$form->errors as $error"><strong>{$error}</strong></li>
+						</ul>
+					</div>
+					<div class="box-body with-border">
+						<ul class="nav">
+							{foreach $images as $image}
+								<li class="col-sm-3">
+									<a n:href="Product:imageRemove $productId, $image['id']" class="remove">
+										<i class="fa fa-times fa-time-white-background">
+										</i>
+									</a>
+									<img class="image-list" src="{$basePath}/{$image['path']}" width="100%">								
+								</li>
+							{/foreach}
+						</ul>
+					</div>
+					<div class="box-footer">	
+							<div class="box-header">
+								<h3 class="box-title">
+									Pridanie obrázka
+								</h3>	
+							</div>					
+							<div class="form-group">
+								{input image}
+							</div>	
+							<div class="row">
+								<div class="col-sm-6">
+									 <a class="btn btn-danger btn-flat" title="Cancel" n:href="Product:edit $productId">
+								       	Späť
+								    </a> 
+								</div>
+								<div class="col-sm-6">
+									{input add}
+								</div>
+							</div>
+						</div>
+					{/form}
+				</div>
+				<!-- IMAGE BOX END -->
+			</div>
+			<!-- IMAGES TAB END -->
 	</div>
+</div>
 
 {* Script for changing active menu *}
 <script>
-	$(function() {
-		unsetAndSetActive('#products', '#addProduct');
-	});
+$(function() {
+	unsetAndSetActive('#products', '#addProduct');
+});
 </script>
 <script>
-    CKEDITOR.replace('frm-productForm-desc');
+CKEDITOR.replace('frm-productForm-desc');
 </script>
 {/block}
