@@ -54,6 +54,9 @@ services:
 	suppliers:
 		class: App\Model\SupplierManager
 
+	stocks:
+		class: App\Model\StockManager
+
 	languages:
 		class: App\Model\LanguageManager
 		

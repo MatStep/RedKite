@@ -1,0 +1,115 @@
+{block content}
+<!-- Date Picker -->
+    <link href="{$basePath}/adminCnt/plugins/datepicker/datepicker3.css" rel="stylesheet" type="text/css" />
+    <!-- Daterange picker -->
+    <link href="{$basePath}/adminCnt/plugins/daterangepicker/daterangepicker-bs3.css" rel="stylesheet" type="text/css" />
+<div class="box box-primary">
+		<div class="box-header with-border">
+			<h2 class="box-title">
+				Editovanie skladu
+			</h2>
+			<a n:href="Stock:" class="pull-right"><i class="fa fa-close"></i></a>
+		</div>
+		<div class="box-body">
+			{form stockForm}
+			<div n:if="$form->hasErrors()">
+				<ul class="errors">
+					<li n:foreach="$form->errors as $error"><strong>{$error}</strong></li>
+				</ul>
+			</div> 
+			<div class="form-group">
+				<label for="inputName">
+					Názov
+				</label>
+				{input name}
+			</div>
+			<div class="form-group">
+				<label for="inputCount_products">
+					Počet produktov
+				</label>
+				{input count_products}
+			</div>
+			<div class="form-group">
+				<label for="inputAddress_id">
+					Adresa
+				</label>
+				{input address_id}
+			</div>
+			<div class="new-address">
+				<div class="form-group">					
+					<label for="inputStreet">
+						Ulica
+					</label>
+					{input street}
+				</div>
+				<div class="form-group">					
+					<label for="inputStreet_no">
+						Číslo ulice
+					</label>
+					{input street_no}
+				</div>
+				<div class="form-group">					
+					<label for="inputZip_code">
+						PSČ
+					</label>
+					{input zip_code}
+				</div>
+				<div class="form-group">					
+					<label for="inputCity">
+						Mesto
+					</label>
+					{input city}
+				</div>
+				<div class="form-group">					
+					<label for="inputCountry">
+						Krajina
+					</label>
+					{input country}
+				</div>
+			</div>
+			<div class="form-group">	
+				<label for="nothing">
+				</label>
+				<button class="btn btn-primary form-control add-address">
+					Pridať nový sklad
+				</button>
+			</div>
+			{input edit}
+			{/form}
+		</div>
+	</div>
+
+{* Script for changing active menu *}
+<script>
+	$(function() {
+		unsetAndSetActive('#stocks', '#addStock');
+	});
+</script>
+
+<script>
+	$(function(){
+		$(".new-address").hide();
+	});
+
+	$(".add-address").click(function(){
+		var selectValue = $("#frm-stockForm-address_id").val();
+
+		$(".new-address").toggle();
+
+		if ( $(".new-address").is(":visible") )
+		{
+			$("#frm-stockForm-address_id").val("default").toggle().prev("label").toggle();
+			$(this).text("Zrušiť pridanie novej adresy");
+		}
+		else
+		{
+			$("#frm-stockForm-address_id").val("default").toggle().prev("label").toggle();
+			$(this).text("Pridať novú adresu");
+		}
+
+		return false;
+	});
+</script>
+
+
+{/block}
