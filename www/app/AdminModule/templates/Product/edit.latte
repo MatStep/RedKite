@@ -90,7 +90,7 @@
 			</div>
 		</div>
 		<!-- INFO TAB END -->
-		<!-- IMAGES TAB BEING -->
+		<!-- IMAGES TAB BEGIN -->
 			<div id="images" class="tab-pane">
 				<div class="box box-primary">	
 					{form productImageForm}
@@ -111,6 +111,19 @@
 								</li>
 							{/foreach}
 						</ul>
+						<div class="row image-list">
+							<div class="col-sm-12">
+								{if count($images) > 1}
+									<a n:href="Product:ImageReorder $productId" class="btn btn-primary">
+										Zmeniť poradie
+									</a>
+								{else}
+									<a n:href="Product:ImageReorder $productId" class="btn btn-primary disabled">
+										Zmeniť poradie
+									</a>
+								{/if}
+							</div>
+						</div>
 					</div>
 					<div class="box-footer">	
 							<div class="box-header">
@@ -144,9 +157,7 @@
 <script>
 $(function() {
 	unsetAndSetActive('#products', '#addProduct');
+	CKEDITOR.replace('frm-productForm-desc');
 });
-</script>
-<script>
-CKEDITOR.replace('frm-productForm-desc');
 </script>
 {/block}

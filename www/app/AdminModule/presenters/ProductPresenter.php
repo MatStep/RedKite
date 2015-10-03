@@ -53,6 +53,14 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
 		$this->template->images = $this->products->getProductImages($productId);
 	}
 
+	public function renderImageReorder($productId) 
+	{
+		$productImages = $this->products->getProductImages($productId);
+
+		$this->template->productId = $productId;
+		$this->template->images = $productImages;
+	}
+
 	/*Product form*/
 	public function createComponentProductForm()
 	{
@@ -186,6 +194,36 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
 		}
 
 		$this->products->addProductImage($productId, $values);
+		$this->redirect('Product:edit', $productId);
+	}
+
+	public function createComponentImageReorderForm() 
+	{
+		$form = new Form;
+
+		$form->addSubmit('send', 'Uložiť')
+			 ->getControlPrototype()->class('btn btn-primary form-control');
+		
+		$form->addText('reorderedString', '')
+			 ->getControlPrototype()->class('reorder');
+
+		$form->onSuccess[] = array($this, 'imageReorderFormSucceded');
+
+		return $form;
+	}
+
+	public function imageReorderFormSucceded($form, $values) 
+	{
+		$productId = $this->request->getParameters()['productId'];
+
+		$imageOrderString = 
+			$this->getHttpRequest()->getPost('reorderedString');
+
+		$imageOrderString = self::parseCheckedBoxes($imageOrderString);
+
+		$this->productManager->orderImages($productId, $imageOrderString);
+
+		$this->flashMessage('Obrázky boli preusporiadané');
 		$this->redirect('Product:edit', $productId);
 	}
 
