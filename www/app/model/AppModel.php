@@ -26,8 +26,8 @@ class AppModel extends Nette\Object
 	/** 
 	 * This method returns all rows in first_second where FK equals to first_id
 	 * @param int $firstId   	  first id
-	 * @param string $table		  name of table where is first_second
-	 * @param string $firstColumn name of first item column
+	 * @param string $first		  name of first item column
+	 * @param string $second	  name of second item column
 	 * @param int $exception	  1 => throws exception 0 => doesn't throw
 	 * @return Object			  return first_second
 	 */
@@ -52,9 +52,8 @@ class AppModel extends Nette\Object
 	 * This method returns one first_second where FK equals to first_id and second_id
 	 * @param int $firstId   	  first id
 	 * @param int $secondId   	  second id
-	 * @param string $table		  name of table where is first_second
-	 * @param string $firstColumn name of first item column
-	 * @param string $secondColumn name of second item column
+	 * @param string $first		  name of first item column
+	 * @param string $second	  name of second item column
 	 * @param int $exception	  1 => throws exception 0 => doesn't throw
 	 * @return Object			  return first_second
 	 */
@@ -77,6 +76,13 @@ class AppModel extends Nette\Object
 		return $first_second;
 	}
 
+	/**
+	 * This method orders items
+	 * @param string $table		name of table where is item
+	 * @param int $itemId		id of item
+	 * @param int $itemOrder	number of order
+	 * @return void
+	 */
 	public function orderItems($table, $itemId, $itemOrder)
 	 {
 		for ( $i = 0; $i < count($itemOrder); $i++ ) 

@@ -47,7 +47,9 @@ class ProductManager extends Nette\Object
 		COLUMN_FK_LANG_ID = "lang_id",
 		COLUMN_NAME = 'name',
 		COLUMN_SHORT_DESC = 'short_desc',
-		COLUMN_DESC = 'desc';
+		COLUMN_DESC = 'desc',
+
+		DEFAULT_IMAGE_PATH = 'images/products/default_image.png';
 
 	/** @var Nette\Database\Context */
 	private $database;
@@ -217,6 +219,8 @@ class ProductManager extends Nette\Object
 				$productSupplier->delete();
 			}
 		}
+
+		self::removeProductImages($id);
 		
 		return $this->database->table(self::PRODUCT_TABLE)->where(self::COLUMN_ID, $id)->delete();
 	}
@@ -255,7 +259,7 @@ class ProductManager extends Nette\Object
 
 	public function addDefaultImage($productId)
 	{
-        $imgUrl = 'images/products/default_image.png';
+        $imgUrl = self::DEFAULT_IMAGE_PATH;
 
         $name = 'default';
 
@@ -289,16 +293,6 @@ class ProductManager extends Nette\Object
         	 ->update(array('path' => $imgUrl));
 	}
 
-	public function orderImages($productId, $imageOrder)
-	 {
-		for ( $i = 0; $i < count($imageOrder); $i++ ) 
-		{
-			$this->database->table('product_image')
-				 ->where('id = ?', $imageOrder[$i])
-				 ->update(array('order' => $i + 1));
-		}
-	}
-
 	public function removeDefaultImage($productId)
 	{
 		$defaultImagePath = 'path';
@@ -319,7 +313,10 @@ class ProductManager extends Nette\Object
 		foreach ($productImages as $productImage)
 		{
 			//delete from server
+			if ( $productImage->path != self::DEFAULT_IMAGE_PATH )
+		{
 			unlink($productImage->path);
+		}
 			//delete from DB
 			$productImage->delete();
 		}
@@ -350,7 +347,7 @@ class ProductManager extends Nette\Object
 		}
 
 		//remove image from server only if it is not the default image
-		if ( $image->path != 'path' )
+		if ( $image->path != self::DEFAULT_IMAGE_PATH )
 		{
 			unlink($image->path);
 		}
