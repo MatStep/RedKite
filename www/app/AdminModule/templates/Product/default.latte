@@ -49,9 +49,6 @@
 						</td>
 						<td>
 							<img class="productImage" src="{$basePath}/{$presenter->getLink($product->id)}" />
-							{* {foreach $product->related('product_image')->where('order = 1') as $image}
-								<img class="productImage" src="{$basePath}/{$image->path}" />
-							{/foreach} *}
 						</td>
 						<td>
 							{$presenter->getProductLang($product->id)->name}

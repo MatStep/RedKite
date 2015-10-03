@@ -49,23 +49,23 @@
 					</li>
 					{/foreach}
 				</ul>
-			<div class="box-footer">				
-				<div class="reorderDIV" style="display:none">
-					{input reorderedString}
-				</div>
-				<div class="row">
-					<div class="col-sm-6">
-						<a class="btn btn-danger btn-flat" title="Cancel" n:href="Product:edit $productId">
-							Späť
-						</a> 
+				<div class="box-footer">				
+					<div class="reorderDIV" style="display:none">
+						{input reorderedString}
 					</div>
-					<div class="col-sm-6">
-						{input send}
+					<div class="row">
+						<div class="col-sm-6">
+							<a class="btn btn-danger btn-flat" title="Cancel" n:href="Product:edit $productId">
+								Späť
+							</a> 
+						</div>
+						<div class="col-sm-6">
+							{input send}
+						</div>
 					</div>
 				</div>
+				{/form}
 			</div>
-			{/form}
-		</div>
 		</div>
 			<!-- IMAGES TAB END -->
 	</div>
