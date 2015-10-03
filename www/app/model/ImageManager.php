@@ -4,6 +4,7 @@ namespace App\Model;
 
 use Nette,
 	Nette\Utils\Strings,
+	Nette\Utils\Image,
 	Nette\Security\Passwords;
 
 

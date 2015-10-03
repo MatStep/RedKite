@@ -47,9 +47,7 @@ class ProductManager extends Nette\Object
 		COLUMN_FK_LANG_ID = "lang_id",
 		COLUMN_NAME = 'name',
 		COLUMN_SHORT_DESC = 'short_desc',
-		COLUMN_DESC = 'desc',
-
-		DEFAULT_IMAGE_PATH = 'images/products/default_image.png';
+		COLUMN_DESC = 'desc';
 
 	/** @var Nette\Database\Context */
 	private $database;
@@ -123,8 +121,6 @@ class ProductManager extends Nette\Object
 			 	'price_buy'	=> $values->price_buy,
 			 	'status' => 1,
 			 	));
-
-		self::addDefaultImage($product->id);
 
 		//ADD LANGUAGE DATA
         foreach($this->languages->getAllActive() as $lang) {
@@ -257,25 +253,8 @@ class ProductManager extends Nette\Object
 		}
 	}
 
-	public function addDefaultImage($productId)
-	{
-        $imgUrl = self::DEFAULT_IMAGE_PATH;
-
-        $name = 'default';
-
-        $this->database->table('product_image')
-        	->insert(array(
-        		'product_id' => $productId,
-        		'name' => $name,
-        		'path' => $imgUrl,
-        		'order' => 1
-        	));		
-	}
-
 	public function addProductImage($productId, $values) 
 	{	
-		//removes the default image if it is there
-		self::removeDefaultImage($productId);
 
 		$file = $values->image;
 
@@ -293,15 +272,6 @@ class ProductManager extends Nette\Object
         	 ->update(array('path' => $imgUrl));
 	}
 
-	public function removeDefaultImage($productId)
-	{
-		$defaultImagePath = 'path';
-		
-		$this->database->table('product_image')
-			 ->where('product_id = ? AND path = ?', $productId, $defaultImagePath)
-			 ->delete();
-	}
-
 	function removeProductImages($productId)
 	{
 		//gets all product images
@@ -313,10 +283,8 @@ class ProductManager extends Nette\Object
 		foreach ($productImages as $productImage)
 		{
 			//delete from server
-			if ( $productImage->path != self::DEFAULT_IMAGE_PATH )
-		{
 			unlink($productImage->path);
-		}
+
 			//delete from DB
 			$productImage->delete();
 		}
@@ -346,19 +314,6 @@ class ProductManager extends Nette\Object
 			$this->model->orderItems('product_image', $productId, $reorderArray);
 		}
 
-		//remove image from server only if it is not the default image
-		if ( $image->path != self::DEFAULT_IMAGE_PATH )
-		{
 			unlink($image->path);
-		}
-
-		/*
-			if the deleted image was the only product image
-			add default image to the product
-		 */
-		if ( count($productImages) == 0 )
-		{
-			self::addDefaultImage($productId);
-		}
 	}
 }

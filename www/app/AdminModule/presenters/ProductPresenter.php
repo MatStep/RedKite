@@ -4,6 +4,7 @@ namespace App\AdminModule\Presenters;
 
 use Nette,
 	App\Model,
+	Nette\Utils\Image,
 	Nette\Application\UI\Form as Form;
 
 /**
@@ -173,8 +174,7 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
 	{
 		$productId = $this->request->getParameters()['productId'];
 
-		$images = $this->products->getProductImages($productId)
-					   ->where('path != ?', 'images/productimages/default_product.jpg');
+		$images = $this->products->getProductImages($productId);
 		
 		if ( count($images) == 0 ) 
 		{
@@ -219,6 +219,21 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
 		}
 
 		return $suppliersArray;
+	}
+
+	public function getLink($productId)
+	{
+		$images = $this->products->getProductImages($productId);
+
+		if($images->count() == 0)
+		{
+			return 'images/products/default_image.png';
+		}
+		else
+		{
+			$imgPath = $images->where('order = 1')->fetch()->path;
+			return $imgPath;
+		}
 	}
 
 	public function getProductLang($productId)
