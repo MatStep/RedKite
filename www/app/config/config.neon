@@ -57,6 +57,8 @@ services:
 	stocks:
 		class: App\Model\StockManager
 
+	features:
+		class: App\Model\FeatureManager
 	languages:
 		class: App\Model\LanguageManager
 		
