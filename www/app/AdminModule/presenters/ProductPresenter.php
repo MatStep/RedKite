@@ -97,8 +97,9 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
 			 ->getControlPrototype()->class("form-control");
 
 		$form->addMultiSelect("category", "Kategórie", $categoriesArray)
-			 ->setRequired('Značka je povinná')
-			 ->getControlPrototype()->class("form-control");
+			 ->setRequired('Kategória je povinná')
+			 ->setAttribute('data-placeholder', 'Vyberte kategóriu')
+			 ->getControlPrototype()->class("form-control categorySelect");
 
 		$form->addSelect("brand", "Značka", $brandsArray)
 			 ->setRequired('Značka je povinná')
