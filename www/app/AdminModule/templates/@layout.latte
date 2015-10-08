@@ -188,6 +188,13 @@
 					<li class="header">NAVIGÁCIA</li>
 					<!-- Optionally, you can add icons to the links -->
 					<li id="home"><a n:href="Homepage:"><i class="fa fa-home"></i> <span>Úvodná stránka</span></a></li>
+					<li id="categories" class="treeview">
+						<a n:href="Category:"><i class="fa fa-file-text-o"></i> <span>Kategórie</span> <i class="fa fa-angle-left pull-right"></i></a>
+						<ul class="treeview-menu">
+							<li id="listCategories"><a n:href="Category:"><i class="fa fa-list"></i>Výpis kategórií</a></li>
+							<li id="addCategory"><a n:href="Category:add"><i class="fa fa-plus"></i>Pridať kategóriu</a></li>
+						</ul>
+					</li>
 					<li id="products" class="treeview">
 						<a n:href="Product:"><i class="fa fa-cube"></i> <span>Produkty</span> <i class="fa fa-angle-left pull-right"></i></a>
 						<ul class="treeview-menu">
@@ -210,25 +217,11 @@
 							<li id="addService"><a n:href="Service:add"><i class="fa fa-user-plus"></i>Pridať službu</a></li>
 						</ul>
 					</li>
-					<li id="categories" class="treeview">
-						<a n:href="Category:"><i class="fa fa-file-text-o"></i> <span>Kategórie</span> <i class="fa fa-angle-left pull-right"></i></a>
+					<li id="features" class="treeview">
+						<a n:href="Feature:"><i class="fa fa-industry"></i> <span>Features</span> <i class="fa fa-angle-left pull-right"></i></a>
 						<ul class="treeview-menu">
-							<li id="listCategories"><a n:href="Category:"><i class="fa fa-list"></i>Výpis kategórií</a></li>
-							<li id="addCategory"><a n:href="Category:add"><i class="fa fa-plus"></i>Pridať kategóriu</a></li>
-						</ul>
-					</li>
-					<li id="references" class="treeview">
-						<a n:href="Reference:"><i class="fa fa-smile-o"></i> <span>Referencie</span> <i class="fa fa-angle-left pull-right"></i></a>
-						<ul class="treeview-menu">
-							<li id="listReferences"><a n:href="Reference:"><i class="fa fa-list"></i>Výpis referencií</a></li>
-							<li id="addReference"><a n:href="Reference:add"><i class="fa fa-plus"></i>Pridať referenciu</a></li>
-						</ul>
-					</li>
-					<li id="suppliers" class="treeview">
-						<a n:href="Supplier:"><i class="fa fa-industry"></i> <span>Dodávatelia</span> <i class="fa fa-angle-left pull-right"></i></a>
-						<ul class="treeview-menu">
-							<li id="listSuppliers"><a n:href="Supplier:"><i class="fa fa-list"></i>Výpis dodávateľov</a></li>
-							<li id="addSupplier"><a n:href="Supplier:add"><i class="fa fa-plus"></i>Pridať dodávateľa</a></li>
+							<li id="listFeatures"><a n:href="Feature:"><i class="fa fa-list"></i>Výpis feature</a></li>
+							<li id="addFeature"><a n:href="Feature:add"><i class="fa fa-plus"></i>Pridať feature</a></li>
 						</ul>
 					</li>
 					<li id="addresses" class="treeview">
@@ -238,6 +231,13 @@
 							<li id="addAddress"><a n:href="Address:add"><i class="fa fa-plus"></i>Pridať adresu</a></li>
 						</ul>
 					</li>
+					<li id="suppliers" class="treeview">
+						<a n:href="Supplier:"><i class="fa fa-industry"></i> <span>Dodávatelia</span> <i class="fa fa-angle-left pull-right"></i></a>
+						<ul class="treeview-menu">
+							<li id="listSuppliers"><a n:href="Supplier:"><i class="fa fa-list"></i>Výpis dodávateľov</a></li>
+							<li id="addSupplier"><a n:href="Supplier:add"><i class="fa fa-plus"></i>Pridať dodávateľa</a></li>
+						</ul>
+					</li>
 					<li id="stocks" class="treeview">
 						<a n:href="Stock:"><i class="fa fa-building"></i> <span>Sklady</span> <i class="fa fa-angle-left pull-right"></i></a>
 						<ul class="treeview-menu">
@@ -245,11 +245,11 @@
 							<li id="addStock"><a n:href="Stock:add"><i class="fa fa-plus"></i>Pridať sklad</a></li>
 						</ul>
 					</li>
-					<li id="features" class="treeview">
-						<a n:href="Feature:"><i class="fa fa-industry"></i> <span>Features</span> <i class="fa fa-angle-left pull-right"></i></a>
+					<li id="references" class="treeview">
+						<a n:href="Reference:"><i class="fa fa-smile-o"></i> <span>Referencie</span> <i class="fa fa-angle-left pull-right"></i></a>
 						<ul class="treeview-menu">
-							<li id="listFeatures"><a n:href="Feature:"><i class="fa fa-list"></i>Výpis feature</a></li>
-							<li id="addFeature"><a n:href="Feature:add"><i class="fa fa-plus"></i>Pridať feature</a></li>
+							<li id="listReferences"><a n:href="Reference:"><i class="fa fa-list"></i>Výpis referencií</a></li>
+							<li id="addReference"><a n:href="Reference:add"><i class="fa fa-plus"></i>Pridať referenciu</a></li>
 						</ul>
 					</li>
 					<li id="users" class="treeview">
