@@ -53,6 +53,12 @@ class ImageManager extends Nette\Object
 	    return $imgUrl;
 	}
 
+	public function getName($fileName)
+	{
+		//returns file name, constant is in PHP 5.2.0
+		return pathinfo($fileName, PATHINFO_FILENAME);
+	}
+
 	public function getExtension($fileName)
 	{
 		//initialise variable extension

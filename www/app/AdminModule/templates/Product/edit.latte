@@ -114,7 +114,7 @@ $(document).ready(function() {
 										<i class="fa fa-times fa-time-white-background">
 										</i>
 									</a>
-									<img class="image-list" src="{$basePath}/{$image['path']}" width="100%">								
+									<img class="image-list" src="{$basePath}/{$image['path']}" width="100%">							
 								</li>
 							{/foreach}
 						</ul>
@@ -138,9 +138,16 @@ $(document).ready(function() {
 									Pridanie obrázka
 								</h3>	
 							</div>					
-							<div class="form-group">
+							<div id="img-input" class="form-group">
 								{input image}
-							</div>	
+							</div>
+							<img id="img-preview" width="300">
+							<div class="form-group">
+										<label for="inputName">
+											Názov ({$lang})
+										</label>
+										{input name}
+									</div>	
 							<div class="row">
 								<div class="col-sm-6">
 									 <a class="btn btn-danger btn-flat" title="Cancel" n:href="Product:edit $productId">

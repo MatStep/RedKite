@@ -258,12 +258,26 @@ class ProductManager extends Nette\Object
 
 		$file = $values->image;
 
-		$image = $this->database->table('product_image')
+		$fileName = $this->imageManager->getName($file->name);
+
+		if($values->name != NULL)
+		{
+			$image = $this->database->table('product_image')
         	->insert(array(
         		'product_id' => $productId,
-        		'name' => $file->name,
+        		'name' => $values->name,
         		'order' => $values->order
         	));
+		}
+		else
+		{
+			$image = $this->database->table('product_image')
+	        	->insert(array(
+	        		'product_id' => $productId,
+	        		'name' => $fileName,
+	        		'order' => $values->order
+	        	));
+        }
 
         $imgUrl = $this->imageManager->getImage($file, "products");
 

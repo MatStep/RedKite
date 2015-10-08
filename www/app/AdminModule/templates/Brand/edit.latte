@@ -21,11 +21,12 @@
 			</div>
 			{* if no logo add new *}
 			{if $logo_path == NULL}
-				<div class="form-group">
+				<div id="img-input" class="form-group">
 					<label for="inputLogo">
 						Logo
 					</label>
 					{input logo}
+					<img id="img-preview" width="300">
 				</div>
 			{* If has logo show it *}
 			{else}

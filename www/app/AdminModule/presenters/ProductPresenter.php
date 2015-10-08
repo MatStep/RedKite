@@ -171,6 +171,14 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
 			 ->addCondition(Form::FILLED)
 			 ->addRule(Form::IMAGE, 'Nepodporovaný formát obrázku');
 
+		foreach(parent::getAllLanguages() as $lang)
+        {
+            if($lang->id == parent::getLanguage()->id)
+            {
+				$form->addText("name", "Názov" . "(" . $lang->iso_code . ")")
+		                     ->getControlPrototype()->class("form-control");
+            }
+        }
 		$form->addSubmit("add", "Pridať obrázok")
 			 ->getControlPrototype()->class("btn btn-primary pull-right");
 
@@ -299,6 +307,7 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
 		$product = $this->products->getProduct($productId);
 		$productLang = self::getProductLang($productId);
 		$productCategory = $this->products->model->getAllFirstSecond($productId, 'product', 'category');
+		$productImages = $this->products->getProductImages($productId);
 		$pArray = array();
 		foreach($productCategory as $productCat)
 		{
@@ -319,5 +328,9 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
 		$this['productForm']['brand']->setDefaultValue($product->brand);
 		$this['productForm']['supplier']->setDefaultValue($productSupplier->supplier_id);
 
+		// foreach($productImages as $productImage)
+		// {
+		// 	$this['productImageForm']['name']->setDefaultValue($productImage->name);
+		// }
 	}
 }
