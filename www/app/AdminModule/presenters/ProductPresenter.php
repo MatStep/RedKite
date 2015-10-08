@@ -195,7 +195,7 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
 		}
 
 		$this->products->addProductImage($productId, $values);
-		$this->redirect('Product:edit', $productId);
+		$this->redirect('Product:edit', $productId, true);
 	}
 
 	public function createComponentImageReorderForm() 
@@ -284,7 +284,7 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
 	{
 		$this->products->removeProductImage($productId, $imageId);
 		$this->flashMessage('Obrázok úspešne vymazaný');
-		$this->redirect('Product:edit', $productId);
+		$this->redirect('Product:edit', $productId, true);
 	}
 
 	public function actionRemove($productId)
@@ -294,7 +294,7 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
 		$this->redirect("Product:");
 	}
 
-	public function actionEdit($productId)
+	public function actionEdit($productId, $goToImageTab = false)
 	{
 		$product = $this->products->getProduct($productId);
 		$productLang = self::getProductLang($productId);
@@ -307,6 +307,7 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
 		//Now is there only one row, status is not mentioned
 		$productSupplier = $this->products->model->getAllFirstSecond($productId, 'product', 'supplier')->fetch();
 
+		$this->template->goToImageTab = $goToImageTab;
 		$this->template->productId = $productId;
 
 		$this['productForm']->setDefaults($product->toArray());

@@ -160,6 +160,19 @@ $(document).ready(function() {
 	</div>
 </div>
 
+<!-- for image tab redirects -->
+{if $goToImageTab}
+	<span id="go-to-image-tab" style="display:none" />
+{/if}
+
+<script>
+	$(function(){
+		if ( $('#go-to-image-tab').length ) {
+			$('#image-tab-view').click();
+		}
+	});
+</script>
+
 {* Script for changing active menu *}
 <script>
 $(function() {
