@@ -265,18 +265,24 @@ class ProductManager extends Nette\Object
 			$image = $this->database->table('product_image')
         	->insert(array(
         		'product_id' => $productId,
-        		'name' => $values->name,
         		'order' => $values->order
         	));
+        	//ADD LANGUAGE DATA
+        	foreach($this->languages->getAllActive() as $lang) {
+            	self::translateDataImage($lang->id, $image->id, $values->name, 0);
+        	}
 		}
 		else
 		{
 			$image = $this->database->table('product_image')
 	        	->insert(array(
 	        		'product_id' => $productId,
-	        		'name' => $fileName,
 	        		'order' => $values->order
 	        	));
+	        //ADD LANGUAGE DATA
+        	foreach($this->languages->getAllActive() as $lang) {
+            	self::translateDataImage($lang->id, $image->id, $fileName, 0);
+        	}
         }
 
         $imgUrl = $this->imageManager->getImage($file, "products");
@@ -284,6 +290,34 @@ class ProductManager extends Nette\Object
         $this->database->table('product_image')
         	 ->where('product_id = ? AND id = ?', $productId, $image->id)
         	 ->update(array('path' => $imgUrl));
+
+	}
+
+	/** 
+	 * translate data
+	 * @param int $lang 		   language id
+	 * @param array $data		   array of data to transalte
+	 * @param int $method 		   method defines 0-> adding, 1->updating
+	 * @param string $productImageId    id of productImage
+	 */
+	public function translateDataImage($langId, $productImageId, $data, $method)
+	{
+
+		if($method == '0')
+		{
+			$this->database->table('product_image_lang')->insert(array(
+				'product_image_id' => $productImageId,
+				'lang_id' => $langId,
+				'name' => $data,
+				));
+		}
+		else
+		{
+			$product_lang = $this->model->getFirstSecond($productImageId, $langId, 'product_image', 'lang');
+			$product_lang->update(array(
+				'name' => $data,
+				));
+		}
 	}
 
 	function removeProductImages($productId)
@@ -296,6 +330,15 @@ class ProductManager extends Nette\Object
 		//deletes each of them one by one also from the server and DB
 		foreach ($productImages as $productImage)
 		{
+			$allProductImageLang = $this->model->getAllFirstSecond($productImage->id,'product_image','lang');
+
+			while($allProductImageLang->count() > 0) {
+				foreach($allProductImageLang as $productImageLang)
+				{
+					$productImageLang->delete();
+				}
+			}
+
 			//delete from server
 			unlink($productImage->path);
 
@@ -309,6 +352,15 @@ class ProductManager extends Nette\Object
 		//get the image to be deleted
 		$image = $this->database->table('product_image')
 					  ->where('id = ?', $imageId)->fetch();
+
+		$allProductImageLang = $this->model->getAllFirstSecond($imageId,'product_image','lang');
+
+			while($allProductImageLang->count() > 0) {
+				foreach($allProductImageLang as $productImageLang)
+				{
+					$productImageLang->delete();
+				}
+			}
 		//delete the image
 		$this->database->table('product_image')
 			 ->where('id = ?', $imageId)->delete();
