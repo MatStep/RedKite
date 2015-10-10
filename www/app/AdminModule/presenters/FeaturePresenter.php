@@ -15,6 +15,9 @@ class FeaturePresenter extends \App\AdminModule\Presenters\BasePresenter
 	/** @var \App\Model\UserManager @inject */
 	public $userManager;
 
+	/** @var App\Model\LanguageManager */
+    public $languages;
+
 	private $features;
 
 	private $values;
@@ -42,11 +45,17 @@ class FeaturePresenter extends \App\AdminModule\Presenters\BasePresenter
 	{
 		$form = new Form;
 
-		$form->addText("name", "Názov feature")
-			 ->setRequired('Názov je povinný')
-			 ->getControlPrototype()->class("form-control");
+		foreach(parent::getAllLanguages() as $lang)
+        {
+            if($lang->id == parent::getLanguage()->id)
+            {
+                $form->addText("name", "Názov" . "(" . $lang->iso_code . ")")
+                     ->getControlPrototype()->class("form-control")
+                     ->setRequired('Názov je povinný');
+            }
+        }
 
-		$form->addSubmit("add", "Pridať feature")
+		$form->addSubmit("add", "Pridať vlastnosť")
 			 ->getControlPrototype()->class("btn btn-primary pull-right");
 
 		$form->addSubmit("edit", "Uložiť zmeny")
@@ -74,27 +83,32 @@ class FeaturePresenter extends \App\AdminModule\Presenters\BasePresenter
 				//ADD FEATURE
 				$this->features->insert($values);
 
-				$this->flashMessage('Feature úspešne pridaná');
+				$this->flashMessage('Vlastnosť úspešne pridaná');
 			}
 			else
 			{
 				//EDIT FEATURE
 				$this->features->edit($featureId, $values);
 
-				$this->flashMessage('Feature bola aktualizovaná');
+				$this->flashMessage('Vlastnosť bola aktualizovaná');
 			}
 
 				$this->redirect("Feature:");
 		} catch (Nette\Application\BadRequestException $e) {
 			if ($e->getMessage() == "NAME_EXISTS")
-				$form->addError('Feature neexistuje');
+				$form->addError('Vlastnosť s danným menom už existuje');
 		}
 	}
+
+	public function getFeatureLang($featureId)
+    {
+        return $this->features->model->getFirstSecond($featureId, parent::getLanguage()->id, 'feature', 'lang');
+    }
 
 	public function actionRemove($featureId)
 	{
 			$this->features->remove($featureId);
-			$this->flashMessage('Feautre bola úspešne vymazaná');
+			$this->flashMessage('Vlastnosť bola úspešne vymazaná');
 			$this->redirect("Feature:");
 	}
 
@@ -102,7 +116,9 @@ class FeaturePresenter extends \App\AdminModule\Presenters\BasePresenter
 	public function actionEdit($featureId)
 	{
 		$feature = $this->features->getFeature($featureId);
+		$featureLang = self::getFeatureLang($featureId);
 		$this->template->featureId = $featureId;
 		$this['featureForm']->setDefaults($feature->toArray());
+		$this['featureForm']['name']->setDefaultValue($featureLang->name);
 	}
 }
