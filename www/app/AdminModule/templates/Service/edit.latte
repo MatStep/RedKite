@@ -27,11 +27,12 @@
 			</div>
 			{* if no image add new *}
 			{if $img_path == NULL}
-				<div class="form-group">
-					<label for="inputImage">
+				<div id="img-input" class="form-group">
+					<label for="inputLogo">
 						Obrázok
 					</label>
 					{input image}
+					<img id="img-preview" width="300">
 				</div>
 			{* If has image show it *}
 			{else}

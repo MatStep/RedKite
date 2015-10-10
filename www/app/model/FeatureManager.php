@@ -38,6 +38,11 @@ class FeatureManager extends Nette\Object
 		return $this->database->table('feature');
 	}
 
+	public function getAllFeatureValue()
+	{
+		return $this->database->table('feature_value');
+	}
+
 	/*Get feature*/
 	public function getFeature($featureId)
 	{
@@ -51,11 +56,23 @@ class FeatureManager extends Nette\Object
 		return $feature;
 	}
 
+	/*Get feature value*/
+	public function getFeatureValue($featureValueId)
+	{
+		$featureValue =  $this->database->table('feature_value')->where('id', $featureValueId)->fetch();
+
+		if ( !$featureValue )
+		{
+			throw new Nette\Application\BadRequestException("DOESNT_EXIST");
+		}
+
+		return $featureValue;
+	}
 
 	public function insert($values)
 	{
 		$data = array();
-		// $data["name"]  = $values->name;
+
 		$feature = $this->database->table(self::FEATURE_TABLE)->insert($data);
 
 		//ADD LANGUAGE DATA
@@ -64,6 +81,21 @@ class FeatureManager extends Nette\Object
         }
 
 		return $feature;
+
+	}
+
+	public function insertFeatureValue($values)
+	{
+		$data = array();
+
+		$featureValue = $this->database->table('feature_value')->insert($data);
+
+		//ADD LANGUAGE DATA
+        foreach($this->languages->getAllActive() as $lang) {
+            self::translateDataFeatureValue($lang->id, $featureValue->id, $values, 0);
+        }
+
+		return $featureValue;
 
 	}
 
@@ -82,6 +114,21 @@ class FeatureManager extends Nette\Object
         self::translateData($currentLanguage, $id, $values, 1);
 	}
 
+	public function editFeatureValue($id, $values)
+	{
+		$featureValue = $this->database->table('feature_value')->where('id', $id);
+
+		$currentLanguage = $this->languages->getLanguageByName($this->languages->getLanguage());
+
+		if (!$featureValue)
+		{
+			throw new Nette\Application\BadRequestException("DOESNT_EXIST");
+		}
+
+		//EDIT LANGUAGE DATA
+        self::translateDataFeatureValue($lang->id, $featureValue->id, $values, 1);
+	}
+
 	public function remove($id)
 	{
 		// delete all rows where is feature located in feature lang
@@ -96,6 +143,22 @@ class FeatureManager extends Nette\Object
 		}
 
 		return $this->database->table(self::FEATURE_TABLE)->where(self::COLUMN_ID, $id)->delete();
+	}
+
+	public function removeFeatureValue($id)
+	{
+		// delete all rows where is feature value located in feature value lang
+
+		$allFeatureValueLang = $this->model->getAllFirstSecond($id,'feature_value','lang');
+
+		while($allFeatureValueLang->count() > 0) {
+			foreach($allFeatureValueLang as $featureValueLang)
+			{
+				$featureValueLang->delete();
+			}
+		}
+
+		return $this->database->table('feature_value')->where('id', $id)->delete();
 	}
 
 	/** 
@@ -121,6 +184,33 @@ class FeatureManager extends Nette\Object
 			$feature_lang = $this->model->getFirstSecond($featureId, $langId, 'feature', 'lang');
 			$feature_lang->update(array(
 				'name' => $data['name'],
+				));
+		}
+	}
+
+	/** 
+	 * translate data
+	 * @param int $lang 		   language id
+	 * @param array $data		   array of data to transalte
+	 * @param int $method 		   method defines 0-> adding, 1->updating
+	 * @param string $featureValueId   id of featureValue
+	 */
+	public function translateDataFeatureValue($langId, $featureValueId, $data, $method)
+	{
+
+		if($method == '0')
+		{
+			$this->database->table('feature_value_lang')->insert(array(
+				'feature_value_id' => $featureValueId,
+				'lang_id' => $langId,
+				'value' => $data['value'],
+				));
+		}
+		else
+		{
+			$feature_value_lang = $this->model->getFirstSecond($featureValueId, $langId, 'feature_value', 'lang');
+			$feature_value_lang->update(array(
+				'value' => $data['value'],
 				));
 		}
 	}

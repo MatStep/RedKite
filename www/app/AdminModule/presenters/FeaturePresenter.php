@@ -38,6 +38,7 @@ class FeaturePresenter extends \App\AdminModule\Presenters\BasePresenter
 	public function renderEdit($featureId)
 	{
 		$this->template->feature = $this->features->getFeature($featureId);
+		$this->template->featureValues = $this->features->model->getAllFirstSecond($featureId, 'feature', 'feature_value');
 	}
 
 	/*Feature form*/
@@ -100,14 +101,86 @@ class FeaturePresenter extends \App\AdminModule\Presenters\BasePresenter
 		}
 	}
 
+	/*Feature value form*/
+	public function createComponentFeatureValueForm()
+	{
+		$form = new Form;
+
+		foreach(parent::getAllLanguages() as $lang)
+        {
+            if($lang->id == parent::getLanguage()->id)
+            {
+                $form->addText("value", "Hodnota" . "(" . $lang->iso_code . ")")
+                     ->getControlPrototype()->class("form-control")
+                     ->setRequired('Hodnota je povinná');
+            }
+        }
+
+		$form->addSubmit("add", "Pridať hodnotu")
+			 ->getControlPrototype()->class("btn btn-primary pull-right");
+
+		$form->addSubmit("edit", "Uložiť zmeny")
+			 ->getControlPrototype()->class("btn btn-primary pull-right");
+
+		$form->onSuccess[] = array($this, "featureFormSucceeded");
+
+		return $form;
+	}
+
+	public function featureValueFormSucceeded($form, $values)
+	{
+		$adding = true;
+		$currentLanguage = parent::getLanguage();
+		
+		try {
+			if ( isset($this->request->getParameters()['featureValueId']) )
+			{
+				$featureValueId = $this->getParameter('featureValueId');
+				$adding = false;
+			}
+
+			if ($adding)
+			{
+				//ADD FEATURE
+				$this->features->insertFeatureValue($values);
+
+				$this->flashMessage('Hodnota úspešne pridaná');
+			}
+			else
+			{
+				//EDIT FEATURE
+				$this->features->editFeatureValue($featureValueId, $values);
+
+				$this->flashMessage('Hodnota bola aktualizovaná');
+			}
+
+				$this->redirect("Feature:");
+		} catch (Nette\Application\BadRequestException $e) {
+			if ($e->getMessage() == "NAME_EXISTS")
+				$form->addError('Hodnota s danným menom už existuje');
+		}
+	}
+
 	public function getFeatureLang($featureId)
     {
         return $this->features->model->getFirstSecond($featureId, parent::getLanguage()->id, 'feature', 'lang');
     }
 
+    public function getFeatureValueLang($featureValueId)
+    {
+        return $this->features->model->getFirstSecond($featureValueId, parent::getLanguage()->id, 'feature_value', 'lang');
+    }
+
 	public function actionRemove($featureId)
 	{
 			$this->features->remove($featureId);
+			$this->flashMessage('Vlastnosť bola úspešne vymazaná');
+			$this->redirect("Feature:");
+	}
+
+	public function actionRemoveFeatureValue($featureValueId)
+	{
+			$this->featureValues->remove($featureValueId);
 			$this->flashMessage('Vlastnosť bola úspešne vymazaná');
 			$this->redirect("Feature:");
 	}
@@ -120,5 +193,15 @@ class FeaturePresenter extends \App\AdminModule\Presenters\BasePresenter
 		$this->template->featureId = $featureId;
 		$this['featureForm']->setDefaults($feature->toArray());
 		$this['featureForm']['name']->setDefaultValue($featureLang->name);
+	}
+
+
+	public function actionEditFeatureValue($featureValueId)
+	{
+		$featureValue = $this->featureValues->getFeatureValue($featureValueId);
+		$featureValueLang = self::getFeatureValueLang($featureValueId);
+		$this->template->featureValueId = $featureValueId;
+		$this['featureValueForm']->setDefaults($featureValue->toArray());
+		$this['featureValueForm']['name']->setDefaultValue($featureValueLang->name);
 	}
 }
