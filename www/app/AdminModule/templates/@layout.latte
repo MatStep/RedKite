@@ -48,8 +48,11 @@
     $(function()
     {
     	var rmWindow = $('#removeWindow');
+    	var rmLogOutWindow = $('#removeLogOutWindow');
     	var rmClose  = $('.closeRm');
+    	var rmCloseLogOut = $('.closeRmLogOut');
     	var rmSave   = $('#saveRm');
+    	var rmSaveLogOut   = $('#saveRmLogOut');
     	var rmUrl;
 
     	$('.itemTrash').click(function()
@@ -59,7 +62,19 @@
     		return false;
     	});
 
+    	$('.logOutTrash').click(function()
+    	{
+    		rmLogOutWindow.show();
+    		rmUrl = $(this).attr('href');
+    		return false;
+    	});
+
     	rmSave.click(function()
+    	{
+    		window.location = rmUrl;
+    	});
+
+    	rmSaveLogOut.click(function()
     	{
     		window.location = rmUrl;
     	});
@@ -67,6 +82,11 @@
     	rmClose.click(function()
     	{
     		rmWindow.hide();
+    	});
+
+    	rmCloseLogOut.click(function()
+    	{
+    		rmLogOutWindow.hide();
     	});
     });
 
@@ -147,7 +167,7 @@
 							</ul>
 						</li>
 						<li title="Log out"class="dropdown user user-menu">
-							<a class="itemTrash" n:href="Lockscreen:out">
+							<a class="logOutTrash" n:href="Lockscreen:out">
 								<i class="glyphicon glyphicon-log-out"/>                  
 							</a>
 						</li>
@@ -310,6 +330,23 @@
 						</div>
 					</div>
 				</div><!-- Remove modal window end -->
+				<div id="removeLogOutWindow" class="modal">
+					<div class="modal-dialog">
+						<div class="modal-content">
+							<div class="modal-header">
+								<button type="button" class="closeRmLogOut close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+								<h4 class="modal-title">Odhlásiť?</h4>
+							</div>
+							<div class="modal-body">
+								<p>Týmto sa odhlásite.</p>
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="closeRmLogOut btn btn-default pull-left" data-dismiss="modal">Späť</button>
+								<button type="button" id="saveRmLogOut" class="btn btn-primary">Odhlásiť</button>
+							</div>
+						</div>
+					</div>
+				</div>
 				{include content}
 			</section>
 
