@@ -84,9 +84,10 @@ class FeatureManager extends Nette\Object
 
 	}
 
-	public function insertFeatureValue($values)
+	public function insertFeatureValue($featureId, $values)
 	{
 		$data = array();
+		$data["feature_id"] = $featureId;
 
 		$featureValue = $this->database->table('feature_value')->insert($data);
 

@@ -37,6 +37,10 @@
 	max-width:80px;
 }
 
+.fleft {
+	float: left;
+}
+
 .nav li .remove {
 	padding: 0px;
 }

@@ -38,7 +38,11 @@ class FeaturePresenter extends \App\AdminModule\Presenters\BasePresenter
 	public function renderEdit($featureId)
 	{
 		$this->template->feature = $this->features->getFeature($featureId);
-		$this->template->featureValues = $this->features->model->getAllFirstSecond($featureId, 'feature', 'feature_value');
+	}
+
+	public function renderAddValue($featureId)
+	{
+		$this->template->feature = $this->features->getFeature($featureId);
 	}
 
 	/*Feature form*/
@@ -122,7 +126,7 @@ class FeaturePresenter extends \App\AdminModule\Presenters\BasePresenter
 		$form->addSubmit("edit", "Uložiť zmeny")
 			 ->getControlPrototype()->class("btn btn-primary pull-right");
 
-		$form->onSuccess[] = array($this, "featureFormSucceeded");
+		$form->onSuccess[] = array($this, "featureValueFormSucceeded");
 
 		return $form;
 	}
@@ -138,11 +142,15 @@ class FeaturePresenter extends \App\AdminModule\Presenters\BasePresenter
 				$featureValueId = $this->getParameter('featureValueId');
 				$adding = false;
 			}
+			if ( isset($this->request->getParameters()['featureId']) )
+			{
+				$featureId = $this->getParameter('featureId');
+			}
 
 			if ($adding)
 			{
 				//ADD FEATURE
-				$this->features->insertFeatureValue($values);
+				$this->features->insertFeatureValue($featureId, $values);
 
 				$this->flashMessage('Hodnota úspešne pridaná');
 			}
@@ -171,6 +179,11 @@ class FeaturePresenter extends \App\AdminModule\Presenters\BasePresenter
         return $this->features->model->getFirstSecond($featureValueId, parent::getLanguage()->id, 'feature_value', 'lang');
     }
 
+    public function getFeatureValues($featureId)
+    {
+        return $this->features->model->getAllFirstSecond($featureId, 'feature', 'value');
+    }
+
 	public function actionRemove($featureId)
 	{
 			$this->features->remove($featureId);
@@ -180,7 +193,7 @@ class FeaturePresenter extends \App\AdminModule\Presenters\BasePresenter
 
 	public function actionRemoveFeatureValue($featureValueId)
 	{
-			$this->featureValues->remove($featureValueId);
+			$this->features->removeFeatureValue($featureValueId);
 			$this->flashMessage('Vlastnosť bola úspešne vymazaná');
 			$this->redirect("Feature:");
 	}
@@ -202,6 +215,6 @@ class FeaturePresenter extends \App\AdminModule\Presenters\BasePresenter
 		$featureValueLang = self::getFeatureValueLang($featureValueId);
 		$this->template->featureValueId = $featureValueId;
 		$this['featureValueForm']->setDefaults($featureValue->toArray());
-		$this['featureValueForm']['name']->setDefaultValue($featureValueLang->name);
+		$this['featureValueForm']['value']->setDefaultValue($featureValueLang->value);
 	}
 }
