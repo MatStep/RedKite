@@ -116,7 +116,7 @@ class FeaturePresenter extends \App\AdminModule\Presenters\BasePresenter
             if($lang->id == parent::getLanguage()->id)
             {
                 $form->addText("value", "Hodnota" . "(" . $lang->iso_code . ")")
-                     ->getControlPrototype()->class("form-control")
+                     ->getControlPrototype()->class("form-control ajax")
                      ->setRequired('Hodnota je povinná');
             }
         }
@@ -162,8 +162,15 @@ class FeaturePresenter extends \App\AdminModule\Presenters\BasePresenter
 
 				$this->flashMessage('Hodnota bola aktualizovaná');
 			}
-
+			if(!$this->isAjax())
+			{
 				$this->redirect("Feature:addValue", $featureId);
+			}
+			else {
+				$this->invalidateControl('list');
+				$this->invlaidateControl('form');
+				$this->setValues(array(), TRUE);
+			}
 		} catch (Nette\Application\BadRequestException $e) {
 			if ($e->getMessage() == "NAME_EXISTS")
 				$form->addError('Hodnota s danným menom už existuje');

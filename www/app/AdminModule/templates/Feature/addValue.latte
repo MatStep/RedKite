@@ -1,4 +1,4 @@
-{block content}
+@{block content}
 <div class="box box-primary">
 		<div class="box-header with-border">
 			<h2 class="box-title">
@@ -7,13 +7,18 @@
 			<a n:href="Feature:" class="pull-right"><i class="fa fa-close"></i></a>
 		</div>
 		<div class="box-body">
+			{snippet list}
 			<h2>{$presenter->getFeatureLang($feature->id)->name}</h2>
 			<p>
 				{foreach $presenter->getFeatureValues($feature->id) as $featureValue}
 					{$presenter->getFeatureValueLang($featureValue->id)->value} <a n:href="Feature:removeFeatureValue $featureValue->id" style="margin-top: 10px; width: 130px;" class='itemTrash'><i class="fa fa-close"></i></a>, 
 				{/foreach}
 			</p>
+			{/snippet}
+
+			{snippet form}
 			{form featureValueForm}
+
 			<div n:if="$form->hasErrors()">
 				<ul class="errors">
 					<li n:foreach="$form->errors as $error"><strong>{$error}</strong></li>
@@ -27,6 +32,7 @@
 			</div>
 			{input add}
 			{/form}
+			{/snippet}
 		</div>
 	</div>
 

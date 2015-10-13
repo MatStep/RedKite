@@ -13,3 +13,18 @@ $(document).ready(function() {
 	image.attr("src", URL.createObjectURL(event.target.files[0]));
 	});
 });
+
+$("body").on("click", "a.ajax", function (event) {
+    event.preventDefault();
+    $.get(this.href);
+});
+
+$("body").on("submit", "form.ajax", function () {
+    $(this).ajaxSubmit();
+    return false;
+});
+
+$("body").on("click", "form.ajax :submit", function () {
+    $(this).ajaxSubmit();
+    return false;
+});
