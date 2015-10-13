@@ -350,11 +350,11 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
 		}
 
 		$productSupplier = $this->products->model->getAllFirstSecond($productId, 'product', 'supplier')->fetch();
-		$allSuppliers = array();
+		$sArray = array();
 		$productSupplierArray = $this->products->model->getAllFirstSecond($productId, 'product', 'supplier');
 		foreach($productSupplierArray as $productSup)
 		{
-			array_push($allSuppliers, $productSup->supplier_id);
+			array_push($sArray, $productSup->supplier_id);
 		}
 		//Now is there only one row, status is not mentioned
 		
@@ -369,8 +369,8 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
 		$this['productForm']['desc']->setDefaultValue($productLang->desc);
 		$this['productForm']['category']->setDefaultValue($cArray);
 		$this['productForm']['feature']->setDefaultValue($fArray);
+		$this['productForm']['supplier']->setDefaultValue($sArray);
 		$this['productForm']['brand']->setDefaultValue($product->brand);
-		$this['productForm']['supplier']->setDefaultValue($allSuppliers);
 
 		// foreach($productImages as $productImage)
 		// {
