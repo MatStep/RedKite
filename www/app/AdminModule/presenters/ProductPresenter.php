@@ -109,9 +109,14 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
 			 ->setRequired('Značka je povinná')
 			 ->getControlPrototype()->class("form-control");
 
-		$form->addSelect("supplier", "Dodávateľ", $suppliersArray)
+		/*$form->addSelect("supplier", "Dodávateľ", $suppliersArray)
 			 ->setRequired('Dodávateľ je povinný')
-			 ->getControlPrototype()->class("form-control");
+			 ->getControlPrototype()->class("form-control");*/
+
+		$form->addMultiSelect("supplier", "Dodávatelia", $suppliersArray)
+			 ->setRequired('Dodávateľ je povinná')
+			 ->setAttribute('data-placeholder', 'Vyberte dodávateľa')
+			 ->getControlPrototype()->class("form-control supplierSelect");
 
 		$form->addMultiSelect("feature", "Vlastnosti", $featuresArray)
 			 ->setAttribute('data-placeholder', 'Vyberte vlastnosť')
@@ -343,8 +348,16 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
 		{
 			array_push($fArray, $productF->feature_id);
 		}
-		//Now is there only one row, status is not mentioned
+
 		$productSupplier = $this->products->model->getAllFirstSecond($productId, 'product', 'supplier')->fetch();
+		$allSuppliers = array();
+		$productSupplierArray = $this->products->model->getAllFirstSecond($productId, 'product', 'supplier');
+		foreach($productSupplierArray as $productSup)
+		{
+			array_push($allSuppliers, $productSup->supplier_id);
+		}
+		//Now is there only one row, status is not mentioned
+		
 
 		$this->template->goToImageTab = $goToImageTab;
 		$this->template->productId = $productId;
@@ -357,7 +370,7 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
 		$this['productForm']['category']->setDefaultValue($cArray);
 		$this['productForm']['feature']->setDefaultValue($fArray);
 		$this['productForm']['brand']->setDefaultValue($product->brand);
-		$this['productForm']['supplier']->setDefaultValue($productSupplier->supplier_id);
+		$this['productForm']['supplier']->setDefaultValue($allSuppliers);
 
 		// foreach($productImages as $productImage)
 		// {
