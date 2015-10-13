@@ -122,6 +122,15 @@ class ProductManager extends Nette\Object
 			 	'status' => 1,
 			 	));
 
+		// Table product_feature
+		foreach($values->feature as $feature) {
+			$this->database->table('product_feature')
+				 ->insert(array(
+				 	'product_id' => $product->id,
+				 	'feature_id' => $feature,
+				 	));
+		}
+
 		//ADD LANGUAGE DATA
         foreach($this->languages->getAllActive() as $lang) {
             self::translateData($lang->id, $product->id, $values, 0);
@@ -165,6 +174,24 @@ class ProductManager extends Nette\Object
 			 	'product_id' => $id,
 			 	'category_id' => $category,
 			 	));
+		}
+
+		$allProductFeature = $this->model->getAllFirstSecond($id,'product','feature', 0);
+
+		while($allProductFeature->count() > 0) {
+			foreach($allProductFeature as $productFeature)
+			{
+				$productFeature->delete();
+			}
+		}
+
+		// Table product_feature
+		foreach($values->feature as $feature) {
+			$this->database->table('product_feature')
+				 ->insert(array(
+				 	'product_id' => $id,
+				 	'feature_id' => $feature,
+				 	));
 		}
 
 		$this->database->table(self::PRODUCT_SUPPLIER_TABLE)->where('product_id', $id)
@@ -213,6 +240,17 @@ class ProductManager extends Nette\Object
 			foreach($allProductSupplier as $productSupplier)
 			{
 				$productSupplier->delete();
+			}
+		}
+
+		// delete all rows where is product located in product feature
+
+		$allProductFeature = $this->model->getAllFirstSecond($id,'product','feature', 0);
+
+		while($allProductFeature->count() > 0) {
+			foreach($allProductFeature as $productFeature)
+			{
+				$productFeature->delete();
 			}
 		}
 

@@ -24,6 +24,9 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
 	/** @var \App\Model\SupplierManager @inject */
 	public $supplierManager;
 
+	/** @var \App\Model\FeatureManager @inject */
+	public $featureManager;
+
 	/** @var App\Model\LanguageManager */
     public $languages;
 
@@ -69,6 +72,7 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
 		$categoriesArray = $this->categoryManager->getAllCategoriesAsArray();
 		$brandsArray = self::createBrandsArrayForSelect();
 		$suppliersArray = self::createSuppliersArrayForSelect();
+		$featuresArray = self::createFeaturesArrayForSelect();
 
 		foreach(parent::getAllLanguages() as $lang)
         {
@@ -108,6 +112,10 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
 		$form->addSelect("supplier", "Dodávateľ", $suppliersArray)
 			 ->setRequired('Dodávateľ je povinný')
 			 ->getControlPrototype()->class("form-control");
+
+		$form->addMultiSelect("feature", "Vlastnosti", $featuresArray)
+			 ->setAttribute('data-placeholder', 'Vyberte vlastnosť')
+			 ->getControlPrototype()->class("form-control featureSelect");
 
 		$form->addCheckbox("status", "");
 
@@ -268,6 +276,22 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
 		return $suppliersArray;
 	}
 
+	private function createFeaturesArrayForSelect()
+	{
+		$features = $this->featureManager->getAll();
+
+		$featureArray = array();
+
+		$featuresArray[''] = "--";
+
+		foreach ( $features as $feature )
+		{
+			$featuresArray[$feature->id] = $this->products->model->getFirstSecond($feature->id, parent::getLanguage()->id, 'feature', 'lang')->name;
+		}
+
+		return $featuresArray;
+	}
+
 	public function getLink($productId)
 	{
 		$images = $this->products->getProductImages($productId);
@@ -307,11 +331,17 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
 		$product = $this->products->getProduct($productId);
 		$productLang = self::getProductLang($productId);
 		$productCategory = $this->products->model->getAllFirstSecond($productId, 'product', 'category');
+		$productFeature = $this->products->model->getAllFirstSecond($productId, 'product', 'feature');
 		$productImages = $this->products->getProductImages($productId);
-		$pArray = array();
+		$cArray = array();
+		$fArray = array();
 		foreach($productCategory as $productCat)
 		{
-			array_push($pArray, $productCat->category_id);
+			array_push($cArray, $productCat->category_id);
+		}
+		foreach($productFeature as $productF)
+		{
+			array_push($fArray, $productF->feature_id);
 		}
 		//Now is there only one row, status is not mentioned
 		$productSupplier = $this->products->model->getAllFirstSecond($productId, 'product', 'supplier')->fetch();
@@ -324,7 +354,8 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
 		$this['productForm']['name']->setDefaultValue($productLang->name);
 		$this['productForm']['short_desc']->setDefaultValue($productLang->short_desc);
 		$this['productForm']['desc']->setDefaultValue($productLang->desc);
-		$this['productForm']['category']->setDefaultValue($pArray);
+		$this['productForm']['category']->setDefaultValue($cArray);
+		$this['productForm']['feature']->setDefaultValue($fArray);
 		$this['productForm']['brand']->setDefaultValue($product->brand);
 		$this['productForm']['supplier']->setDefaultValue($productSupplier->supplier_id);
 

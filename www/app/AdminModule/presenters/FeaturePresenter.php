@@ -42,6 +42,7 @@ class FeaturePresenter extends \App\AdminModule\Presenters\BasePresenter
 
 	public function renderAddValue($featureId)
 	{
+		$this->template->features = $this->features->getFeature($featureId);
 		$this->template->feature = $this->features->getFeature($featureId);
 	}
 
@@ -162,7 +163,7 @@ class FeaturePresenter extends \App\AdminModule\Presenters\BasePresenter
 				$this->flashMessage('Hodnota bola aktualizovaná');
 			}
 
-				$this->redirect("Feature:");
+				$this->redirect("Feature:addValue", $featureId);
 		} catch (Nette\Application\BadRequestException $e) {
 			if ($e->getMessage() == "NAME_EXISTS")
 				$form->addError('Hodnota s danným menom už existuje');

@@ -2,6 +2,7 @@
 <script>
 $(document).ready(function() {
 	$(".categorySelect").select2();
+	$(".featureSelect").select2();
 });
 </script>
 {/block}
@@ -84,6 +85,12 @@ $(document).ready(function() {
 							Dodávateľ
 						</label>
 						{input supplier}
+					</div>
+					<div class="form-group">
+						<label for="inputFeature">
+							Vlastnosti
+						</label>
+						{input feature}
 					</div>
 					<div class="form-group">
 						<label for="inputName">
