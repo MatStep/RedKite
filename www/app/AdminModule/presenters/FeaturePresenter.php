@@ -111,15 +111,20 @@ class FeaturePresenter extends \App\AdminModule\Presenters\BasePresenter
 	{
 		$form = new Form;
 
+		$form->getElementPrototype()->class('ajax');
+
 		foreach(parent::getAllLanguages() as $lang)
         {
             if($lang->id == parent::getLanguage()->id)
             {
                 $form->addText("value", "Hodnota" . "(" . $lang->iso_code . ")")
-                     ->getControlPrototype()->class("form-control ajax")
-                     ->setRequired('Hodnota je povinná');
+                     ->setRequired('Hodnota je povinná')
+                     ->setAttribute('placeholder', 'Pridať hodnotu')
+                     ->getControlPrototype()->class("feature-value-enter");
             }
         }
+
+        $form->addHidden('id');
 
 		$form->addSubmit("add", "Pridať hodnotu")
 			 ->getControlPrototype()->class("btn btn-primary pull-right");
@@ -136,7 +141,7 @@ class FeaturePresenter extends \App\AdminModule\Presenters\BasePresenter
 	{
 		$adding = true;
 		$currentLanguage = parent::getLanguage();
-		
+
 		try {
 			if ( isset($this->request->getParameters()['featureValueId']) )
 			{
@@ -146,6 +151,10 @@ class FeaturePresenter extends \App\AdminModule\Presenters\BasePresenter
 			if ( isset($this->request->getParameters()['featureId']) )
 			{
 				$featureId = $this->getParameter('featureId');
+			}
+			else
+			{
+				$featureId = $values->id;
 			}
 
 			if ($adding)
@@ -167,13 +176,32 @@ class FeaturePresenter extends \App\AdminModule\Presenters\BasePresenter
 				$this->redirect("Feature:addValue", $featureId);
 			}
 			else {
+				$this->redrawControl('featureContainer');
 				$this->invalidateControl('list');
-				$this->invlaidateControl('form');
-				$this->setValues(array(), TRUE);
+				$this->invalidateControl('form');
+				$form->setValues(array(), TRUE);
 			}
 		} catch (Nette\Application\BadRequestException $e) {
 			if ($e->getMessage() == "NAME_EXISTS")
 				$form->addError('Hodnota s danným menom už existuje');
+		}
+	}
+
+	public function handleCreateNewFeatureValue($feature_id, $feature_value) {
+		$currentLanguage = parent::getLanguage();
+
+		$values["value"] = $feature_value;
+
+		$this->features->insertFeatureValue($feature_id, $values);
+
+		$this->flashMessage('Hodnota úspešne pridaná');
+		if($this->isAjax())
+		{
+			$form->redrawControl('featureContainer');
+		}
+		else
+		{
+			$this->redirect('this');
 		}
 	}
 

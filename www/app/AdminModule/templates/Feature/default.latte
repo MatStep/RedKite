@@ -30,6 +30,7 @@
 					</tr>
 				</thead>
 				<tbody>	<!-- TABLE BODY -->	
+					{snippet featureContainer}
 					{foreach $features as $feature}
 					<tr>
 						<td>
@@ -42,9 +43,31 @@
 							{$presenter->getFeatureLang($feature->id)->name}
 						</td>
 						<th>
-							{foreach $presenter->getFeatureValues($feature->id) as $featureValue}
-								{$presenter->getFeatureValueLang($featureValue->id)->value} <a n:href="Feature:removeFeatureValue $featureValue->id" style="margin-top: 10px; width: 130px;" class='itemTrash'><i class="fa fa-close"></i></a>, 
-							{/foreach}<a n:href="Feature:addValue $feature->id" class="btn btn-sm btn-default">Pridaj novú</a>
+							{snippet list-$feature->id}
+							<div class="feature-values-list fleft">
+								{foreach $presenter->getFeatureValues($feature->id) as $featureValue}
+									{$presenter->getFeatureValueLang($featureValue->id)->value}<a n:href="Feature:removeFeatureValue $featureValue->id" style="margin-top: 10px; width: 130px;" class='itemTrash'><i class="fa fa-close"></i></a>, 
+								{/foreach}
+								{* <a n:href="Feature:addValue $feature->id" class="btn btn-sm btn-default">Pridaj novú</a> *}
+							</div>
+							{/snippet}
+							{snippet form-$feature->id}
+							<div class="feature-value-form fleft">
+								{form featureValueForm}
+								<div n:if="$form->hasErrors()">
+									<ul class="errors">
+										<li n:foreach="$form->errors as $error"><strong>{$error}</strong></li>
+									</ul>
+								</div>
+								{* Add id of feature to form *}
+								{?$control['featureValueForm']['id']->setValue($feature->id)}
+								{input value}
+								{* <div class="feature-add fright">
+									{input add}
+								</div> *}
+								{/form}
+							</div>
+							{/snippet}
 						</th>
 						<td>
 							<a n:href="Feature:edit $feature->id" style="margin-top: 10px; width: 130px;" class='itemEdit'><i class="fa fa-edit"></i></a>
@@ -52,6 +75,7 @@
 						</td>
 					</tr>
 					{/foreach}
+					{/snippet}
 				</tbody>
 			</table>
 		</div>
@@ -63,5 +87,31 @@
 	$(function() {
 		unsetAndSetActive('#features', '#listFeatures');
 	});
+
+	//JS for on enter select
+
+	$(function() {
+		$.nette.ext('feature-value-enter', {
+			load: function() {
+				$('#frm-featureValueForm-value').keyup(function (e) {
+					if(event.keyCode == 13) {
+						$(this).closest('form').submit();
+						return false;
+					}
+				});
+			}
+		});
+	});
+
+	// JS for ajax
+	// $('.feature-add').click(function() {
+	// 	var feature_id = $('#frm-featureValueForm-value').parent().data('internalid');
+	// 	var feature_value = $('#frm-featureValueForm-value').val();
+	// 	$.post({link createNewFeatureValue!}, { feature_id: feature_id, feature_value: feature_value},
+	// 		function(data) {
+	// 			$.nette.success(data);
+	// 		});
+	// });
+
 </script>
 {/block}

@@ -44,6 +44,12 @@ class BasePresenter extends \App\Presenters\BasePresenter
 	    return $template;
 	}
 
+    public function afterRender()
+    {
+        if ($this->isAjax() && $this->hasFlashSession())
+            $this->invalidateControl('flashes');
+    }
+
     //method returns Language
     public function getLanguage()
     {

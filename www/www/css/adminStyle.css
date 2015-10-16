@@ -41,6 +41,20 @@
 	float: left;
 }
 
+.fright {
+	float: right;
+}
+
+.feature-values-list {
+	line-height: 2;
+}
+
+.feature-value-enter {
+	line-height: 2;
+	border: none;
+	width: 150px;
+}
+
 .nav li .remove {
 	padding: 0px;
 }

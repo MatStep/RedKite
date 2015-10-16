@@ -311,7 +311,9 @@
 		<div class="content-wrapper">
 			<!-- Content Header (Page header) -->
 			<section class="content-header">
-				<div n:foreach="$flashes as $flash" n:class="flash, $flash->type">{$flash->message}</div>
+				{snippet flashes}
+					<div n:foreach="$flashes as $flash" n:class="flash, $flash->type">{$flash->message}</div>
+				{/snippet}
 				<!-- Remove modal window-->
 				<div id="removeWindow" class="modal">
 					<div class="modal-dialog">
@@ -347,13 +349,13 @@
 						</div>
 					</div>
 				</div>
-				{include content}
 			</section>
 
 			<!-- Main content -->
 			<section class="content">
 
 				<!-- Your Page Content Here -->
+				{include #content}
 
 			</section><!-- /.content -->
 		</div><!-- /.content-wrapper -->
