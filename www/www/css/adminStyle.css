@@ -55,6 +55,11 @@
 	width: 150px;
 }
 
+.form-control-80 {
+	width: 80%;
+	float: left;
+}
+
 .nav li .remove {
 	padding: 0px;
 }

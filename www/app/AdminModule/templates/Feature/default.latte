@@ -79,6 +79,20 @@
 				</tbody>
 			</table>
 		</div>
+		<div class="add-feature">
+			{form featureForm}
+			<div n:if="$form->hasErrors()">
+				<ul class="errors">
+					<li n:foreach="$form->errors as $error"><strong>{$error}</strong></li>
+				</ul>
+			</div> 
+			<div class="box-header with-border">
+				<h2 class="box-title">Pridať novú vlastnosť</h2>
+			</div>
+			{input name class=>form-control-80}
+			{input add}
+			{/form}
+		</div>
 	</div>
 </div>
 

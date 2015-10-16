@@ -56,16 +56,16 @@ class FeaturePresenter extends \App\AdminModule\Presenters\BasePresenter
             if($lang->id == parent::getLanguage()->id)
             {
                 $form->addText("name", "Názov" . "(" . $lang->iso_code . ")")
-                     ->getControlPrototype()->class("form-control")
-                     ->setRequired('Názov je povinný');
+                	 ->setRequired('Názov je povinný')
+                     ->getControlPrototype()->class("form-control");
             }
         }
 
 		$form->addSubmit("add", "Pridať vlastnosť")
-			 ->getControlPrototype()->class("btn btn-primary pull-right");
+			 ->getControlPrototype()->class("btn btn-primary");
 
 		$form->addSubmit("edit", "Uložiť zmeny")
-			 ->getControlPrototype()->class("btn btn-primary pull-right");
+			 ->getControlPrototype()->class("btn btn-primary");
 
 		$form->onSuccess[] = array($this, "featureFormSucceeded");
 
