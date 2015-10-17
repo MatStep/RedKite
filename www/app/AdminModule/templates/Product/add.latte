@@ -78,6 +78,14 @@ $(document).ready(function() {
 				</label>
 				{input feature}
 			</div>
+			{snippet featureValue}
+			<div class="form-group">
+				<label for="inputFeatureValue">
+					Hodnoty<a n:href="showSelect! 1">refresh</a>
+				</label>
+				{input featureValue}
+			</div>
+			{/snippet}
 			<div class="form-group">
 				<label for="inputName">
 					Status
@@ -95,5 +103,20 @@ $(document).ready(function() {
 		unsetAndSetActive('#products', '#addProduct');
 		CKEDITOR.replace('frm-productForm-desc');
 	});
+
+	// $("form").delegate("#" + {$control["productForm-feature"]->htmlId}, 'change', function() {
+	// 	$.get("?do=showSelect&featureId=" + $(this).val());
+	// });
+
+	$('#' + {$control[productForm-feature]->htmlId}).on('change', function() {
+		$.nette.ajax({
+			type: 'GET',
+			url: '{link showSelect!}',
+			data: {
+				'value': $(this).val(),
+			}
+		});
+	});
+
 </script>
 {/block}

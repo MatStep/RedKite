@@ -6,6 +6,7 @@
 		</h2>
 	</div>
 	<div class="box-body">
+		{snippet featureBox}
 		<!-- Feature VIEW TABLE BEGIN -->
 		<div class="table">
 			<table class="table table-hover">
@@ -46,7 +47,8 @@
 							{snippet list-$feature->id}
 							<div class="feature-values-list fleft">
 								{foreach $presenter->getFeatureValues($feature->id) as $featureValue}
-									{$presenter->getFeatureValueLang($featureValue->id)->value}<a n:href="Feature:removeFeatureValue $featureValue->id" style="margin-top: 10px; width: 130px;" class='itemTrash'><i class="fa fa-close"></i></a>, 
+									<span class="item-labeled">{$presenter->getFeatureValueLang($featureValue->id)->value}
+									 <a n:href="Feature:removeFeatureValue $featureValue->id" style="margin-top: 10px; width: 130px;" class='itemTrash'><i class="fa fa-close"></i></a></span>, 
 								{/foreach}
 								{* <a n:href="Feature:addValue $feature->id" class="btn btn-sm btn-default">Pridaj novú</a> *}
 							</div>
@@ -80,19 +82,22 @@
 			</table>
 		</div>
 		<div class="add-feature">
-			{form featureForm}
-			<div n:if="$form->hasErrors()">
-				<ul class="errors">
-					<li n:foreach="$form->errors as $error"><strong>{$error}</strong></li>
-				</ul>
-			</div> 
-			<div class="box-header with-border">
-				<h2 class="box-title">Pridať novú vlastnosť</h2>
-			</div>
-			{input name class=>form-control-80}
-			{input add}
-			{/form}
+			{snippet featureAdd}
+				{form featureForm}
+				<div n:if="$form->hasErrors()">
+					<ul class="errors">
+						<li n:foreach="$form->errors as $error"><strong>{$error}</strong></li>
+					</ul>
+				</div> 
+				<div class="box-header with-border">
+					<h2 class="box-title">Pridať novú vlastnosť</h2>
+				</div>
+				{input name class=>form-control-80}
+				{input add}
+				{/form}
+			{/snippet}
 		</div>
+		{/snippet}
 	</div>
 </div>
 

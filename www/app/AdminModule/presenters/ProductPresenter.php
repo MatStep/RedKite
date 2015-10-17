@@ -51,6 +51,11 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
 		$this->template->products = $this->products->getAll();
 	}
 
+	public function renderAdd()
+	{
+		$this->template->form = $this->template->_form = $this["productForm"];
+	}
+
 	public function renderEdit($productId)
 	{
 		$this->template->images = $this->products->getProductImages($productId);
@@ -69,10 +74,13 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
 	{
 		$form = new Form;
 
+		$form->getElementPrototype()->class('ajax');
+
 		$categoriesArray = $this->categoryManager->getAllCategoriesAsArray();
 		$brandsArray = self::createBrandsArrayForSelect();
 		$suppliersArray = self::createSuppliersArrayForSelect();
 		$featuresArray = self::createFeaturesArrayForSelect();
+		$featureValuesArray = self::createFeatureValuesArrayForSelect();
 
 		foreach(parent::getAllLanguages() as $lang)
         {
@@ -120,7 +128,11 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
 
 		$form->addMultiSelect("feature", "Vlastnosti", $featuresArray)
 			 ->setAttribute('data-placeholder', 'Vyberte vlastnosť')
-			 ->getControlPrototype()->class("form-control featureSelect");
+			 ->getControlPrototype()->class("form-control featureSelect ajax");
+
+		$form->addMultiSelect("featureValue", "Hodnoty", $featureValuesArray)
+			 ->setAttribute('data-placeholder', 'Vyberte hodnoty')
+			 ->getControlPrototype()->class("form-control featureValuesSelect ajax");
 
 		$form->addCheckbox("status", "");
 
@@ -172,6 +184,22 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
 		} catch (Nette\Application\BadRequestException $e) {
 			if ($e->getMessage() == "NAME_EXISTS")
 				$form->addError('Názov produktu už existuje');
+		}
+	}
+
+	public function handleShowSelect($featureId)
+	{
+		$featureValues = self::createFeatureValuesArrayForSelect2($featureId);
+		$form = $this->getComponent("productForm");
+		$form["featureValue"]->setItems($featureValues);
+		
+		if($this->isAjax())
+		{
+			$this->redrawControl("featureValue");
+		}
+		else
+		{
+			$this->redirect("this");
 		}
 	}
 
@@ -295,6 +323,38 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
 		}
 
 		return $featuresArray;
+	}
+
+	private function createFeatureValuesArrayForSelect()
+	{
+		$featureValues = $this->featureManager->getAllFeatureValue();
+
+		$featureValuesArray = array();
+
+		$featuresValuesArray[''] = "--";
+
+		foreach ( $featureValues as $featureValue )
+		{
+			$featureValuesArray[$featureValue->id] = $this->products->model->getFirstSecond($featureValue->id, parent::getLanguage()->id, 'feature_value', 'lang')->value;
+		}
+
+		return $featureValuesArray;
+	}
+
+	private function createFeatureValuesArrayForSelect2($featureId)
+	{
+		$featureValues = $this->featureManager->getFeatureValues($featureId);
+
+		$featureValuesArray = array();
+
+		$featuresValuesArray[''] = "--";
+
+		foreach ( $featureValues as $featureValue )
+		{
+			$featureValuesArray[$featureValue->id] = $this->products->model->getFirstSecond($featureValue->id, parent::getLanguage()->id, 'feature_value', 'lang')->value;
+		}
+
+		return $featureValuesArray;
 	}
 
 	public function getLink($productId)

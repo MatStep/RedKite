@@ -51,6 +51,8 @@ class FeaturePresenter extends \App\AdminModule\Presenters\BasePresenter
 	{
 		$form = new Form;
 
+		$form->getElementPrototype()->class('ajax');
+
 		foreach(parent::getAllLanguages() as $lang)
         {
             if($lang->id == parent::getLanguage()->id)
@@ -98,8 +100,15 @@ class FeaturePresenter extends \App\AdminModule\Presenters\BasePresenter
 
 				$this->flashMessage('Vlastnosť bola aktualizovaná');
 			}
-
+			if(!$this->isAjax())
+			{
 				$this->redirect("Feature:");
+			}
+			else {
+				$this->redrawControl('featureBox');
+				$this->redrawControl('featureAdd');
+				$form->setValues(array(), TRUE);
+			}
 		} catch (Nette\Application\BadRequestException $e) {
 			if ($e->getMessage() == "NAME_EXISTS")
 				$form->addError('Vlastnosť s danným menom už existuje');

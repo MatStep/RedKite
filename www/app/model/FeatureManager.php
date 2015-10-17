@@ -69,6 +69,19 @@ class FeatureManager extends Nette\Object
 		return $featureValue;
 	}
 
+	/*Get feature values*/
+	public function getFeatureValues($featureId)
+	{
+		$featureValues =  $this->database->table('feature_value')->where('feature_id', $featureId);
+
+		if ( !$featureValues )
+		{
+			throw new Nette\Application\BadRequestException("DOESNT_EXIST");
+		}
+
+		return $featureValues;
+	}
+
 	public function insert($values)
 	{
 		$data = array();

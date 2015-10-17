@@ -60,6 +60,13 @@
 	float: left;
 }
 
+.item-labeled {
+	border: 1px solid #DDD;
+	padding:5px 8px;
+	background: #E6F2FF;
+	border-radius: 2px;
+}
+
 .nav li .remove {
 	padding: 0px;
 }
