@@ -67,6 +67,7 @@ services:
 
 extensions:
     translation: Kdyby\Translation\DI\TranslationExtension
+    replicator: Kdyby\Replicator\DI\ReplicatorExtension
 
 translation:
     default: sk

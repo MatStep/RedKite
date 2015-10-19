@@ -5,6 +5,7 @@ namespace App\AdminModule\Presenters;
 use Nette,
 	App\Model,
 	Nette\Utils\Image,
+	Nette\Forms\Container,
 	Nette\Application\UI\Form as Form;
 
 /**

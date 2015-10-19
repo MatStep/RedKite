@@ -1151,12 +1151,12 @@
         "version_normalized": "2.7.4.0",
         "source": {
             "type": "git",
-            "url": "https://github.com/symfony/Filesystem.git",
+            "url": "https://github.com/symfony/filesystem.git",
             "reference": "f079e9933799929584200b9a926f72f29e291654"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/symfony/Filesystem/zipball/f079e9933799929584200b9a926f72f29e291654",
+            "url": "https://api.github.com/repos/symfony/filesystem/zipball/f079e9933799929584200b9a926f72f29e291654",
             "reference": "f079e9933799929584200b9a926f72f29e291654",
             "shasum": ""
         },
@@ -1202,12 +1202,12 @@
         "version_normalized": "2.7.4.0",
         "source": {
             "type": "git",
-            "url": "https://github.com/symfony/Config.git",
+            "url": "https://github.com/symfony/config.git",
             "reference": "5ab9ff48b3cb5b40951a607f77fc1cbfd29edba8"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/symfony/Config/zipball/5ab9ff48b3cb5b40951a607f77fc1cbfd29edba8",
+            "url": "https://api.github.com/repos/symfony/config/zipball/5ab9ff48b3cb5b40951a607f77fc1cbfd29edba8",
             "reference": "5ab9ff48b3cb5b40951a607f77fc1cbfd29edba8",
             "shasum": ""
         },
@@ -1405,6 +1405,85 @@
             "kdyby",
             "nette",
             "translation"
+        ]
+    },
+    {
+        "name": "kdyby/forms-replicator",
+        "version": "dev-master",
+        "version_normalized": "9999999-dev",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/Kdyby/Replicator.git",
+            "reference": "a8e37efe715d913800cdc530e126874ff166681a"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/Kdyby/Replicator/zipball/a8e37efe715d913800cdc530e126874ff166681a",
+            "reference": "a8e37efe715d913800cdc530e126874ff166681a",
+            "shasum": ""
+        },
+        "require": {
+            "nette/forms": "~2.2@dev"
+        },
+        "require-dev": {
+            "jakub-onderka/php-parallel-lint": "~0.7",
+            "latte/latte": "~2.2@dev",
+            "nette/application": "~2.2@dev",
+            "nette/bootstrap": "~2.2@dev",
+            "nette/caching": "~2.2@dev",
+            "nette/component-model": "~2.2@dev",
+            "nette/database": "~2.2@dev",
+            "nette/deprecated": "~2.2@dev",
+            "nette/di": "~2.2@dev",
+            "nette/finder": "~2.2@dev",
+            "nette/forms": "~2.2@dev",
+            "nette/http": "~2.2@dev",
+            "nette/mail": "~2.2@dev",
+            "nette/neon": "~2.2@dev",
+            "nette/php-generator": "~2.2@dev",
+            "nette/reflection": "~2.2@dev",
+            "nette/robot-loader": "~2.2@dev",
+            "nette/safe-stream": "~2.2@dev",
+            "nette/security": "~2.2@dev",
+            "nette/tester": "@dev",
+            "nette/tokenizer": "~2.2@dev",
+            "nette/utils": "~2.2@dev",
+            "tracy/tracy": "~2.2@dev"
+        },
+        "time": "2015-05-09 20:49:46",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "1.2-dev"
+            }
+        },
+        "installation-source": "source",
+        "autoload": {
+            "psr-0": {
+                "Kdyby\\Replicator\\": "src/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "BSD-3-Clause",
+            "GPL-2.0",
+            "GPL-3.0"
+        ],
+        "authors": [
+            {
+                "name": "Filip Procházka",
+                "email": "filip@prochazka.su",
+                "homepage": "http://filip-prochazka.com"
+            }
+        ],
+        "description": "Nette forms container replicator aka addDynamic",
+        "homepage": "http://kdyby.org",
+        "keywords": [
+            "Forms",
+            "addDynamic",
+            "kdyby",
+            "nette",
+            "replicator"
         ]
     }
 ]
