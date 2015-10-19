@@ -372,6 +372,12 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
 		}
 	}
 
+
+	public function getNumberofProducts()
+	{
+		return $this->products->getNumberofProducts();
+	}
+
 	public function getProductLang($productId)
     {
         return $this->products->model->getFirstSecond($productId, parent::getLanguage()->id, 'product', 'lang');

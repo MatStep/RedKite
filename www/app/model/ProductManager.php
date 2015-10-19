@@ -74,6 +74,11 @@ class ProductManager extends Nette\Object
 		return $this->database->table('product');
 	}
 
+	public function getNumberOfProducts()
+	{
+		return $this->database->table('product')->count('*');
+	}
+
 	/*Get product*/
 	public function getProduct($productId)
 	{
