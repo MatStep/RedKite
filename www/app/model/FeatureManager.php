@@ -149,10 +149,22 @@ class FeatureManager extends Nette\Object
 
 		$allFeatureLang = $this->model->getAllFirstSecond($id,'feature','lang');
 
+		$allFeatureValues = self::getFeatureValues($id);
+
+		$k = $allFeatureValues->count();
+
 		while($allFeatureLang->count() > 0) {
 			foreach($allFeatureLang as $featureLang)
 			{
 				$featureLang->delete();
+			}
+		}
+
+		while($k > 0) {
+			foreach($allFeatureValues as $featureValue)
+			{
+				self::removeFeatureValue($featureValue->id);
+				$k--;
 			}
 		}
 
