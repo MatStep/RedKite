@@ -49,6 +49,7 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
 	public function renderDefault()
 	{
 		$this->template->products = $this->products->getAll();
+		$this->template->products_num = $this->products->getNumberOfProducts();
 	}
 
 	public function renderAdd()
@@ -370,12 +371,6 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
 			$imgPath = $images->where('order = 1')->fetch()->path;
 			return $imgPath;
 		}
-	}
-
-
-	public function getNumberofProducts()
-	{
-		return $this->products->getNumberofProducts();
 	}
 
 	public function getProductLang($productId)

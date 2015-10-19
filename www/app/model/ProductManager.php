@@ -74,11 +74,6 @@ class ProductManager extends Nette\Object
 		return $this->database->table('product');
 	}
 
-	public function getNumberOfProducts()
-	{
-		return $this->database->table('product')->count('*');
-	}
-
 	/*Get product*/
 	public function getProduct($productId)
 	{
@@ -96,6 +91,11 @@ class ProductManager extends Nette\Object
 	{
 		return $this->database->table('product_image')
 			->where('product_id = ?', $productId)->order('order');
+	}
+
+	public function getNumberOfProducts()
+	{
+		return $this->database->table('product')->count('*');
 	}
 
 	public function insert($values)
