@@ -111,10 +111,10 @@ $(document).ready(function() {
 	$('#' + {$control[productForm-feature]->htmlId}).on('change', function() {
 		$.nette.ajax({
 			type: 'GET',
-			url: '{link showSelect!}',
-			data: {
-				'value': $(this).val(),
-			}
+			url: "?do=showSelect&featureId=" + $(this).val(),
+			// data: {
+			// 	featureId: $(this).val(),
+			// }
 		});
 	});
 
