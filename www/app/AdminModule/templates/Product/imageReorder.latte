@@ -40,19 +40,19 @@
 				</div>
 				<ul id="sortable" class="nav">
 					{foreach $images as $image}
-					<li class="col-sm-3">
+					<li id="image_{$image->id}" class="col-sm-3">
 						<a n:href="Product:imageRemove $productId, $image['id']" class="remove">
 							<i class="fa fa-times fa-time-white-background">
 							</i>
 						</a>
-						<img class="image-list" src="{$basePath}/{$image['path']}" width="100%">								
+						<img class="image-list imageReorder" src="{$basePath}/{$image['path']}" width="100%">								
 					</li>
 					{/foreach}
 				</ul>
-				<div class="box-footer">				
-					<div class="reorderDIV" style="display:none">
-						{input reorderedString}
-					</div>
+				<div class="reorderDIV" style="display:none">
+					{input reorderedString}
+				</div>
+				<div class="box-footer">
 					<div class="row">
 						<div class="col-sm-6">
 							<a class="btn btn-danger btn-flat" title="Cancel" n:href="Product:edit $productId">
