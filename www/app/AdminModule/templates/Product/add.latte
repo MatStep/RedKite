@@ -87,6 +87,18 @@ $(document).ready(function() {
 			</div>
 			{/snippet}
 			<div class="form-group">
+				{$form["featureValues"]->containers->count()}
+			{snippet fv}
+			{foreach $form["featureValues"]->containers as $id => $container}
+			<div class="form-group">
+				{input featureValues-$id-featureVal}
+			</div>
+			{/foreach}
+			{/snippet}
+			<a n:href="addElementClicked!" class="ajax">aaaa</a>
+				{input featureValues-add_fv class=>"btn"}
+			</div>
+			<div class="form-group">
 				<label for="inputName">
 					Status
 				</label>

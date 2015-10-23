@@ -6,6 +6,7 @@ use Nette,
 	App\Model,
 	Nette\Utils\Image,
 	Nette\Forms\Container,
+	Nette\Forms\Controls\SubmitButton,
 	Nette\Application\UI\Form as Form;
 
 /**
@@ -59,6 +60,7 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
 	public function renderAdd()
 	{
 		$this->template->form = $this->template->_form = $this["productForm"];
+		$this->template->products = $this->products->getAll();
 	}
 
 	public function renderEdit($productId)
@@ -139,6 +141,20 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
 			 ->setAttribute('data-placeholder', 'Vyberte hodnoty')
 			 ->getControlPrototype()->class("form-control featureValuesSelect ajax");
 
+		$removeEvent = array($this, "removeElemenetClicked");
+
+		$featureValues = $form->addDynamic("featureValues", function (Container $container) use ($removeEvent) {
+			$container->addText("featureVal", "Hodnota");
+
+			$container->addSubmit("remove_fv", "Vymazať")
+				->setValidationScope(FALSE)
+				->onClick[] = $removeEvent;
+		});
+
+		$featureValues->addSubmit("add_fv", "Pridať novú hodnotu")
+			->setValidationScope(FALSE);
+			// ->onClick[] = array($this, "addElementClicked");
+
 		$form->addCheckbox("status", "");
 
 		$form->addSubmit("add", "Pridať produkt")
@@ -189,6 +205,21 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
 		} catch (Nette\Application\BadRequestException $e) {
 			if ($e->getMessage() == "NAME_EXISTS")
 				$form->addError('Názov produktu už existuje');
+		}
+	}
+
+	public function handleAddElementClicked()
+	{
+		$form = $this->getComponent("productForm");
+		$form["featureValues"]->createOne();
+
+		if($this->isAjax())
+		{
+			$this->redrawControl("fv");
+		}
+		else
+		{
+			$this->redirect("this");
 		}
 	}
 
