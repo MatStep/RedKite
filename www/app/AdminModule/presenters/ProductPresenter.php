@@ -28,6 +28,9 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
 	/** @var \App\Model\FeatureManager @inject */
 	public $featureManager;
 
+	/** @var \App\Model\AppModel @inject */
+	public $model;
+
 	/** @var App\Model\LanguageManager */
     public $languages;
 
@@ -273,10 +276,26 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
 
 		$imageOrderString = self::parseCheckedBoxes($imageOrderString);
 
-		$this->productManager->orderImages($productId, $imageOrderString);
+		$this->model->orderItems('product_image', $productId, $imageOrderString);
 
 		$this->flashMessage('Obrázky boli preusporiadané');
-		$this->redirect('Product:edit', $productId);
+		$this->redirect('Product:imageReorder', $productId);
+	}
+
+	public function parseCheckedBoxes($checkedBoxes) 
+	{
+		$productsIds = '';
+
+		preg_match_all('!\d+!', $checkedBoxes, $productsIds);
+		
+		$ids = array();
+		
+		foreach($productsIds[0] as $id)
+		{
+			array_push($ids, (int)$id);
+		}
+		
+		return $ids;
 	}
 
 	private function createBrandsArrayForSelect()
