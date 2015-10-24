@@ -7,6 +7,7 @@ use Nette,
 	Nette\Utils\Image,
 	Nette\Forms\Container,
 	Nette\Forms\Controls\SubmitButton,
+	Nette\Utils\Strings,
 	Nette\Application\UI\Form as Form;
 
 /**
@@ -76,12 +77,49 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
 		$this->template->images = $productImages;
 	}
 
-	/*Product form*/
-	public function createComponentProductForm()
+	public function createComponentTestForm()
 	{
 		$form = new Form;
 
-		$form->getElementPrototype()->class('ajax');
+		$removeEvent = array($this, 'MyFormRemoveElementClicked');
+
+		$users = $form->addDynamic('users', function (Container $user) use ($removeEvent) {
+        $user->addText('name', 'Name');
+
+            $user->addSubmit('remove', 'Remove')
+            ->setValidationScope(FALSE) # disables validation
+            ->onClick[] = $removeEvent;      
+		}, 1);
+
+		$users->addSubmit('add', 'Add next person')
+        ->setValidationScope(FALSE)
+        ->onClick[] = array($this, 'MyFormAddElementClicked');
+
+        $form->addSubmit("add", "Pridať produkt")
+			 ->getControlPrototype()->class("btn btn-primary pull-right");
+
+        return $form;
+	}
+
+	public function MyFormAddElementClicked(SubmitButton $button)
+	{
+	    $button->parent->createOne();
+	}
+
+	public function MyFormRemoveElementClicked(SubmitButton $button)
+	{
+	    // first parent is container
+	    // second parent is it's replicator
+	    $users = $button->parent->parent;
+	    $users->remove($button->parent, TRUE);
+	}
+
+	/*Product form*/
+	protected function createComponentProductForm()
+	{
+		$form = new Form;
+
+		// $form->getElementPrototype()->class('ajax');
 
 		$categoriesArray = $this->categoryManager->getAllCategoriesAsArray();
 		$brandsArray = self::createBrandsArrayForSelect();
@@ -141,19 +179,19 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
 			 ->setAttribute('data-placeholder', 'Vyberte hodnoty')
 			 ->getControlPrototype()->class("form-control featureValuesSelect ajax");
 
-		$removeEvent = array($this, "removeElemenetClicked");
+		$removeEvent = array($this, "removeElementClicked");
 
 		$featureValues = $form->addDynamic("featureValues", function (Container $container) use ($removeEvent) {
 			$container->addText("featureVal", "Hodnota");
 
-			$container->addSubmit("remove_fv", "Vymazať")
+			$container->addSubmit("remove", "Vymazať")
 				->setValidationScope(FALSE)
 				->onClick[] = $removeEvent;
-		});
+		},1);
 
-		$featureValues->addSubmit("add_fv", "Pridať novú hodnotu")
-			->setValidationScope(FALSE);
-			// ->onClick[] = array($this, "addElementClicked");
+		$featureValues->addSubmit("add", "Pridať novú hodnotu")
+			->setValidationScope(FALSE)
+			->onClick[] = array($this, "addElementClicked");
 
 		$form->addCheckbox("status", "");
 
@@ -161,9 +199,8 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
 			 ->getControlPrototype()->class("btn btn-primary pull-right");
 
 		$form->addSubmit("edit", "Uložiť zmeny")
-			 ->getControlPrototype()->class("btn btn-primary pull-right");
-
-		$form->onSuccess[] = array($this, "productFormSucceeded");
+			 ->getControlPrototype()->class("btn btn-primary pull-right")
+			 ->onSuccess[] = array($this, "productFormSucceeded");
 
 		return $form;
 	}
@@ -208,10 +245,30 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
 		}
 	}
 
-	public function handleAddElementClicked()
+	public function addElementClicked(SubmitButton $button)
 	{
+		$button->parent->createOne();
+		// $this->redrawControl("fv");
+	}
+
+	public function removeElementClicked(SubmitButton $button)
+	{
+	    // first parent is container
+	    // second parent is it's replicator
+	    $featureValues = $button->parent->parent;
+	    $featureValues->remove($button->parent, TRUE);
+	}
+
+	public function handleAddElementClicked()
+	{	
 		$form = $this->getComponent("productForm");
-		$form["featureValues"]->createOne();
+		
+		$n = $form["featureValues"]->containers->count();
+
+		for($i=0;$i<=$n;$i++)
+		{
+			$form["featureValues"]->createOne();
+		}
 
 		if($this->isAjax())
 		{

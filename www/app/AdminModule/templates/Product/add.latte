@@ -89,14 +89,14 @@ $(document).ready(function() {
 			<div class="form-group">
 				{$form["featureValues"]->containers->count()}
 			{snippet fv}
-			{foreach $form["featureValues"]->containers as $id => $container}
+			{foreach $form["featureValues"]->containers as $container}
 			<div class="form-group">
-				{input featureValues-$id-featureVal}
+				{$container['featureVal']->label} {$container["featureVal"]->control}{$container["remove"]->control}
 			</div>
 			{/foreach}
 			{/snippet}
 			<a n:href="addElementClicked!" class="ajax">aaaa</a>
-				{input featureValues-add_fv class=>"btn"}
+				{input featureValues-add class=>"btn"}
 			</div>
 			<div class="form-group">
 				<label for="inputName">
@@ -108,6 +108,15 @@ $(document).ready(function() {
 			{/form}
 		</div>
 	</div>
+	{* {form testForm}
+	{foreach $form['users']->containers as $user}
+
+	    {$user['name']->control} {$user['name']->label}
+
+	{/foreach}
+	{$form['users']['add']->control}
+	{input add}
+	{/form} *}
 
 {* Script for changing active menu *}
 <script>
