@@ -175,21 +175,25 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
 			 ->setAttribute('data-placeholder', 'Vyberte vlastnosť')
 			 ->getControlPrototype()->class("form-control featureSelect ajax");
 
-		$form->addMultiSelect("featureValue", "Hodnoty", $featureValuesArray)
-			 ->setAttribute('data-placeholder', 'Vyberte hodnoty')
-			 ->getControlPrototype()->class("form-control featureValuesSelect ajax");
+		// $form->addMultiSelect("featureValue", "Hodnoty", $featureValuesArray)
+		// 	 ->setAttribute('data-placeholder', 'Vyberte hodnoty')
+		// 	 ->getControlPrototype()->class("form-control featureValuesSelect ajax");
 
 		$removeEvent = array($this, "removeElementClicked");
 
-		$featureValues = $form->addDynamic("featureValues", function (Container $container) use ($removeEvent) {
-			$container->addText("featureVal", "Hodnota");
+		$featureValues = $form->addDynamic("featureValues", function (Container $container) use ($removeEvent, $featureValuesArray) {
+			$container->addMultiSelect("value", "Hodnoty", $featureValuesArray)
+			 ->setAttribute('data-placeholder', 'Vyberte hodnoty')
+			 ->getControlPrototype()->class("form-control featureValuesSelect");
 
 			$container->addSubmit("remove", "Vymazať")
+				->setAttribute("class", "remove_button btn ajax")
 				->setValidationScope(FALSE)
 				->onClick[] = $removeEvent;
-		},1);
+		});
 
 		$featureValues->addSubmit("add", "Pridať novú hodnotu")
+			->setAttribute("class", "add_button btn ajax")
 			->setValidationScope(FALSE)
 			->onClick[] = array($this, "addElementClicked");
 
@@ -248,7 +252,7 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
 	public function addElementClicked(SubmitButton $button)
 	{
 		$button->parent->createOne();
-		// $this->redrawControl("fv");
+		$this->redrawControl("fv");
 	}
 
 	public function removeElementClicked(SubmitButton $button)
@@ -257,18 +261,15 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
 	    // second parent is it's replicator
 	    $featureValues = $button->parent->parent;
 	    $featureValues->remove($button->parent, TRUE);
+	    $this->redrawControl("fv");
 	}
 
-	public function handleAddElementClicked()
+	public function handleAddElementClicked($featureId)
 	{	
 		$form = $this->getComponent("productForm");
-		
-		$n = $form["featureValues"]->containers->count();
-
-		for($i=0;$i<=$n;$i++)
-		{
-			$form["featureValues"]->createOne();
-		}
+		$featureValues = self::createFeatureValuesArrayForSelect2($featureId);
+		$form["featureValues"]->createOne();
+		$form["featureValues-0-value"]->setItems($featureValues);
 
 		if($this->isAjax())
 		{

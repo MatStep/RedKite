@@ -4,6 +4,7 @@ $(document).ready(function() {
 	$(".categorySelect").select2();
 	$(".featureSelect").select2();
 	$(".supplierSelect").select2();
+	$(".featureValuesSelect").select2();
 });
 </script>
 {/block}
@@ -78,25 +79,23 @@ $(document).ready(function() {
 				</label>
 				{input feature}
 			</div>
-			{snippet featureValue}
+			{* {snippet featureValue}
 			<div class="form-group">
 				<label for="inputFeatureValue">
 					Hodnoty
 				</label>
 				{input featureValue}
 			</div>
-			{/snippet}
+			{/snippet} *}
 			<div class="form-group">
-				{$form["featureValues"]->containers->count()}
 			{snippet fv}
-			{foreach $form["featureValues"]->containers as $container}
+			{foreach $form["featureValues"]->containers as $id => $container}
 			<div class="form-group">
-				{$container['featureVal']->label} {$container["featureVal"]->control}{$container["remove"]->control}
+				{label featureValues-$id-value/} {input featureValues-$id-value} {input featureValues-$id-remove}
 			</div>
 			{/foreach}
 			{/snippet}
-			<a n:href="addElementClicked!" class="ajax">aaaa</a>
-				{input featureValues-add class=>"btn"}
+				{input featureValues-add}
 			</div>
 			<div class="form-group">
 				<label for="inputName">
@@ -129,14 +128,30 @@ $(document).ready(function() {
 	// 	$.get("?do=showSelect&featureId=" + $(this).val());
 	// });
 
+	// $('#' + {$control[productForm-feature]->htmlId}).on('change', function() {
+	// 	$.nette.ajax({
+	// 		type: 'GET',
+	// 		url: "?do=showSelect&featureId=" + $(this).val(),
+	// 		// data: {
+	// 		// 	featureId: $(this).val(),
+	// 		// }
+	// 	});
+	// });
+
 	$('#' + {$control[productForm-feature]->htmlId}).on('change', function() {
 		$.nette.ajax({
 			type: 'GET',
-			url: "?do=showSelect&featureId=" + $(this).val(),
+			url: "?do=addElementClicked&featureId=" + $(this).val(),
 			// data: {
 			// 	featureId: $(this).val(),
 			// }
 		});
+	});
+
+	$(".add_button").on("click", function() {
+		setTimeout(function() {
+			$(".featureValuesSelect").select2();
+		},100);
 	});
 
 </script>
