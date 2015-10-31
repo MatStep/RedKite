@@ -66,6 +66,7 @@ class BasePresenter extends \App\Presenters\BasePresenter
 	public function startup()
     {
     	parent::startup();
+
     	$user = $this->getUser();
     	if(!$user->isLoggedIn()) {
     		$this->flashMessage('Pre vstup do administrácie je potrebné sa prihlásiť');
@@ -79,6 +80,7 @@ class BasePresenter extends \App\Presenters\BasePresenter
 
         $this->template->languages = $this->languages->getAll();
     	$this->template->lang = $this->languages->getLanguage();
+
     	// $this->template->lang_czech = $this->languages->changeLanguage('cs');
     	// $this->template->lang_slovak = $this->languages->changeLanguage('sk');
     }

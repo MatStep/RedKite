@@ -1,1 +1,7 @@
-../nette/tester/src/tester
+#!/usr/bin/env sh
+SRC_DIR="`pwd`"
+cd "`dirname "$0"`"
+cd "../nette/tester/src"
+BIN_TARGET="`pwd`/tester"
+cd "$SRC_DIR"
+"$BIN_TARGET" "$@"

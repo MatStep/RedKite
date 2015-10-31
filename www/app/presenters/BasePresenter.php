@@ -25,7 +25,8 @@ abstract class BasePresenter extends Nette\Application\UI\Presenter
         $template->presenterName = $this->name;
 
         $this->translator->createTemplateHelpers()->register($template->getLatte());
-
+        
 	    return $template;
 	}
+
 }

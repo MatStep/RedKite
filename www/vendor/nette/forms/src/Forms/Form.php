@@ -1,8 +1,8 @@
 <?php
 
 /**
- * This file is part of the Nette Framework (http://nette.org)
- * Copyright (c) 2004 David Grudl (http://davidgrudl.com)
+ * This file is part of the Nette Framework (https://nette.org)
+ * Copyright (c) 2004 David Grudl (https://davidgrudl.com)
  */
 
 namespace Nette\Forms;
@@ -13,17 +13,8 @@ use Nette;
 /**
  * Creates, validates and renders HTML forms.
  *
- * @property   mixed $action
- * @property   string $method
- * @property-read array $groups
- * @property   Nette\Localization\ITranslator|NULL $translator
- * @property-read bool $anchored
- * @property-read ISubmitterControl|FALSE $submitted
- * @property-read bool $success
- * @property-read array $httpData
  * @property-read array $errors
  * @property-read Nette\Utils\Html $elementPrototype
- * @property   IFormRenderer $renderer
  */
 class Form extends Container implements Nette\Utils\IHtmlString
 {
@@ -409,7 +400,11 @@ class Form extends Container implements Nette\Utils\IHtmlString
 
 		if (!$this->isValid()) {
 			$this->onError($this);
-		} elseif ($this->onSuccess) {
+
+		} elseif ($this->onSuccess !== NULL) {
+			if (!is_array($this->onSuccess) && !$this->onSuccess instanceof \Traversable) {
+				throw new Nette\UnexpectedValueException('Property Form::$onSuccess must be array or Traversable, ' . gettype($this->onSuccess) . ' given.');
+			}
 			foreach ($this->onSuccess as $handler) {
 				$params = Nette\Utils\Callback::toReflection($handler)->getParameters();
 				$values = isset($params[1]) ? $this->getValues($params[1]->isArray()) : NULL;

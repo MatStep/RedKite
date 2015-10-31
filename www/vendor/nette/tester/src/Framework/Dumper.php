@@ -2,7 +2,7 @@
 
 /**
  * This file is part of the Nette Tester.
- * Copyright (c) 2009 David Grudl (http://davidgrudl.com)
+ * Copyright (c) 2009 David Grudl (https://davidgrudl.com)
  */
 
 namespace Tester;
@@ -181,7 +181,14 @@ class Dumper
 			}
 			return 'array(' . $out . ')';
 
+		} elseif ($var instanceof \Closure) {
+			$rc = new \ReflectionFunction($var);
+			return "/* Closure defined in file {$rc->getFileName()} on line {$rc->getStartLine()} */";
+
 		} elseif (is_object($var)) {
+			if (PHP_VERSION_ID >= 70000 && ($rc = new \ReflectionObject($var)) && $rc->isAnonymous()) {
+				return "/* Anonymous class defined in file {$rc->getFileName()} on line {$rc->getStartLine()} */";
+			}
 			$arr = (array) $var;
 			$space = str_repeat("\t", $level);
 			$class = get_class($var);
@@ -326,7 +333,7 @@ class Dumper
 			$path = dirname($testFile) . DIRECTORY_SEPARATOR . $path;
 		}
 		@mkdir(dirname($path)); // @ - directory may already exist
-		file_put_contents($path, is_string($content) ? $content : self::toPhp($content));
+		file_put_contents($path, is_string($content) ? $content : (self::toPhp($content) . "\n"));
 		return $path;
 	}
 

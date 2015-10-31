@@ -2,7 +2,7 @@
 
 /**
  * This file is part of the Nette Tester.
- * Copyright (c) 2009 David Grudl (http://davidgrudl.com)
+ * Copyright (c) 2009 David Grudl (https://davidgrudl.com)
  */
 
 namespace Tester\Runner;
@@ -87,7 +87,7 @@ class CliTester
 		echo <<<'XX'
  _____ ___  ___ _____ ___  ___
 |_   _/ __)( __/_   _/ __)| _ )
-  |_| \___ /___) |_| \___ |_|_\  v1.5.0
+  |_| \___ /___) |_| \___ |_|_\  v1.6.1
 
 
 XX;
@@ -147,6 +147,10 @@ XX
 			$args .= ' -c ' . Helpers::escapeArg($this->options['-c']);
 		} elseif (!$this->options['--info']) {
 			echo "Note: No php.ini is used.\n";
+		}
+
+		if (in_array($this->options['-o'], array('tap', 'junit'))) {
+			$args .= ' -d html_errors=off';
 		}
 
 		foreach ($this->options['-d'] as $item) {

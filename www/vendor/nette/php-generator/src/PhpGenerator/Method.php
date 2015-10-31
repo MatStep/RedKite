@@ -1,8 +1,8 @@
 <?php
 
 /**
- * This file is part of the Nette Framework (http://nette.org)
- * Copyright (c) 2004 David Grudl (http://davidgrudl.com)
+ * This file is part of the Nette Framework (https://nette.org)
+ * Copyright (c) 2004 David Grudl (https://davidgrudl.com)
  */
 
 namespace Nette\PhpGenerator;
@@ -51,6 +51,9 @@ class Method extends Nette\Object
 	/** @var PhpNamespace|NULL */
 	private $namespace;
 
+	/** @var string|NULL */
+	private $returnType;
+
 
 	/**
 	 * @return self
@@ -65,8 +68,7 @@ class Method extends Nette\Object
 			$from = new \ReflectionFunction($from);
 		}
 
-		$method = new static;
-		$method->name = $from->isClosure() ? NULL : $from->getName();
+		$method = new static($from->isClosure() ? NULL : $from->getName());
 		foreach ($from->getParameters() as $param) {
 			$method->parameters[$param->getName()] = Parameter::from($param);
 		}
@@ -80,7 +82,19 @@ class Method extends Nette\Object
 		$method->returnReference = $from->returnsReference();
 		$method->variadic = PHP_VERSION_ID >= 50600 && $from->isVariadic();
 		$method->documents = $from->getDocComment() ? array(preg_replace('#^\s*\* ?#m', '', trim($from->getDocComment(), "/* \r\n\t"))) : array();
+		if (PHP_VERSION_ID >= 70000 && $from->hasReturnType()) {
+			$method->returnType = (string) $from->getReturnType();
+		}
 		return $method;
+	}
+
+
+	/**
+	 * @param  string|NULL
+	 */
+	public function __construct($name = NULL)
+	{
+		$this->setName($name);
 	}
 
 
@@ -89,15 +103,12 @@ class Method extends Nette\Object
 	 */
 	public function __toString()
 	{
-		static $builtinTypes = array('array', 'self', 'parent', 'callable', NULL);
+		$namespace = $this->namespace ?: new PhpNamespace;
 		$parameters = array();
 		foreach ($this->parameters as $param) {
 			$variadic = $this->variadic && $param === end($this->parameters);
-			$hint = !$this->namespace || in_array($param->getTypeHint(), $builtinTypes, TRUE)
-				? $param->getTypeHint()
-				: $this->namespace->unresolveName($param->getTypeHint());
 
-			$parameters[] = ($hint ? $hint . ' ' : '')
+			$parameters[] = ($param->getTypeHint() ? $namespace->unresolveName($param->getTypeHint()) . ' ' : '')
 				. ($param->isReference() ? '&' : '')
 				. ($variadic ? '...' : '')
 				. '$' . $param->getName()
@@ -118,6 +129,7 @@ class Method extends Nette\Object
 			. ' ' . $this->name
 			. '(' . implode(', ', $parameters) . ')'
 			. ($this->uses ? ' use (' . implode(', ', $uses) . ')' : '')
+			. ($this->returnType ? ': ' . $namespace->unresolveName($this->returnType) : '')
 			. ($this->abstract || $this->body === FALSE ? ';'
 				: ($this->name ? "\n" : ' ') . "{\n" . Nette\Utils\Strings::indent(ltrim(rtrim($this->body) . "\n"), 1) . '}');
 	}
@@ -149,12 +161,13 @@ class Method extends Nette\Object
 	 */
 	public function setParameters(array $val)
 	{
+		$this->parameters = array();
 		foreach ($val as $v) {
 			if (!$v instanceof Parameter) {
 				throw new Nette\InvalidArgumentException('Argument must be Nette\PhpGenerator\Parameter[].');
 			}
+			$this->parameters[$v->getName()] = $v;
 		}
-		$this->parameters = $val;
 		return $this;
 	}
 
@@ -174,11 +187,11 @@ class Method extends Nette\Object
 	 */
 	public function addParameter($name, $defaultValue = NULL)
 	{
-		$param = new Parameter;
+		$param = new Parameter($name);
 		if (func_num_args() > 1) {
 			$param->setOptional(TRUE)->setDefaultValue($defaultValue);
 		}
-		return $this->parameters[$name] = $param->setName($name);
+		return $this->parameters[$name] = $param;
 	}
 
 
@@ -206,8 +219,7 @@ class Method extends Nette\Object
 	 */
 	public function addUse($name)
 	{
-		$param = new Parameter;
-		return $this->uses[] = $param->setName($name);
+		return $this->uses[] = new Parameter($name);
 	}
 
 
@@ -275,7 +287,7 @@ class Method extends Nette\Object
 
 
 	/**
-	 * @return string
+	 * @return string|NULL
 	 */
 	public function getVisibility()
 	{
@@ -401,6 +413,26 @@ class Method extends Nette\Object
 	{
 		$this->namespace = $val;
 		return $this;
+	}
+
+
+	/**
+	 * @param  string|NULL
+	 * @return self
+	 */
+	public function setReturnType($val)
+	{
+		$this->returnType = $val ? (string) $val : NULL;
+		return $this;
+	}
+
+
+	/**
+	 * @return string|NULL
+	 */
+	public function getReturnType()
+	{
+		return $this->returnType;
 	}
 
 }

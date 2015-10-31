@@ -1,8 +1,8 @@
 <?php
 
 /**
- * This file is part of the Latte (http://latte.nette.org)
- * Copyright (c) 2008 David Grudl (http://davidgrudl.com)
+ * This file is part of the Latte (https://latte.nette.org)
+ * Copyright (c) 2008 David Grudl (https://davidgrudl.com)
  */
 
 namespace Latte;
@@ -108,6 +108,25 @@ class Helpers
 			}
 		}
 		return $res . $php;
+	}
+
+
+	/**
+	 * Finds the best suggestion.
+	 * @return string|NULL
+	 */
+	public static function getSuggestion(array $items, $value)
+	{
+		$best = NULL;
+		$min = (int) (strlen($value) / 4) + 2;
+		foreach ($items as $item) {
+			$item = is_object($item) ? $item->getName() : $item;
+			if (($len = levenshtein($item, $value)) > 0 && $len < $min) {
+				$min = $len;
+				$best = $item;
+			}
+		}
+		return $best;
 	}
 
 }

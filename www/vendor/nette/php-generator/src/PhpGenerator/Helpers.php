@@ -1,8 +1,8 @@
 <?php
 
 /**
- * This file is part of the Nette Framework (http://nette.org)
- * Copyright (c) 2004 David Grudl (http://davidgrudl.com)
+ * This file is part of the Nette Framework (https://nette.org)
+ * Copyright (c) 2004 David Grudl (https://davidgrudl.com)
  */
 
 namespace Nette\PhpGenerator;
@@ -93,7 +93,13 @@ class Helpers
 			$var = serialize($var);
 			return 'unserialize(' . self::_dump($var, $level) . ')';
 
+		} elseif ($var instanceof \Closure) {
+			throw new Nette\InvalidArgumentException('Cannot dump closure.');
+
 		} elseif (is_object($var)) {
+			if (PHP_VERSION_ID >= 70000 && ($rc = new \ReflectionObject($var)) && $rc->isAnonymous()) {
+				throw new Nette\InvalidArgumentException('Cannot dump anonymous class.');
+			}
 			$arr = (array) $var;
 			$space = str_repeat("\t", $level);
 			$class = get_class($var);

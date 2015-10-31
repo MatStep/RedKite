@@ -21,7 +21,7 @@ class Helpers
 	 * Expands %placeholders%.
 	 * @param  mixed
 	 * @param  array
-	 * @param  bool
+	 * @param  bool|array
 	 * @return mixed
 	 * @throws Nette\InvalidArgumentException
 	 */
@@ -98,7 +98,7 @@ class Helpers
 				unset($arguments[$parameter->getName()]);
 				$optCount = 0;
 
-			} elseif ($class = PhpReflection::getPropertyType($parameter)) { // has object type hint
+			} elseif (($class = PhpReflection::getParameterType($parameter)) && !PhpReflection::isBuiltinType($class)) {
 				$res[$num] = $container->getByType($class, FALSE);
 				if ($res[$num] === NULL) {
 					if ($parameter->allowsNull()) {
@@ -122,7 +122,7 @@ class Helpers
 				$optCount++;
 
 			} else {
-				throw new ServiceCreationException("Parameter \${$parameter->getName()} in $methodName has no type hint, so its value must be specified.");
+				throw new ServiceCreationException("Parameter \${$parameter->getName()} in $methodName has no class type hint or default value, so its value must be specified.");
 			}
 		}
 

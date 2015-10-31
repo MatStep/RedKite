@@ -1,8 +1,8 @@
 <?php
 
 /**
- * This file is part of the Tracy (http://tracy.nette.org)
- * Copyright (c) 2004 David Grudl (http://davidgrudl.com)
+ * This file is part of the Tracy (https://tracy.nette.org)
+ * Copyright (c) 2004 David Grudl (https://davidgrudl.com)
  */
 
 namespace Tracy;
@@ -16,7 +16,7 @@ use ErrorException;
  */
 class Debugger
 {
-	const VERSION = '2.3.4';
+	const VERSION = '2.3.6';
 
 	/** server modes {@link Debugger::enable()} */
 	const
@@ -230,6 +230,8 @@ class Debugger
 				header('Content-Type: text/html; charset=UTF-8');
 			}
 		}
+
+		Helpers::improveException($exception);
 
 		if (self::$productionMode) {
 			try {
@@ -489,7 +491,7 @@ class Debugger
 			$panel->data[] = array('title' => $title, 'dump' => Dumper::toHtml($var, (array) $options + array(
 				Dumper::DEPTH => self::$maxDepth,
 				Dumper::TRUNCATE => self::$maxLen,
-				Dumper::LOCATION => self::$showLocation,
+				Dumper::LOCATION => self::$showLocation ?: Dumper::LOCATION_CLASS | Dumper::LOCATION_SOURCE,
 			)));
 		}
 		return $var;

@@ -1,8 +1,8 @@
 <?php
 
 /**
- * This file is part of the Nette Framework (http://nette.org)
- * Copyright (c) 2004 David Grudl (http://davidgrudl.com)
+ * This file is part of the Nette Framework (https://nette.org)
+ * Copyright (c) 2004 David Grudl (https://davidgrudl.com)
  */
 
 namespace Nette\Bridges\ApplicationLatte;
@@ -98,6 +98,9 @@ if (empty($_l->extends) && !empty($_control->snippetMode)) {
 	 */
 	public function macroIfCurrent(MacroNode $node, PhpWriter $writer)
 	{
+		if ($node->modifiers) {
+			trigger_error('Modifiers are not allowed here.', E_USER_WARNING);
+		}
 		return $writer->write($node->args
 			? 'if ($_presenter->isLinkCurrent(%node.word, %node.array?)) {'
 			: 'if ($_presenter->getLastCreatedRequestFlag("current")) {'

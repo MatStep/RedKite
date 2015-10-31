@@ -1,8 +1,8 @@
 <?php
 
 /**
- * This file is part of the Nette Framework (http://nette.org)
- * Copyright (c) 2004 David Grudl (http://davidgrudl.com)
+ * This file is part of the Nette Framework (https://nette.org)
+ * Copyright (c) 2004 David Grudl (https://davidgrudl.com)
  */
 
 namespace Nette\Forms\Controls;
@@ -19,18 +19,13 @@ use Nette\Forms\Form;
  * @property-read Form $form
  * @property-read string $htmlName
  * @property   string $htmlId
- * @property-read array $options
- * @property   Nette\Localization\ITranslator|NULL $translator
  * @property   mixed $value
- * @property-read bool $filled
- * @property-write $defaultValue
  * @property   bool $disabled
  * @property   bool $omitted
  * @property-read Html $control
  * @property-read Html $label
  * @property-read Html $controlPrototype
  * @property-read Html $labelPrototype
- * @property-read Nette\Forms\Rules $rules
  * @property   bool $required
  * @property-read array $errors
  */
@@ -139,7 +134,7 @@ abstract class BaseControl extends Nette\ComponentModel\Component implements ICo
 	}
 
 
-	/********************* interface IFormControl ****************d*g**/
+	/********************* interface IControl ****************d*g**/
 
 
 	/**

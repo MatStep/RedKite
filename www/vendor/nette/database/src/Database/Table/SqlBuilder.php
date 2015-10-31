@@ -1,8 +1,8 @@
 <?php
 
 /**
- * This file is part of the Nette Framework (http://nette.org)
- * Copyright (c) 2004 David Grudl (http://davidgrudl.com)
+ * This file is part of the Nette Framework (https://nette.org)
+ * Copyright (c) 2004 David Grudl (https://davidgrudl.com)
  */
 
 namespace Nette\Database\Table;
@@ -80,7 +80,6 @@ class SqlBuilder extends Nette\Object
 		$this->driver = $context->getConnection()->getSupplementalDriver();
 		$this->conventions = $context->getConventions();
 		$this->structure = $context->getStructure();
-
 		$this->delimitedTable = implode('.', array_map(array($this->driver, 'delimite'), explode('.', $tableName)));
 	}
 
@@ -151,14 +150,13 @@ class SqlBuilder extends Nette\Object
 		} else {
 			$prefix = $joins ? "{$this->delimitedTable}." : '';
 			$querySelect = $this->buildSelect(array($prefix . '*'));
-
 		}
 
 		$queryJoins = $this->buildQueryJoins($joins);
 		$query = "{$querySelect} FROM {$this->delimitedTable}{$queryJoins}{$queryCondition}{$queryEnd}";
 
-		if ($this->limit !== NULL || $this->offset) {
-			$this->driver->applyLimit($query, $this->limit, $this->offset);
+		if ($this->limit !== NULL || $this->offset > 0) {
+			$this->driver->applyLimit($query, $this->limit, max(0, $this->offset));
 		}
 
 		return $this->tryDelimite($query);
@@ -507,10 +505,9 @@ class SqlBuilder extends Nette\Object
 			list($joinTable, $joinAlias, $table, $tableColumn, $joinColumn) = $join;
 
 			$return .=
-				" LEFT JOIN {$joinTable}" . ($joinTable !== $joinAlias ? " AS {$joinAlias}" : '') .
+				" LEFT JOIN {$joinTable}" . ($joinTable !== $joinAlias ? " {$joinAlias}" : '') .
 				" ON {$table}.{$tableColumn} = {$joinAlias}.{$joinColumn}";
 		}
-
 		return $return;
 	}
 

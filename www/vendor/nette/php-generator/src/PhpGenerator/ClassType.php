@@ -1,8 +1,8 @@
 <?php
 
 /**
- * This file is part of the Nette Framework (http://nette.org)
- * Copyright (c) 2004 David Grudl (http://davidgrudl.com)
+ * This file is part of the Nette Framework (https://nette.org)
+ * Copyright (c) 2004 David Grudl (https://davidgrudl.com)
  */
 
 namespace Nette\PhpGenerator;
@@ -65,41 +65,36 @@ class ClassType extends Nette\Object
 	 */
 	public static function from($from)
 	{
-		$from = $from instanceof \ReflectionClass ? $from : new \ReflectionClass($from);
-		$class = new static($from->getShortName());
+		$from = new \ReflectionClass($from instanceof \ReflectionClass ? $from->getName() : $from);
+		if (PHP_VERSION_ID >= 70000 && $from->isAnonymous()) {
+			$class = new static('anonymous');
+		} else {
+			$class = new static($from->getShortName(), new PhpNamespace($from->getNamespaceName()));
+		}
 		$class->type = $from->isInterface() ? 'interface' : (PHP_VERSION_ID >= 50400 && $from->isTrait() ? 'trait' : 'class');
 		$class->final = $from->isFinal() && $class->type === 'class';
 		$class->abstract = $from->isAbstract() && $class->type === 'class';
 		$class->implements = $from->getInterfaceNames();
 		$class->documents = $from->getDocComment() ? array(preg_replace('#^\s*\* ?#m', '', trim($from->getDocComment(), "/* \r\n\t"))) : array();
-		$namespace = $from->getNamespaceName();
 		if ($from->getParentClass()) {
 			$class->extends = $from->getParentClass()->getName();
-			if ($namespace) {
-				$class->extends = Strings::startsWith($class->extends, "$namespace\\") ? substr($class->extends, strlen($namespace) + 1) : '\\' . $class->extends;
-			}
 			$class->implements = array_diff($class->implements, $from->getParentClass()->getInterfaceNames());
 		}
-		if ($namespace) {
-			foreach ($class->implements as & $interface) {
-				$interface = Strings::startsWith($interface, "$namespace\\") ? substr($interface, strlen($namespace) + 1) : '\\' . $interface;
-			}
-		}
 		foreach ($from->getProperties() as $prop) {
-			if ($prop->getDeclaringClass() == $from) { // intentionally ==
+			if ($prop->getDeclaringClass()->getName() === $from->getName()) {
 				$class->properties[$prop->getName()] = Property::from($prop);
 			}
 		}
 		foreach ($from->getMethods() as $method) {
-			if ($method->getDeclaringClass() == $from) { // intentionally ==
-				$class->methods[$method->getName()] = Method::from($method);
+			if ($method->getDeclaringClass()->getName() === $from->getName()) {
+				$class->methods[$method->getName()] = Method::from($method)->setNamespace($class->namespace);
 			}
 		}
 		return $class;
 	}
 
 
-	public function __construct($name = NULL, PhpNamespace $namespace = NULL)
+	public function __construct($name = '', PhpNamespace $namespace = NULL)
 	{
 		$this->setName($name);
 		$this->namespace = $namespace;
@@ -125,18 +120,10 @@ class ClassType extends Nette\Object
 				. ";\n";
 		}
 
-		$extends = (array) $this->extends;
-		$implements = $this->implements;
-		$traits = $this->traits;
-		if ($this->namespace) {
-			$extends = array_map(array($this->namespace, 'unresolveName'), $extends);
-			$implements = array_map(array($this->namespace, 'unresolveName'), $implements);
-			$traits = array_map(array($this->namespace, 'unresolveName'), $traits);
-			}
-
-		foreach ($this->methods as $method) {
-			$method->setNamespace($this->namespace);
-		}
+		$namespace = $this->namespace ?: new PhpNamespace;
+		$mapper = function (array $arr) use ($namespace) {
+			return array_map(array($namespace, 'unresolveName'), $arr);
+		};
 
 		return Strings::normalize(
 			($this->documents ? str_replace("\n", "\n * ", "/**\n" . implode("\n", $this->documents)) . "\n */\n" : '')
@@ -144,11 +131,11 @@ class ClassType extends Nette\Object
 			. ($this->final ? 'final ' : '')
 			. $this->type . ' '
 			. $this->name . ' '
-			. ($extends ? 'extends ' . implode(', ', $extends) . ' ' : '')
-			. ($implements ? 'implements ' . implode(', ', $implements) . ' ' : '')
+			. ($this->extends ? 'extends ' . implode(', ', $mapper((array) $this->extends)) . ' ' : '')
+			. ($this->implements ? 'implements ' . implode(', ', $mapper($this->implements)) . ' ' : '')
 			. "\n{\n"
 			. Strings::indent(
-				($traits ? 'use ' . implode(', ', $traits) . ";\n\n" : '')
+				($this->traits ? 'use ' . implode(";\nuse ", $mapper($this->traits)) . ";\n\n" : '')
 				. ($this->consts ? implode('', $consts) . "\n" : '')
 				. ($this->properties ? implode("\n", $properties) . "\n" : '')
 				. ($this->methods ? "\n" . implode("\n\n\n", $this->methods) . "\n\n" : ''), 1)
@@ -158,7 +145,7 @@ class ClassType extends Nette\Object
 
 
 	/**
-	 * @return PhpNamespace
+	 * @return PhpNamespace|NULL
 	 */
 	public function getNamespace()
 	{
@@ -414,12 +401,13 @@ class ClassType extends Nette\Object
 	 */
 	public function setProperties(array $props)
 	{
+		$this->properties = array();
 		foreach ($props as $v) {
 			if (!$v instanceof Property) {
 				throw new Nette\InvalidArgumentException('Argument must be Nette\PhpGenerator\Property[].');
 			}
+			$this->properties[$v->getName()] = $v;
 		}
-		$this->properties = $props;
 		return $this;
 	}
 
@@ -452,8 +440,8 @@ class ClassType extends Nette\Object
 	 */
 	public function addProperty($name, $value = NULL)
 	{
-		$property = new Property;
-		return $this->properties[$name] = $property->setName($name)->setValue($value);
+		$property = new Property($name);
+		return $this->properties[$name] = $property->setValue($value);
 	}
 
 
@@ -463,12 +451,13 @@ class ClassType extends Nette\Object
 	 */
 	public function setMethods(array $methods)
 	{
+		$this->methods = array();
 		foreach ($methods as $v) {
 			if (!$v instanceof Method) {
 				throw new Nette\InvalidArgumentException('Argument must be Nette\PhpGenerator\Method[].');
 			}
+			$this->methods[$v->getName()] = $v->setNamespace($this->namespace);
 		}
-		$this->methods = $methods;
 		return $this;
 	}
 
@@ -500,13 +489,13 @@ class ClassType extends Nette\Object
 	 */
 	public function addMethod($name)
 	{
-		$method = new Method;
+		$method = new Method($name);
 		if ($this->type === 'interface') {
 			$method->setVisibility(NULL)->setBody(FALSE);
 		} else {
 			$method->setVisibility('public');
 		}
-		return $this->methods[$name] = $method->setName($name);
+		return $this->methods[$name] = $method->setNamespace($this->namespace);
 	}
 
 }
