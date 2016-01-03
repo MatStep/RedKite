@@ -187,7 +187,7 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
         	$presenter->invalidateControl('fv');
     	};
 
-		$featureValues = $form->addDynamic("featureValues", function (Container $container) use ($invalidateCallback, $removeEvent, $featureValuesArray) {
+		$featureValues = $form->addDynamic("featureValues", function (Container $container) use ($invalidateCallback, $featureValuesArray) {
 			$container->addMultiSelect("value", "Hodnoty", $featureValuesArray)
 			 ->setAttribute('data-placeholder', 'Vyberte hodnoty')
 			 ->getControlPrototype()->class("form-control featureValuesSelect");
