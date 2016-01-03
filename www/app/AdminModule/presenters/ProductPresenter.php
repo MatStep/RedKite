@@ -181,7 +181,13 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
 
 		$removeEvent = array($this, "removeElementClicked");
 
-		$featureValues = $form->addDynamic("featureValues", function (Container $container) use ($removeEvent, $featureValuesArray) {
+		$presenter = $this;
+		$invalidateCallback = function () use ($presenter) {
+        	/** @var \Nette\Application\UI\Presenter $presenter */
+        	$presenter->invalidateControl('fv');
+    	};
+
+		$featureValues = $form->addDynamic("featureValues", function (Container $container) use ($invalidateCallback, $removeEvent, $featureValuesArray) {
 			$container->addMultiSelect("value", "Hodnoty", $featureValuesArray)
 			 ->setAttribute('data-placeholder', 'Vyberte hodnoty')
 			 ->getControlPrototype()->class("form-control featureValuesSelect");
@@ -189,13 +195,15 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
 			$container->addSubmit("remove", "Vymazať")
 				->setAttribute("class", "remove_button btn ajax")
 				->setValidationScope(FALSE)
-				->onClick[] = $removeEvent;
+				->addRemoveOnClick($invalidateCallback);
+				// ->onClick[] = $removeEvent;
 		});
 
 		$featureValues->addSubmit("add", "Pridať novú hodnotu")
 			->setAttribute("class", "add_button btn ajax")
 			->setValidationScope(FALSE)
-			->onClick[] = array($this, "addElementClicked");
+			->addCreateOnClick($invalidateCallback);
+			// ->onClick[] = array($this, "addElementClicked");
 
 		$form->addCheckbox("status", "");
 
@@ -203,8 +211,9 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
 			 ->getControlPrototype()->class("btn btn-primary pull-right");
 
 		$form->addSubmit("edit", "Uložiť zmeny")
-			 ->getControlPrototype()->class("btn btn-primary pull-right")
-			 ->onSuccess[] = array($this, "productFormSucceeded");
+			 ->getControlPrototype()->class("btn btn-primary pull-right");
+		
+		$form->onSuccess[] = array($this, "productFormSucceeded");
 
 		return $form;
 	}
