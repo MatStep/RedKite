@@ -54,6 +54,7 @@ return array(
     'Nette\\Application\\LinkGenerator' => $vendorDir . '/nette/application/src/Application/LinkGenerator.php',
     'Nette\\Application\\PresenterFactory' => $vendorDir . '/nette/application/src/Application/PresenterFactory.php',
     'Nette\\Application\\Request' => $vendorDir . '/nette/application/src/Application/Request.php',
+    'Nette\\Application\\Responses\\CallbackResponse' => $vendorDir . '/nette/application/src/Application/Responses/CallbackResponse.php',
     'Nette\\Application\\Responses\\FileResponse' => $vendorDir . '/nette/application/src/Application/Responses/FileResponse.php',
     'Nette\\Application\\Responses\\ForwardResponse' => $vendorDir . '/nette/application/src/Application/Responses/ForwardResponse.php',
     'Nette\\Application\\Responses\\JsonResponse' => $vendorDir . '/nette/application/src/Application/Responses/JsonResponse.php',

@@ -24,6 +24,7 @@ class AppModel extends Nette\Object
 	}
 
 	/** 
+	 * first_second means many to many table, where first is table A and second is table B
 	 * This method returns all rows in first_second where FK equals to first_id
 	 * @param int $firstId   	  first id
 	 * @param string $first		  name of first item column
@@ -49,6 +50,7 @@ class AppModel extends Nette\Object
 
 
 	/** 
+	 * first_second means many to many table, where first is table A and second is table B
 	 * This method returns one first_second where FK equals to first_id and second_id
 	 * @param int $firstId   	  first id
 	 * @param int $secondId   	  second id
@@ -80,7 +82,7 @@ class AppModel extends Nette\Object
 	 * This method orders items
 	 * @param string $table		name of table where is item
 	 * @param int $itemId		id of item
-	 * @param int $itemOrder	number of order
+	 * @param int $itemOrder	number of order, array of items
 	 * @return void
 	 */
 	public function orderItems($table, $itemId, $itemOrder)
