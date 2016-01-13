@@ -410,7 +410,7 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
 			 ->setAttribute('data-placeholder', 'Vyberte vlastnosť')
 			 ->getControlPrototype()->class("form-control featureSelect form-control-80 ajax");
 
-		$form->addSubmit("add", "Pridať vlastnosti")
+		$form->addSubmit("add", "Upraviť vlastnosti")
 			 ->getControlPrototype()->class("btn btn-primary");
 
 		$form->onSuccess[] = array($this, "featureFormSucceeded");
@@ -421,20 +421,20 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
 	public function featureFormSucceeded($form, $values)
 	{
 		$productId = $this->request->getParameters()['productId'];
-		
+
 		//ADD FEATURE
 		$this->products->addProductFeature($productId, $values);
 
 		$this->flashMessage('Vlastnosť úspešne pridaná');
 
-		$this->redirect("Product:");
+		$this->redirect("Product:edit", $productId);
 
 		// if(!$this->isAjax())
 		// {
-		// 	$this->redirect("Product:");
+		// 	$this->redirect("Product:edit", $productId);
 		// }
 		// else {
-		// 	// $this->redrawControl('featureBox');
+		// 	$this->redrawControl('featureBox');
 		// 	$this->redrawControl('featureAdd');
 		// 	$form->setValues(array(), TRUE);
 		// }

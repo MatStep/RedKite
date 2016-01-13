@@ -49,6 +49,10 @@
 	line-height: 2;
 }
 
+.add-feature .select2-container {
+    width: 80% !important;
+}
+
 .feature-value-enter {
 	line-height: 2;
 	border: none;

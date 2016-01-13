@@ -192,6 +192,7 @@ $(document).ready(function() {
 			<div id="featuresTab" class="tab-pane">
 				<div class="box box-primary">	
 					<div class="box-body">
+						{snippet featureBox}
 						<div class="table">
 							<table class="table table-hover">
 								<!-- TABLE HEADER -->
@@ -212,7 +213,6 @@ $(document).ready(function() {
 									</tr>
 								</thead>
 								<tbody>	<!-- TABLE BODY -->	
-									{snippet featureContainer}
 									{foreach $features as $feature}
 									<tr>
 										<td>
