@@ -70,6 +70,12 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
 		$this->template->features = $this->products->getFeatures($productId);
 	}
 
+	public function renderAddValue($productId, $featureId)
+	{
+		$this->template->productId = $productId;
+		$this->template->feature = $this->products->getFeature($productId, $featureId);
+	}
+
 	public function renderImageReorder($productId) 
 	{
 		$productImages = $this->products->getProductImages($productId);
@@ -490,7 +496,9 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
 
 		$form->getElementPrototype()->class('ajax');
 
-		$featureValuesArray = self::createFeatureValuesArrayForSelect();
+		$featureId = $this->request->getParameters()['featureId'];
+
+		$featureValuesArray = self::createFeatureValuesArrayForSelect2($featureId);
 
 		$form->addSelect("feature_value", "Hodnota", $featureValuesArray)
 			 ->setAttribute('placeholder', 'Pridať hodnotu')
@@ -512,6 +520,7 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
 	public function featureValueFormSucceeded($form, $values)
 	{
 		$productId = $this->request->getParameters()['productId'];
+		$featureId = $this->request->getParameters()['featureId'];
 		$productFeatureId = $values->id;
 
 		//ADD FEATURE VALUE
@@ -519,7 +528,7 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
 
 		$this->flashMessage('Hodnota úspešne pridaná');
 
-		$this->redirect("Product:edit", $productId);
+		$this->redirect("Product:addValue", $productId, $featureId);
 
 		// if(!$this->isAjax())
 		// {

@@ -99,6 +99,12 @@ class ProductManager extends Nette\Object
 			->where('product_id = ?', $productId);
 	}
 
+	public function getFeature($productId, $featureId)
+	{
+		return $this->database->table('product_feature')
+			->where('product_id = ?', $productId)->where('feature_id', $featureId)->fetch();
+	}
+
 	public function getNumberOfProducts()
 	{
 		return $this->database->table('product')->count('*');

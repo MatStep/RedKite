@@ -234,23 +234,24 @@ $(document).ready(function() {
 												{* <a n:href="Feature:addValue $feature->id" class="btn btn-sm btn-default">Pridaj novú</a> *}
 											</div>
 											{/snippet}
-											{snippet form-$feature->id}
+											{* {snippet form-$feature->id}
 											<div class="feature-value-form fleft">
 												{form featureValueForm}
 												<div n:if="$form->hasErrors()">
 													<ul class="errors">
 														<li n:foreach="$form->errors as $error"><strong>{$error}</strong></li>
 													</ul>
-												</div>
+												</div> *}
 												{* Add id of feature to form *}
-												{?$control['featureValueForm']['id']->setValue($feature->id)}
+												{* {?$control['featureValueForm']['id']->setValue($feature->id)}
 												{input feature_value}
 												<div class="feature-add fright">
 													{input add}
 												</div>
 												{/form}
 											</div>
-											{/snippet}
+											{/snippet} *}
+											<a n:href="Product:addValue $productId, $feature->feature_id">Pridať hodnotu</a>
 										</th>
 									</tr>
 									{/foreach}
