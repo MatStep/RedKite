@@ -41,7 +41,9 @@ class CurrencyPresenter extends \App\AdminModule\Presenters\BasePresenter
 		$this->template->currencies = $this->currencies->getAll();
 	}
 
-	/*Currency form*/
+	/*
+	 * Currency form
+	 */
 	public function createComponentCurrencyForm()
 	{
 		$form = new Form;

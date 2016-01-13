@@ -44,7 +44,9 @@ class StockPresenter extends \App\AdminModule\Presenters\BasePresenter
 		$this->template->stock = $this->stocks->getStock($stockId);
 	}
 
-	/*Stock form*/
+	/*
+	 * Stock form
+	 */
 	public function createComponentStockForm()
 	{
 		$form = new Form;

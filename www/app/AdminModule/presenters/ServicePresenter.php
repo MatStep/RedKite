@@ -38,7 +38,9 @@ class ServicePresenter extends \App\AdminModule\Presenters\BasePresenter
         $this->template->img_path = $img_path;
     }
 
-    /*Service form*/
+    /*
+     * Service form
+     */
 	protected function createComponentServiceForm()
     {
         $form = new Form;

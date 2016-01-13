@@ -40,7 +40,9 @@ class ReferencePresenter extends \App\AdminModule\Presenters\BasePresenter
 		$this->template->logo_path = $logo_path;
 	}
 
-	/*Reference form*/
+	/*
+	 * Reference form
+	 */
 	public function createComponentReferenceForm()
 	{
 		$form = new Form;

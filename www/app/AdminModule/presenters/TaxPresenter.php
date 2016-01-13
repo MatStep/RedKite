@@ -41,7 +41,9 @@ class TaxPresenter extends \App\AdminModule\Presenters\BasePresenter
 		$this->template->taxes = $this->taxes->getAll();
 	}
 
-	/*Tax form*/
+	/*
+	 * Tax form
+	 */
 	public function createComponentTaxForm()
 	{
 		$form = new Form;

@@ -46,7 +46,9 @@ class FeaturePresenter extends \App\AdminModule\Presenters\BasePresenter
 		$this->template->feature = $this->features->getFeature($featureId);
 	}
 
-	/*Feature form*/
+	/*
+	 * Feature form
+	 */
 	public function createComponentFeatureForm()
 	{
 		$form = new Form;
@@ -115,7 +117,9 @@ class FeaturePresenter extends \App\AdminModule\Presenters\BasePresenter
 		}
 	}
 
-	/*Feature value form*/
+	/*
+	 * Feature value form
+	 */
 	public function createComponentFeatureValueForm()
 	{
 		$form = new Form;

@@ -37,7 +37,9 @@ class AddressPresenter extends \App\AdminModule\Presenters\BasePresenter
 		$this->template->address = $this->addresses->getAddress($addressId);
 	}
 
-	/*Address form*/
+	/*
+	 * Address form
+	 */
 	public function createComponentAddressForm()
 	{
 		$form = new Form;

@@ -40,7 +40,9 @@ class BrandPresenter extends \App\AdminModule\Presenters\BasePresenter
 		$this->template->logo_path = $logo_path;
 	}
 
-	/*Brand form*/
+	/*
+	 * Brand form
+	 */
 	public function createComponentBrandForm()
 	{
 		$form = new Form;

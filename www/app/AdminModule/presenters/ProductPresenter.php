@@ -77,6 +77,9 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
 		$this->template->images = $productImages;
 	}
 
+	/*
+	 * Test form
+	 */
 	public function createComponentTestForm()
 	{
 		$form = new Form;
@@ -114,7 +117,9 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
 	    $users->remove($button->parent, TRUE);
 	}
 
-	/*Product form*/
+	/*
+	 * Product form
+	 */
 	protected function createComponentProductForm()
 	{
 		$form = new Form;
@@ -306,6 +311,9 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
 		}
 	}
 
+	/*
+	 * ProductImage form
+	 */
 	public function createComponentProductImageForm()
 	{
 		$form = new Form;
@@ -350,6 +358,9 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
 		$this->redirect('Product:edit', $productId, true);
 	}
 
+	/*
+	 * Image reorder form
+	 */
 	public function createComponentImageReorderForm() 
 	{
 		$form = new Form;

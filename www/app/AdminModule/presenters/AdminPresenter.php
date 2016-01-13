@@ -44,7 +44,9 @@ class AdminPresenter extends \App\AdminModule\Presenters\BasePresenter
 		}
 	}
 
-	/*User form*/
+	/*
+	 * User form
+	 */
 	public function createComponentUserForm()
 	{
 		$form = new Form;

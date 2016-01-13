@@ -37,7 +37,9 @@ class CategoryPresenter extends \App\AdminModule\Presenters\BasePresenter
         $this->template->languages = parent::getAllLanguages();
 	}
 
-    /*Category form*/
+    /*
+     * Category form
+     */
 	protected function createComponentCategoryForm()
     {
         $form = new Form;

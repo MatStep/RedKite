@@ -151,7 +151,9 @@ class BasePresenter extends \App\Presenters\BasePresenter
 		$this->redirect("this");
 	}
 
-    /*Langugage form*/
+    /*
+     * Language form
+     */
     public function createComponentLanguageForm()
     {
         $form = new Form;

@@ -44,7 +44,9 @@ class SupplierPresenter extends \App\AdminModule\Presenters\BasePresenter
 		$this->template->supplier = $this->suppliers->getSupplier($supplierId);
 	}
 
-	/*Supplier form*/
+	/*
+	 * Supplier form
+	 */
 	public function createComponentSupplierForm()
 	{
 		$form = new Form;
