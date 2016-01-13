@@ -48,7 +48,9 @@
 							{$product->id}
 						</td>
 						<td>
-							<img class="productImage" src="{$basePath}/{$presenter->getLink($product->id)}" />
+							<a n:href="Product:edit $product->id">
+								<img class="productImage" src="{$basePath}/{$presenter->getLink($product->id)}" />
+							</a>
 						</td>
 						<td>
 							{$presenter->getProductLang($product->id)->name}

@@ -39,7 +39,9 @@
 							{$brand->id}
 						</td>
 						<td>
-							<img src="{$basePath}/{$brand->logo_path}" alt="{$brand->name}Logo" height="60">
+							<a n:href="Brand:edit $brand->id">
+								<img src="{$basePath}/{$brand->logo_path}" alt="{$brand->name}Logo" height="60">
+							</a>
 						</td>
 						<td>
 							{$brand->name}
