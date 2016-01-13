@@ -1,0 +1,28 @@
+{block content}
+	<div class="box box-primary">
+		<div class="box-header with-border">
+			<h2 class="box-title">
+				Import produktov
+			</h2>
+			<a n:href="Product:" class="pull-right"><i class="fa fa-close"></i></a>
+		</div>
+		<div class="box-body">
+			{form productImportForm}
+			<div n:if="$form->hasErrors()">
+				<ul class="errors">
+					<li n:foreach="$form->errors as $error"><strong>{$error}</strong></li>
+				</ul>
+			</div> 
+			<div class="box-header">
+				<h3 class="box-title">
+					Pridanie obrázka
+				</h3>	
+			</div>					
+			<div id="img-input" class="form-group">
+				{input image}
+			</div>
+			{input add}
+			{/form}
+		</div>
+	</div>
+{/block}
