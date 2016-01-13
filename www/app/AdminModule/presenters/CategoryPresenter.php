@@ -58,8 +58,7 @@ class CategoryPresenter extends \App\AdminModule\Presenters\BasePresenter
         $form->addText('icon', "Icon Class *")
         		->setAttribute('class', 'form-control')
         		->setAttribute('placeholder', 'Napíš class ikonky')
-        		->setAttribute('value', $this->values['icon'])
-        		->setRequired('Ikonka je povinná');
+        		->setAttribute('value', $this->values['icon']);
 
 			foreach ($this->categories->getAll(FALSE) as $category) 
 			{ 

@@ -363,6 +363,46 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
 	}
 
 	/*
+	 * Product import form
+	 */
+	public function createComponentProductImportForm()
+	{
+		$form = new Form;
+
+		$form->addUpload('image','Obrázok')
+			 ->setRequired('Nahranie obrázku je povinné')
+			 ->addCondition(Form::FILLED)
+			 ->addRule(Form::IMAGE, 'Nepodporovaný formát obrázku');
+
+		
+		$form->addSubmit("add", "Pridať obrázok")
+			 ->getControlPrototype()->class("btn btn-primary pull-right");
+
+		$form->onSuccess[] = array($this, "productImageFormSucceeded");
+
+		return $form;
+	}
+
+	public function productImageImportSucceeded($form, $values) 
+	{
+		$productId = $this->request->getParameters()['productId'];
+
+		$images = $this->products->getProductImages($productId);
+		
+		if ( count($images) == 0 ) 
+		{
+			$values->order = 1;
+		}
+		else 
+		{
+			$values->order = count($images) + 1;
+		}
+
+		$this->products->addProductImage($productId, $values);
+		$this->redirect('Product:edit', $productId, true);
+	}
+
+	/*
 	 * Image reorder form
 	 */
 	public function createComponentImageReorderForm() 
