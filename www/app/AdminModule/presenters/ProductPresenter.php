@@ -480,6 +480,59 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
 		// }
 	}
 
+	/*
+	 * Feature value form
+	 */
+
+	public function createComponentFeatureValueForm()
+	{
+		$form = new Form;
+
+		$form->getElementPrototype()->class('ajax');
+
+		$featureValuesArray = self::createFeatureValuesArrayForSelect();
+
+		$form->addSelect("feature_value", "Hodnota", $featureValuesArray)
+			 ->setAttribute('placeholder', 'Pridať hodnotu')
+			 ->getControlPrototype()->class("form-control");
+
+        $form->addHidden('id');
+
+		$form->addSubmit("add", "Pridať hodnotu")
+			 ->getControlPrototype()->class("btn btn-primary pull-right");
+
+		$form->addSubmit("edit", "Uložiť zmeny")
+			 ->getControlPrototype()->class("btn btn-primary pull-right");
+
+		$form->onSuccess[] = array($this, "featureValueFormSucceeded");
+
+		return $form;
+	}
+
+	public function featureValueFormSucceeded($form, $values)
+	{
+		$productId = $this->request->getParameters()['productId'];
+		$productFeatureId = $values->id;
+
+		//ADD FEATURE VALUE
+		$this->products->addProductFeatureValue($productFeatureId, $values);
+
+		$this->flashMessage('Hodnota úspešne pridaná');
+
+		$this->redirect("Product:edit", $productId);
+
+		// if(!$this->isAjax())
+		// {
+		// 	$this->redirect("Product:edit", $productId);
+		// }
+		// else {
+		// 	$this->redrawControl('featureBox');
+		// 	$this->invalidateControl('list');
+		// 	$this->invalidateControl('form');
+		// 	$form->setValues(array(), TRUE);
+		// }
+	}
+
 	public function parseCheckedBoxes($checkedBoxes) 
 	{
 		$productsIds = '';
@@ -601,11 +654,28 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
         return $this->products->model->getFirstSecond($featureId, parent::getLanguage()->id, 'feature', 'lang');
     }
 
+    public function getFeatureValueLang($featureValueId)
+    {
+        return $this->products->model->getFirstSecond($featureValueId, parent::getLanguage()->id, 'feature_value', 'lang');
+    }
+
+    public function getFeatureValues($featureId)
+    {
+        return $this->products->model->getAllFirstSecond($featureId, 'product_feature', 'value');
+    }
+
     public function actionImageRemove($productId, $imageId) 
 	{
 		$this->products->removeProductImage($productId, $imageId);
 		$this->flashMessage('Obrázok úspešne vymazaný');
 		$this->redirect('Product:edit', $productId, true);
+	}
+
+	public function actionRemoveProductFeatureValue($productId, $productFeatureValueId)
+	{
+			$this->products->removeProductFeatureValue($productFeatureValueId);
+			$this->flashMessage('Vlastnosť bola úspešne vymazaná');
+			$this->redirect('Product:edit', $productId);
 	}
 
 	public function actionRemove($productId)

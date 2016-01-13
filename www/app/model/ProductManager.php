@@ -363,6 +363,22 @@ class ProductManager extends Nette\Object
 		}
 	}
 
+	public function addProductFeatureValue($id, $values)
+	{
+		$productFeatureValue = $this->database->table('product_feature_value')
+			->where('product_feature_id = ?', $id)->where('feature_value_id', $values->feature_value);
+
+		if($productFeatureValue->count() == 0)
+		{
+		// Table product_feature_value
+			$this->database->table('product_feature_value')
+				 ->insert(array(
+				 	'product_feature_id' => $id,
+				 	'feature_value_id' => $values->feature_value,
+				 	));
+		}
+	}
+
 	/** 
 	 * translate data
 	 * @param int $lang 		   language id
@@ -451,5 +467,10 @@ class ProductManager extends Nette\Object
 		}
 
 			unlink($image->path);
+	}
+
+	public function removeProductFeatureValue($id)
+	{
+		return $this->database->table('product_feature_value')->where('id', $id)->delete();
 	}
 }

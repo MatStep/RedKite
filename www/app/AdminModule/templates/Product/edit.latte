@@ -225,7 +225,32 @@ $(document).ready(function() {
 											{$presenter->getFeatureLang($feature->feature_id)->name}
 										</td>
 										<th>
-											Hodnoty
+											{snippet list-$feature->id}
+											<div class="feature-values-list fleft">
+												{foreach $presenter->getFeatureValues($feature->id) as $featureValue}
+													<span class="item-labeled">{$presenter->getFeatureValueLang($featureValue->feature_value_id)->value}
+													 <a n:href="Product:removeProductFeatureValue $productId, $featureValue->id" style="margin-top: 10px; width: 130px;" class='itemTrash'><i class="fa fa-close"></i></a></span>, 
+												{/foreach}
+												{* <a n:href="Feature:addValue $feature->id" class="btn btn-sm btn-default">Pridaj novú</a> *}
+											</div>
+											{/snippet}
+											{snippet form-$feature->id}
+											<div class="feature-value-form fleft">
+												{form featureValueForm}
+												<div n:if="$form->hasErrors()">
+													<ul class="errors">
+														<li n:foreach="$form->errors as $error"><strong>{$error}</strong></li>
+													</ul>
+												</div>
+												{* Add id of feature to form *}
+												{?$control['featureValueForm']['id']->setValue($feature->id)}
+												{input feature_value}
+												<div class="feature-add fright">
+													{input add}
+												</div>
+												{/form}
+											</div>
+											{/snippet}
 										</th>
 									</tr>
 									{/foreach}
@@ -278,5 +303,14 @@ $(function() {
 	unsetAndSetActive('#products', '#addProduct');
 	CKEDITOR.replace('frm-productForm-desc');
 });
+
+//JS for onchange feature_values select
+
+	$(function() {
+			$('.feature-value-form select').change(function (e) {
+				$(this).closest('form').submit();
+				return false;
+			});
+		});
 </script>
 {/block}
