@@ -93,6 +93,12 @@ class ProductManager extends Nette\Object
 			->where('product_id = ?', $productId)->order('order');
 	}
 
+	public function getFeatures($productId)
+	{
+		return $this->database->table('product_feature')
+			->where('product_id = ?', $productId);
+	}
+
 	public function getNumberOfProducts()
 	{
 		return $this->database->table('product')->count('*');
@@ -334,6 +340,27 @@ class ProductManager extends Nette\Object
         	 ->where('product_id = ? AND id = ?', $productId, $image->id)
         	 ->update(array('path' => $imgUrl));
 
+	}
+
+	public function addProductFeature($id, $values)
+	{
+		$allProductFeature = $this->model->getAllFirstSecond($id,'product','feature', 0);
+
+		while($allProductFeature->count() > 0) {
+			foreach($allProductFeature as $productFeature)
+			{
+				$productFeature->delete();
+			}
+		}
+
+		// Table product_feature
+		foreach($values->feature as $feature) {
+			$this->database->table('product_feature')
+				 ->insert(array(
+				 	'product_id' => $id,
+				 	'feature_id' => $feature,
+				 	));
+		}
 	}
 
 	/** 

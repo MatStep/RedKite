@@ -67,6 +67,7 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
 	public function renderEdit($productId)
 	{
 		$this->template->images = $this->products->getProductImages($productId);
+		$this->template->features = $this->products->getFeatures($productId);
 	}
 
 	public function renderImageReorder($productId) 
@@ -184,31 +185,34 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
 		// 	 ->setAttribute('data-placeholder', 'Vyberte hodnoty')
 		// 	 ->getControlPrototype()->class("form-control featureValuesSelect ajax");
 
-		$removeEvent = array($this, "removeElementClicked");
+		// Feature values adding dynamically with Replicator
+		// Need to fix
 
-		$presenter = $this;
-		$invalidateCallback = function () use ($presenter) {
-        	/** @var \Nette\Application\UI\Presenter $presenter */
-        	$presenter->invalidateControl('fv');
-    	};
+		// $removeEvent = array($this, "removeElementClicked");
 
-		$featureValues = $form->addDynamic("featureValues", function (Container $container) use ($invalidateCallback, $featureValuesArray) {
-			$container->addMultiSelect("value", "Hodnoty", $featureValuesArray)
-			 ->setAttribute('data-placeholder', 'Vyberte hodnoty')
-			 ->getControlPrototype()->class("form-control featureValuesSelect");
+		// $presenter = $this;
+		// $invalidateCallback = function () use ($presenter) {
+  //       	/** @var \Nette\Application\UI\Presenter $presenter */
+  //       	$presenter->invalidateControl('fv');
+  //   	};
 
-			$container->addSubmit("remove", "Vymazať")
-				->setAttribute("class", "remove_button btn ajax")
-				->setValidationScope(FALSE)
-				->addRemoveOnClick($invalidateCallback);
-				// ->onClick[] = $removeEvent;
-		});
+		// $featureValues = $form->addDynamic("featureValues", function (Container $container) use ($invalidateCallback, $featureValuesArray) {
+		// 	$container->addMultiSelect("value", "Hodnoty", $featureValuesArray)
+		// 	 ->setAttribute('data-placeholder', 'Vyberte hodnoty')
+		// 	 ->getControlPrototype()->class("form-control featureValuesSelect");
 
-		$featureValues->addSubmit("add", "Pridať novú hodnotu")
-			->setAttribute("class", "add_button btn ajax")
-			->setValidationScope(FALSE)
-			->addCreateOnClick($invalidateCallback);
-			// ->onClick[] = array($this, "addElementClicked");
+		// 	$container->addSubmit("remove", "Vymazať")
+		// 		->setAttribute("class", "remove_button btn ajax")
+		// 		->setValidationScope(FALSE)
+		// 		->addRemoveOnClick($invalidateCallback);
+		// 		// ->onClick[] = $removeEvent;
+		// });
+
+		// $featureValues->addSubmit("add", "Pridať novú hodnotu")
+		// 	->setAttribute("class", "add_button btn ajax")
+		// 	->setValidationScope(FALSE)
+		// 	->addCreateOnClick($invalidateCallback);
+		// 	// ->onClick[] = array($this, "addElementClicked");
 
 		$form->addCheckbox("status", "");
 
@@ -391,6 +395,51 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
 		$this->redirect('Product:imageReorder', $productId);
 	}
 
+	/*
+	 * Feature form
+	 */
+	public function createComponentFeatureForm()
+	{
+		$form = new Form;
+
+		$form->getElementPrototype()->class('ajax');
+
+		$featuresArray = self::createFeaturesArrayForSelect();
+
+		$form->addMultiSelect("feature", "Vlastnosti", $featuresArray)
+			 ->setAttribute('data-placeholder', 'Vyberte vlastnosť')
+			 ->getControlPrototype()->class("form-control featureSelect form-control-80 ajax");
+
+		$form->addSubmit("add", "Pridať vlastnosti")
+			 ->getControlPrototype()->class("btn btn-primary");
+
+		$form->onSuccess[] = array($this, "featureFormSucceeded");
+
+		return $form;
+	}
+
+	public function featureFormSucceeded($form, $values)
+	{
+		$productId = $this->request->getParameters()['productId'];
+		
+		//ADD FEATURE
+		$this->products->addProductFeature($productId, $values);
+
+		$this->flashMessage('Vlastnosť úspešne pridaná');
+
+		$this->redirect("Product:");
+
+		// if(!$this->isAjax())
+		// {
+		// 	$this->redirect("Product:");
+		// }
+		// else {
+		// 	// $this->redrawControl('featureBox');
+		// 	$this->redrawControl('featureAdd');
+		// 	$form->setValues(array(), TRUE);
+		// }
+	}
+
 	public function parseCheckedBoxes($checkedBoxes) 
 	{
 		$productsIds = '';
@@ -507,6 +556,11 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
         return $this->products->model->getFirstSecond($productId, parent::getLanguage()->id, 'product', 'lang');
     }
 
+    public function getFeatureLang($featureId)
+    {
+        return $this->products->model->getFirstSecond($featureId, parent::getLanguage()->id, 'feature', 'lang');
+    }
+
     public function actionImageRemove($productId, $imageId) 
 	{
 		$this->products->removeProductImage($productId, $imageId);
@@ -561,6 +615,7 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
 		$this['productForm']['feature']->setDefaultValue($fArray);
 		$this['productForm']['supplier']->setDefaultValue($sArray);
 		$this['productForm']['brand']->setDefaultValue($product->brand);
+		$this['featureForm']['feature']->setDefaultValue($fArray);
 
 		// foreach($productImages as $productImage)
 		// {
