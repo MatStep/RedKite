@@ -375,37 +375,33 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
 	{
 		$form = new Form;
 
-		$form->addUpload('image','Obrázok')
-			 ->setRequired('Nahranie obrázku je povinné')
-			 ->addCondition(Form::FILLED)
-			 ->addRule(Form::IMAGE, 'Nepodporovaný formát obrázku');
-
+		$form->addUpload('csv','Súbor')
+			 ->setRequired('Nahranie súboru je povinné')
+			 ->addCondition(Form::FILLED);
 		
-		$form->addSubmit("add", "Pridať obrázok")
+		$form->addSubmit("add", "Pridať csv import")
 			 ->getControlPrototype()->class("btn btn-primary pull-right");
 
-		$form->onSuccess[] = array($this, "productImageFormSucceeded");
+		$form->onSuccess[] = array($this, "productImportFormSucceeded");
 
 		return $form;
 	}
 
-	public function productImageImportSucceeded($form, $values) 
+	public function productImportFormSucceeded($form, $values) 
 	{
-		$productId = $this->request->getParameters()['productId'];
+		$csvFile = $this->readCSV($values->csv);
+		$this->flashMessage(json_encode($csvFile[0][0]));
+	}
 
-		$images = $this->products->getProductImages($productId);
-		
-		if ( count($images) == 0 ) 
-		{
-			$values->order = 1;
+	function readCSV($csvFile){
+		$line_of_text = array();
+		ini_set('auto_detect_line_endings', true);
+		$file_handle = fopen($csvFile, 'rb');
+		while (!feof($file_handle) ) {
+			$line_of_text[] = fgetcsv($file_handle,"\t");
 		}
-		else 
-		{
-			$values->order = count($images) + 1;
-		}
-
-		$this->products->addProductImage($productId, $values);
-		$this->redirect('Product:edit', $productId, true);
+		fclose($file_handle);
+		return $line_of_text;
 	}
 
 	/*
@@ -426,7 +422,7 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
 		return $form;
 	}
 
-	public function imageReorderFormSucceded($form, $values) 
+	public function imageReorderFormSucceeded($form, $values) 
 	{
 		$productId = $this->request->getParameters()['productId'];
 
