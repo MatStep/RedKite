@@ -8,7 +8,8 @@ use Nette,
 	Nette\Forms\Container,
 	Nette\Forms\Controls\SubmitButton,
 	Nette\Utils\Strings,
-	Nette\Application\UI\Form as Form;
+	Nette\Application\UI\Form as Form,
+	Tracy\Debugger;
 
 /**
  * Product presenter
@@ -386,18 +387,21 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
 
 		return $form;
 	}
+
 	/*
 	* CSV collumns must be comma separated(','). 
 	*/
 	public function productImportFormSucceeded($form, $values) 
 	{
+		$this->importArrayData($values);
 		$csvFile = $this->readCSV($values->csv);
+
 		// csvFile is now 2 Dimensional Array, csvFile[rows][columns]
-		$this->flashMessage(json_encode($csvFile[2][2])); //example
+		$this->flashMessage($csvFile[1][1]); //example
 		$this->flashMessage(json_encode($csvFile));
 	}
 
-	function readCSV($csvFile){
+	public function readCSV($csvFile){
 		$line_of_text = array();
 		ini_set('auto_detect_line_endings', true);
 		$file_handle = fopen($csvFile, 'rb');
@@ -408,6 +412,29 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
 		fclose($file_handle);
 		return $line_of_text;
 	}
+
+	/*
+	 * Function for data import from array to DB
+	 * Values is array with csv data
+	 */
+	public function importArrayData($values)
+	{
+		$import = $this->readCSV($values->csv);
+		Debugger::barDump($import);
+
+		// One product test
+		$data = new Nette\Utils\ArrayHash();
+		$data->code = $import[1][0];
+		$data->price_sell = $import[1][1];
+		$data->status = 1;
+		$data->brand = NULL;
+
+		Debugger::barDump($data);
+
+
+		$this->products->insert($data);
+	}
+
 	/*
 	 * Image reorder form
 	 */
