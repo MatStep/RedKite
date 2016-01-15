@@ -386,24 +386,28 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
 
 		return $form;
 	}
-
+	/*
+	* CSV collumns must be comma separated(','). 
+	*/
 	public function productImportFormSucceeded($form, $values) 
 	{
 		$csvFile = $this->readCSV($values->csv);
-		$this->flashMessage(json_encode($csvFile[0][0]));
+		// csvFile is now 2 Dimensional Array, csvFile[rows][columns]
+		$this->flashMessage(json_encode($csvFile[2][2])); //example
+		$this->flashMessage(json_encode($csvFile));
 	}
 
 	function readCSV($csvFile){
 		$line_of_text = array();
 		ini_set('auto_detect_line_endings', true);
 		$file_handle = fopen($csvFile, 'rb');
+		set_time_limit(0); // neccesery if csv is large 
 		while (!feof($file_handle) ) {
-			$line_of_text[] = fgetcsv($file_handle,"\t");
+			$line_of_text[] = fgetcsv($file_handle,',');
 		}
 		fclose($file_handle);
 		return $line_of_text;
 	}
-
 	/*
 	 * Image reorder form
 	 */
