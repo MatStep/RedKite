@@ -401,7 +401,7 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
 		$csvFile = $this->readCSV($values->csv);
 
 		// csvFile is now 2 Dimensional Array, csvFile[rows][columns]
-		$this->flashMessage($csvFile[1][1]); //example
+		//$this->flashMessage($csvFile[1][1]); //example
 		$this->flashMessage(json_encode($csvFile));
 	}
 
@@ -426,17 +426,28 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
 		$import = $this->readCSV($values->csv);
 		Debugger::barDump($import);
 
-		// One product test
+		$rows = count($import);
+		$collumns = count($import[0]);
+
+		Debugger::barDump($rows);
+		Debugger::barDump($collumns);
+
 		$data = new Nette\Utils\ArrayHash();
-		$data->code = $import[1][0];
-		$data->price_sell = $import[1][1];
-		$data->status = 1;
-		$data->brand = NULL;
 
-		Debugger::barDump($data);
-
-
-		$this->products->insert($data);
+		for ($i=1; $i<$rows; $i++){ //$i from 1, because 0 are collumns descriptions
+			for ($j=0; $j<$collumns; $j++){ 
+				$data->code = $import[i][j];
+				$data->status = $import[i][j];
+				$data->price_sell = $import[i][j];
+				$data->name = $import[i][j];
+				$data->short_desc = $import[i][j];
+				$data->desc = $import[i][j];
+				$data->price_buy = $import[i][j];
+				$data->category = $import[i][j];
+			}
+			Debugger::barDump($data);
+			$this->products->insert($data); //Insert to table for each row($i)
+		}		
 	}
 
 	/*
