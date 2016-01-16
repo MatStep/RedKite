@@ -116,7 +116,14 @@ class ProductManager extends Nette\Object
 		$data = array();
 		$data["status"] = $values->status;
 		$data["price_sell"] = $values->price_sell;
-		$data["brand_id"] = $values->brand;
+
+		// check if columns for brand exists
+		if(!$values->offsetExists('brand_id')) {
+			$values->brand = NULL;
+		}
+		else {
+			$data["brand_id"] = $values->brand;
+		}
 		$data["code"] = $values->code;
 
 		$product = $this->database->table(self::PRODUCT_TABLE)->insert($data);

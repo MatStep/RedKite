@@ -243,6 +243,8 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
 		$adding = true;
 		$currentLanguage = parent::getLanguage();
 
+		Debugger::barDump($values->category);
+
 		if( $form['status']->getValue() == 'checked')
 		{
 			$values->status = 1;
@@ -405,6 +407,7 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
 		$this->flashMessage(json_encode($csvFile));
 	}
 
+	//fgetcsv get one extra empty row because of end of file
 	public function readCSV($csvFile){
 		$line_of_text = array();
 		ini_set('auto_detect_line_endings', true);
@@ -418,7 +421,7 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
 	}
 
 	/*
-	 * Function for data import from array to DB
+	 * Data import from array to DB
 	 * Values is array with csv data
 	 */
 	public function importArrayData($values)
@@ -434,17 +437,28 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
 
 		$data = new Nette\Utils\ArrayHash();
 
-		for ($i=1; $i<$rows; $i++){ //$i from 1, because 0 are collumns descriptions
-			for ($j=0; $j<$collumns; $j++){ 
-				$data->code = $import[i][j];
-				$data->status = $import[i][j];
-				$data->price_sell = $import[i][j];
-				$data->name = $import[i][j];
-				$data->short_desc = $import[i][j];
-				$data->desc = $import[i][j];
-				$data->price_buy = $import[i][j];
-				$data->category = $import[i][j];
-			}
+		//$i from 1, because 0 are collumns descriptions
+		//Last row is empty, so rows-1
+		for ($i=1; $i<$rows-1; $i++) {
+
+			//Product table
+			$data->code = $import[$i][0];
+			$data->status = $import[$i][1];
+			$data->price_sell = $import[$i][2];
+
+			//Product lang
+			$data->name = $import[$i][3];
+			$data->short_desc = $import[$i][4];
+			$data->desc = $import[$i][5];
+
+			//Product supplier table
+			$data->supplier = 1;
+			$data->price_buy = $import[$i][6];
+
+			//Product category table
+			$data->category = array();
+			$data->category[] = $import[$i][7];
+
 			Debugger::barDump($data);
 			$this->products->insert($data); //Insert to table for each row($i)
 		}		
