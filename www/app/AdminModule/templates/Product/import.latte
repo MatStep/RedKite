@@ -7,6 +7,68 @@
 			<a n:href="Product:" class="pull-right"><i class="fa fa-close"></i></a>
 		</div>
 		<div class="box-body">
+			<p>Štruktúra CSV súboru - príklad</p>
+			<div class="table">
+				<table class="table table-bordered table-hover">
+					<!-- TABLE HEADER -->
+					<thead>
+						<tr>
+							<th>
+								code
+							</th>
+							<th>
+								status
+							</th>
+							<th>
+								price_sell
+							</th>
+							<th>
+								name
+							</th>
+							<th>
+								short_desc
+							</th>
+							<th>
+								desc
+							</th>
+							<th>
+								price_buy
+							</th>
+							<th>
+								category
+							</th>
+						</tr>
+					</thead>
+					<tbody>	<!-- TABLE BODY -->	
+					<tr>
+						<td>
+							JN 782
+						</td>
+						<td>
+							1
+						</td>
+						<td>
+							12
+						</td>
+						<td>
+							tričko
+						</td>
+						<td>
+							Krátky popis
+						</td>
+						<td>
+							Dlhší text o produkte
+						</td>
+						<td>
+							10
+						</td>
+						<td>
+							1 <span class="text-darkGray">(id kategórie)</span>
+						</td>
+					</tr>
+				</tbody>
+				</table>
+			</div>
 			{form productImportForm}
 			<div n:if="$form->hasErrors()">
 				<ul class="errors">
