@@ -47,7 +47,8 @@ class ProductManager extends Nette\Object
 		COLUMN_FK_LANG_ID = "lang_id",
 		COLUMN_NAME = 'name',
 		COLUMN_SHORT_DESC = 'short_desc',
-		COLUMN_DESC = 'desc';
+		COLUMN_DESC = 'desc',
+		COLUMN_CODE = 'code';
 
 	/** @var Nette\Database\Context */
 	private $database;
