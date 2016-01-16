@@ -507,4 +507,13 @@ class ProductManager extends Nette\Object
 	{
 		return $this->database->table('product_feature_value')->where('id', $id)->delete();
 	}
+
+	public function multipleProductsRemove($productsIds) 
+	{
+		foreach($productsIds as $productId)
+		{
+			self::remove($productId);
+		}
+	}
+
 }

@@ -39,6 +39,8 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
 
 	private $products;
 
+	private $selectedCheckBoxes;
+
 	private $values;
 
 	private $id;
@@ -598,6 +600,75 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
 		// }
 	}
 
+	public function createComponentSelectionActionsForm() 
+	{
+		$form = new Nette\Application\UI\Form;
+
+		$actions = self::createActionsArray();
+
+		$categoriesForSelect = self::createCategoriesArrayForSelect();
+
+		$statuses = array
+		(
+			1 => 'Aktívny',
+			0 => 'Neaktívny'
+		);
+
+		$form->addSelect('action', "Akcia", $actions)
+			 ->setRequired("Výber akcie je povinný")
+			 ->getControlPrototype()->class("form-control");
+
+		$form->addSelect('categoryChange', "Zmena kategórie", $categoriesForSelect)
+			 ->getControlPrototype()->class("form-control");
+
+		$form->addSelect('statusChange', "Zmena stavu", $statuses)
+			 ->getControlPrototype()->class("form-control");
+
+		$form->addText('checkedBoxes', '')
+			 ->getControlPrototype()->class('allCheckedBoxes');
+
+		$form->addSubmit('submit', "Vykonať")
+			 ->getControlPrototype()->class('btn btn-primary form-control');
+
+		$form->onSuccess[] = array($this, 'selectionActionsFormSucceeded');
+		
+		return $form;
+	}
+
+	public function selectionActionsFormSucceeded($form, $values) 
+	{
+
+		$this->selectedCheckBoxes = 
+			$this->getHttpRequest()->getPost('checkedBoxes');
+
+		$productsIds = self::parseCheckedBoxes($this->selectedCheckBoxes);
+
+		switch ($values->action) 
+		{
+			case 'categoryChange':	
+				$this->productManager->multipleProductsCategoryChange($productsIds, $values->categoryChange);			
+				break;
+			case 'statusChange':
+				self::multipleProductsStatusChange($productsIds, $values->statusChange);
+				break;
+			case 'remove':
+				$this->productManager->multipleProductsRemove($productsIds);
+				break;
+		}
+		
+		$this->redirect('this', $this->paginator->getPage());
+	}
+
+	public function createActionsArray() 
+	{
+		return array
+		(
+			'categoryChange' => "Zmeniť kategóriu",
+			'statusChange' => "Zmaniť status",
+			'remove' => "Vymazať"
+		);
+	}
+
 	public function parseCheckedBoxes($checkedBoxes) 
 	{
 		$productsIds = '';
@@ -644,6 +715,22 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
 		}
 
 		return $suppliersArray;
+	}
+
+	private function createCategoriesArrayForSelect()
+	{
+		$categories = $this->categoryManager->getAll();
+
+		$categoriesArray = array();
+
+		$categoriesArray[''] = "--";
+
+		foreach ( $categories as $category )
+		{
+			$categoriesArray[$category->id] = $this->products->model->getFirstSecond($category->id, parent::getLanguage()->id, 'category', 'lang')->name;;
+		}
+
+		return $categoriesArray;
 	}
 
 	private function createFeaturesArrayForSelect()

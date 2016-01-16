@@ -6,7 +6,7 @@
 		</h2>
 	</div>
 	<div class="box-body">
-		<!-- Product VIEW TABLE BEGIN -->
+		<!-- PRODUCT VIEW TABLE BEGIN -->
 		<div class="table">
 			<table class="table table-hover">
 				<!-- TABLE HEADER -->
@@ -42,7 +42,7 @@
 					{foreach $products as $product}
 					<tr>
 						<td>
-							<input id="product-check-box-{$product->id}" type="checkbox" class="productCheckBox" name="select">
+							<input id="productCheckBox_{$product->id}" type="checkbox" class="productCheckBox" name="select">
 						</td>
 						<td>
 							{$product->id}
@@ -77,8 +77,135 @@
 				</tbody>
 			</table>
 		</div>
+		<!-- PRODUCT VIEW TABLE END -->
+
+		<!-- MULTIPLE PRODUCT EDIT BEGIN -->
+		<div class="box-footer with-border clearfix">				
+            <div class="checkBoxMenu">
+			{form selectionActionsForm}
+				<div class="row">
+					<div class="col-sm-4">
+						<label for="action">
+							Akcia
+						</label>
+						{input action}
+					</div>
+					<div id="categoryChange" class="col-sm-4">
+						<label for="categoryChange">
+							Zmena kategórie
+						</label>
+						{input categoryChange}
+					</div>
+					<div id="statusChange" class="col-sm-4">
+						<label for="statusChange">
+							Zmena statusu
+						</label>
+						<br />
+						{input statusChange}
+					</div>
+					<div id="checkedBoxesDiv" style="display:none">
+						{input checkedBoxes}
+					</div>
+					<div class="form-group col-sm-4">
+						<label> &nbsp </label>
+						{input submit}
+					</div>		
+				</div>
+			{/form}
+			</div>
+			{* <div class="row">
+				<div class="col-sm-4">
+					{form paginationForm}	
+						{_adminProduct.template.default.ppp}: &nbsp {input ppp}
+					{/form}
+				</div>
+				<div class="col-sm-8">
+					{include pagination}
+				</div>
+			</div> *}
+		</div>
+	<!-- MULTIPLE PRODUCT EDIT END -->
+
 	</div>
 </div>
+
+<!-- CHECK BOXES SCRIPT -->
+	<script>			
+		var numOfCheckedBoxes = 0;
+		var checkedBoxes = [];
+		//checks all checkboxes
+		$(function()
+		{
+			$('.checkBoxMenu').hide();
+
+			$('#headerCheckBox').on('ifChecked', function()
+			{
+				$('.productCheckBox').iCheck('check');
+			});
+			
+			$('#headerCheckBox').on('ifUnchecked', function() {
+				$('.productCheckBox').iCheck('uncheck');
+			});
+
+			$('.productCheckBox').on('ifChecked', function() {
+				numOfCheckedBoxes++;
+
+				if ( numOfCheckedBoxes == 1 ) {
+					$('.checkBoxMenu').show();
+				}
+				checkedBoxes.push($(this).attr('id'));
+				$('#checkedBoxesDiv').children('.allCheckedBoxes').val(checkedBoxes);
+			})
+
+			$('.productCheckBox').on('ifUnchecked', function() {
+				numOfCheckedBoxes--;
+
+				if ( numOfCheckedBoxes == 0 ) {
+					$('.checkBoxMenu').hide();
+					$('#headerCheckBox').iCheck('uncheck');
+				}
+				checkedBoxes.splice(checkedBoxes.indexOf($(this).attr('id')),1);
+				$('#checkedBoxesDiv').children('.allCheckedBoxes').val(checkedBoxes);
+			});
+
+		});
+	</script>
+
+	<!-- ACTIONS SCRIPT -->
+	<script>
+		var actionSelectClickCount = 0;
+		$('#frm-selectionActionsForm-action').click(function()
+		{
+			actionSelectClickCount++;
+
+			switch ($(this).val()) 
+			{
+				case '':
+					$('#categoryChange').hide();
+					$('#statusChange').hide();
+					break;
+				case 'categoryChange':
+					$('#categoryChange').show();
+					$('#statusChange').hide();
+					break;
+				case 'statusChange':
+					$('#categoryChange').hide();
+					$('#statusChange').show();
+					break;
+				case 'remove':
+					$('#categoryChange').hide();
+					$('#statusChange').hide();
+					break;
+			}
+			
+		});
+
+		$(function() 
+		{
+			$('#categoryChange').hide();
+			$('#statusChange').hide();
+		});
+	</script>
 
 {* Script for changing active menu *}
 <script>
