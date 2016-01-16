@@ -116,42 +116,61 @@ class ProductManager extends Nette\Object
 		$data["status"] = $values->status;
 		$data["price_sell"] = $values->price_sell;
 		$data["brand_id"] = $values->brand;
+		$data["code"] = $values->code;
 
 		$product = $this->database->table(self::PRODUCT_TABLE)->insert($data);
 
 		//insert foreign tables
 
 		// Table product_category
-		foreach($values->category as $category) {
-			$this->database->table('product_category')
-				 ->insert(array(
-				 	'product_id' => $product->id,
-				 	'category_id' => $category,
-				 	));
+		if($values->offsetExists('category')) {
+			foreach($values->category as $category) {
+				$this->database->table('product_category')
+					 ->insert(array(
+					 	'product_id' => $product->id,
+					 	'category_id' => $category,
+					 	));
+			}
 		}
 
 		// Table product_supplier
-		$this->database->table(self::PRODUCT_SUPPLIER_TABLE)
-			 ->insert(array(
-			 	'product_id' => $product->id,
-			 	'supplier_id' => $values->supplier,
-			 	'price_buy'	=> $values->price_buy,
-			 	'status' => 1,
-			 	));
-
-		// Table product_feature
-		foreach($values->feature as $feature) {
-			$this->database->table('product_feature')
+		if($values->offsetExists('supplier')) {
+			$this->database->table(self::PRODUCT_SUPPLIER_TABLE)
 				 ->insert(array(
 				 	'product_id' => $product->id,
-				 	'feature_id' => $feature,
+				 	'supplier_id' => $values->supplier,
+				 	'price_buy'	=> $values->price_buy,
+				 	'status' => 1,
 				 	));
 		}
 
+		// Table product_feature
+		if($values->offsetExists('feature')) {
+			foreach($values->feature as $feature) {
+				$this->database->table('product_feature')
+					 ->insert(array(
+					 	'product_id' => $product->id,
+					 	'feature_id' => $feature,
+					 	));
+			}
+		}
+
+		// check if columns for translate exists
+		if(!$values->offsetExists('short_desc')) {
+			$values->short_desc = NULL;
+		}
+
+		if(!$values->offsetExists('desc')) {
+			$values->desc = NULL;
+		}
+
 		//ADD LANGUAGE DATA
-        foreach($this->languages->getAllActive() as $lang) {
-            self::translateData($lang->id, $product->id, $values, 0);
-        }
+		//name is required for product so only if is given
+		if($values->offsetExists('name')) {
+	        foreach($this->languages->getAllActive() as $lang) {
+	            self::translateData($lang->id, $product->id, $values, 0);
+	        }
+    	}
 
 		return $product;
 	}
@@ -171,6 +190,7 @@ class ProductManager extends Nette\Object
 			self::COLUMN_STATUS => $values->status,
 			self::COLUMN_PRICE_SELL => $values->price_sell,
 			self::COLUMN_BRAND_ID => $values->brand,
+			self::COLUMN_CODE => $values->code,
 			));
 
 		//update foreign tables

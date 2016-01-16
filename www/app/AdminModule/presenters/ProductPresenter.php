@@ -155,6 +155,10 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
             }
         }
 
+        $form->addText("code", "Kód produktu")
+             ->setAttribute('placeholder', 'Napríklad: JN782')
+        	 ->getControlPrototype()->class("form-control");
+
 		$form->addText("price_sell", "Cena")
 			 ->setType('number')
 			 ->setRequired('Cena je povinná')
