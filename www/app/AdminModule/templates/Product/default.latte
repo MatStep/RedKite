@@ -42,7 +42,9 @@
 					{foreach $products as $product}
 					<tr>
 						<td>
-							<input id="productCheckBox_{$product->id}" type="checkbox" class="productCheckBox" name="select">
+							<div class="icheckbox_minimal-blue">
+								<input id="productCheckBox_{$product->id}" type="checkbox" class="minimal productCheckBox" name="select">
+							<div>
 						</td>
 						<td>
 							{$product->id}
@@ -136,36 +138,55 @@
 		//checks all checkboxes
 		$(function()
 		{
-			$('.checkBoxMenu').hide();
 
-			$('#headerCheckBox').on('ifChecked', function()
-			{
-				$('.productCheckBox').iCheck('check');
+			$('.checkBoxMenu').hide();
+			$('#headerCheckBox').change(function() {
+			if ($('#headerCheckBox').is(":checked")) {
+				console.log("checked1");
+			}
+			});
+
+			$('#headerCheckBox').change(function() {
+				if ($('#headerCheckBox').is(":checked"))
+				{
+					$('.productCheckBox').iCheck('check');
+					console.log("checked2");
+				}
 			});
 			
-			$('#headerCheckBox').on('ifUnchecked', function() {
-				$('.productCheckBox').iCheck('uncheck');
+
+			$('#headerCheckBox').change(function() {
+				if (!$('#headerCheckBox').is(":checked"))
+				{
+					$('.productCheckBox').iCheck('uncheck');
+				}
 			});
 
-			$('.productCheckBox').on('ifChecked', function() {
-				numOfCheckedBoxes++;
+			$('.productCheckBox').change(function() {
+				if ($('.productCheckBox').is(":checked"))
+				{
+					numOfCheckedBoxes++;
 
-				if ( numOfCheckedBoxes == 1 ) {
-					$('.checkBoxMenu').show();
+					if ( numOfCheckedBoxes == 1 ) {
+						$('.checkBoxMenu').show();
+					}
+					checkedBoxes.push($(this).attr('id'));
+					$('#checkedBoxesDiv').children('.allCheckedBoxes').val(checkedBoxes);
 				}
-				checkedBoxes.push($(this).attr('id'));
-				$('#checkedBoxesDiv').children('.allCheckedBoxes').val(checkedBoxes);
-			})
+			});
 
-			$('.productCheckBox').on('ifUnchecked', function() {
-				numOfCheckedBoxes--;
+			$('.productCheckBox').change(function() {
+				if (!$('.productCheckBox').is(":checked"))
+				{
+					numOfCheckedBoxes--;
 
-				if ( numOfCheckedBoxes == 0 ) {
-					$('.checkBoxMenu').hide();
-					$('#headerCheckBox').iCheck('uncheck');
+					if ( numOfCheckedBoxes == 0 ) {
+						$('.checkBoxMenu').hide();
+						$('#headerCheckBox').iCheck('uncheck');
+					}
+					checkedBoxes.splice(checkedBoxes.indexOf($(this).attr('id')),1);
+					$('#checkedBoxesDiv').children('.allCheckedBoxes').val(checkedBoxes);
 				}
-				checkedBoxes.splice(checkedBoxes.indexOf($(this).attr('id')),1);
-				$('#checkedBoxesDiv').children('.allCheckedBoxes').val(checkedBoxes);
 			});
 
 		});

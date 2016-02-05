@@ -508,6 +508,58 @@ class ProductManager extends Nette\Object
 		return $this->database->table('product_feature_value')->where('id', $id)->delete();
 	}
 
+	public function changeProductCategory($productId, $newCategoryId) 
+	{
+		$this->database->table('product_category')
+			->where('product_id = ?', $productId)
+			->update(array(
+				'category_id' => $newCategoryId
+			));
+	}
+
+	public function changeProductStatus($productId, $status) 
+	{
+		
+		$product = self::getProduct($productId);
+
+		if ( $product->status != $status )
+		{
+			$values = array('status' => $status);
+
+			$this->database->table(self::PRODUCT_TABLE)
+				->get($productId)->update($values);
+
+			return TRUE;
+		}
+
+		return TRUE;
+	}
+
+	//Change only one category to products
+	public function multipleProductsCategoryChange($productsIds, $categoryId) 
+	{
+		foreach ($productsIds as $productId) 
+		{		
+			self::changeProductCategory($productId, $categoryId);
+		}
+	}
+
+	public function multipleProductsStatusChange($productsIds, $status) 
+	{
+
+		$i = 0;
+		foreach($productsIds as $productId) 
+		{
+			if ( !self::changeProductStatus($productId, $status) )
+			{
+				return $i;
+			}
+			$i++;
+		}
+
+		return $i;
+	}
+
 	public function multipleProductsRemove($productsIds) 
 	{
 		foreach($productsIds as $productId)

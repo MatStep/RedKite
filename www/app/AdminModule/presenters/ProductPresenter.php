@@ -637,7 +637,6 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
 
 	public function selectionActionsFormSucceeded($form, $values) 
 	{
-
 		$this->selectedCheckBoxes = 
 			$this->getHttpRequest()->getPost('checkedBoxes');
 
@@ -645,18 +644,20 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
 
 		switch ($values->action) 
 		{
-			case 'categoryChange':	
-				$this->productManager->multipleProductsCategoryChange($productsIds, $values->categoryChange);			
+			case 'categoryChange':
+			//Change only one category to products	
+				$this->products->multipleProductsCategoryChange($productsIds, $values->categoryChange);			
 				break;
 			case 'statusChange':
 				self::multipleProductsStatusChange($productsIds, $values->statusChange);
 				break;
 			case 'remove':
-				$this->productManager->multipleProductsRemove($productsIds);
+				$this->products->multipleProductsRemove($productsIds);
 				break;
 		}
 		
-		$this->redirect('this', $this->paginator->getPage());
+		// $this->redirect('this', $this->paginator->getPage());
+		$this->redirect('this');
 	}
 
 	public function createActionsArray() 
@@ -719,7 +720,7 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
 
 	private function createCategoriesArrayForSelect()
 	{
-		$categories = $this->categoryManager->getAll();
+		$categories = $this->categoryManager->getAll(FALSE);
 
 		$categoriesArray = array();
 
@@ -779,6 +780,20 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
 		}
 
 		return $featureValuesArray;
+	}
+
+	public function multipleProductsStatusChange($productsIds, $status) 
+	{
+
+		$changedStatuses = $this->products->multipleProductsStatusChange($productsIds, $status);
+		if ( $changedStatuses == 0 ) 
+		{
+			$this->flashMessage("Statusy sa nezmenili.", 'error');
+		}
+		else if ( $changedStatuses < count($productsIds) )
+		{
+			$this->flashMessage("Pri zmene statusov došlo k chybe.", 'error');
+		}
 	}
 
 	public function getLink($productId)

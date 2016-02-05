@@ -3,9 +3,21 @@
 {* <a href="{$lang_czech}">Čeština</a>
 <a href="{$lang_slovak}">Slovenčina</a> *}
 {* Script for changing active menu *}
+<label>
+  <input class="myCheck" type="checkbox">
+  Foo
+</label>
 <script>
 	$(function() {
 		unsetAndSetActive('#home', '#home');
+		// handle only checkboxes inside $('.test')
+
+		$('.myCheck').change(function() {
+			if ($('.myCheck').is(":checked")) 
+			{
+			console.log("checked2");
+		}
+		});
 	});
 </script>
 {/block}
