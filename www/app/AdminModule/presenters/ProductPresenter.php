@@ -410,6 +410,7 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
 	}
 
 	//fgetcsv get one extra empty row because of end of file
+	//CSV file must be in UTF-8 encoding
 	public function readCSV($csvFile){
 		$line_of_text = array();
 		ini_set('auto_detect_line_endings', true);
@@ -459,7 +460,7 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
 
 			//Product category table
 			$data->category = array();
-			$data->category[] = $import[$i][7];
+			$data->category[] = $import[$i][7]; //In csv is only 1 category (id), but we have many_to_many so it needs to bude done like this
 
 			Debugger::barDump($data);
 			$this->products->insert($data); //Insert to table for each row($i)
