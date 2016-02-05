@@ -460,7 +460,10 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
 
 			//Product category table
 			$data->category = array();
-			$data->category[] = $import[$i][7]; //In csv is only 1 category (id), but we have many_to_many so it needs to bude done like this
+			//In csv is only 1 category (id), but we have many_to_many so it needs to be done like this
+			//$data->category[] = $import[$i][7]; //if in csv is category by ID
+			$categoryLangFromName = $this->categoryManager->getCategoryByName($import[$i][7]); //looks for category, which name is in import[$i][7]
+			$data->category[] = $categoryLangFromName->category_id;
 
 			Debugger::barDump($data);
 			$this->products->insert($data); //Insert to table for each row($i)

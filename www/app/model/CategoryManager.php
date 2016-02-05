@@ -80,6 +80,25 @@ class CategoryManager extends Nette\Object
 		return $category;
 	}
 
+	/**
+	 * This method returns category based on category_name. 
+	 * It finds in all names in Category_lang table. 
+	 * @param int $categoryName	name of category
+	 * @return Object	Category with $categoryName
+	 */
+	public function getCategoryByName($categoryName)
+	{
+		$category = $this->database->table(self::CATEGORY_LANG_TABLE)
+								   ->where(self::COLUMN_NAME, $categoryName)
+								   ->fetch();
+		if ( !$category)
+		{
+			throw new Nette\Application\BadRequestException("CATEGORY_NOT_FOUND");
+		}
+
+		return $category;
+	}
+
 
 	/**
 	 * This method sort categories with parent categories and their child following
