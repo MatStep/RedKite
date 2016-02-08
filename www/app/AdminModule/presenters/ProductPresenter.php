@@ -377,6 +377,32 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
 		$this->redirect('Product:edit', $productId, true);
 	}
 
+	public function createComponentProductImportPicturesForm()
+	{
+		$form = new Form;
+
+		$form->addUpload('directory','Priečinok')
+			 ->setRequired('Nahranie súboru je povinné')
+			 ->addCondition(Form::FILLED);
+		
+		$form->addSubmit("add", "Pridať import obrázkov")
+			 ->getControlPrototype()->class("btn btn-primary pull-right");
+
+		$form->onSuccess[] = array($this, "productImportPicturesFormSucceeded");
+
+		return $form;
+	}
+
+	public function productImportPicturesFormSucceeded($form, $values) 
+	{
+		$this->importArrayData($values);
+		$csvFile = $this->readCSV($values->csv);
+
+		// csvFile is now 2 Dimensional Array, csvFile[rows][columns]
+		//$this->flashMessage($csvFile[1][1]); //example
+		$this->flashMessage(json_encode($csvFile));
+	}
+
 	/*
 	 * Product import form
 	 */
