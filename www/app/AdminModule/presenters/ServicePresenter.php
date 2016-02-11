@@ -171,6 +171,7 @@ class ServicePresenter extends \App\AdminModule\Presenters\BasePresenter
                 $form->addText("name", "Názov" . "(" . $lang->iso_code . ")")
                      ->getControlPrototype()->class("form-control")
                      ->setRequired('Názov je povinný');
+            }
         }
 
         $form->addText("from", "Počet od")
