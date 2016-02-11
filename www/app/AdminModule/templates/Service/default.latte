@@ -1,11 +1,20 @@
 {block content}
 <div class="box box-primary">
 	<div class="box-header with-border">
-		<h2 class="box-title">
-			Služby
-		</h2>
+		<h1 class="box-title">
+			{$presenter->getServiceLang($service->id)->name}
+		</h1>
+		<a n:href="Service:edit $service->id">upraviť</a>
+		<a n:href="Service:all" class="pull-right"><i class="fa fa-close"></i></a>
 	</div>
 	<div class="box-body">
+		<h2>Tabuľka - vytvorenie hlavičky</h2>
+		<p>Riadky: {$presenter->getAttributeLang($row->id)->name}
+			<a n:href="this">Pridať nový</a>
+		</p>
+		<p>Stĺpce: {$presenter->getAttributeLang($col->id)->name}
+			<a n:href="this">Pridať nový</a>
+		</p>
 		<!-- service VIEW TABLE BEGIN -->
 		<div class="table">
 			<table class="table table-hover">
@@ -13,43 +22,31 @@
 				<thead>
 					<tr>
 						<th>
-							<input id="headerCheckBox" type="checkbox" class="serviceCheckBox" name="select">
+							{$presenter->getAttributeLang($row->id)->name}/{$presenter->getAttributeLang($col->id)->name}
+						</th>
+						{* Foreach showing onli th *}
+						<th>
+							1 farba
 						</th>
 						<th>
-							Id
+							2 farby
 						</th>
 						<th>
-							Názov
-						</th>
-						<th>
-							Obrázok
-						</th>
-						<th>
-							Možnosti
+							3 farby
 						</th>
 					</tr>
 				</thead>
 				<tbody>	<!-- TABLE BODY -->	
-					{foreach $services as $service}
+					{* Foreach showing tr with th and td *}
 					<tr>
-						<td>
-							<input id="service-check-box-{$service->id}" type="checkbox" class="serviceCheckBox" name="select">
-						</td>
-						<td>
-							{$service->id}
-						</td>
-						<td>
-							{$presenter->getServiceLang($service->id)->name}
-						</td>
-						<td>
-							<img src="{$basePath}/{$service->img_path}" alt="{$presenter->getServiceLang($service->id)->name}Image" height="60">
-						</td>
-						<td>
-							<a n:href="Service:edit $service->id" style="margin-top: 10px; width: 130px;" class='itemEdit'><i class="fa fa-edit"></i></a>
-							<a n:href="Service:remove $service->id" style="margin-top: 10px; width: 130px;" class='itemTrash'><i class="fa fa-trash-o"></i></a>
-						</td>
+						<th>1-24 ks</th>
 					</tr>
-					{/foreach}
+					<tr>
+						<th>25-50 ks</th>
+					</tr>
+					<tr>
+						<th>51-100 ks</th>
+					</tr>
 				</tbody>
 			</table>
 		</div>

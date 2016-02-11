@@ -30,13 +30,17 @@ class ServiceManager extends Nette\Object
 	/** @var Nette\Database\Context */
 	private $database;
 
+	/** @var \App\Model\AppModel @inject */
+	public $model;
+
 	/** @var \App\Model\ImageManager */
 	public $imageManager;
 
-	public function __construct(Nette\Database\Context $database, \App\Model\ImageManager $imageManager)
+	public function __construct(Nette\Database\Context $database, \App\Model\ImageManager $imageManager, AppModel $model)
 	{
-		$this->database   = $database;
+		$this->database   	= $database;
 		$this->imageManager = $imageManager;
+		$this->model	  	= $model;
 	}
 
 	public function getAll()
@@ -127,6 +131,8 @@ class ServiceManager extends Nette\Object
 
 		$data = array();
 		$data["img_path"]  = $imgUrl;
+		$data['row_id'] = $values->attribute1;
+		$data['col_id'] = $values->attribute2;
 
 		return $this->database->table(self::SERVICE_TABLE)->insert($data);
 

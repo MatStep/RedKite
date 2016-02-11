@@ -45,6 +45,9 @@ services:
 	services:
 		class: App\Model\ServiceManager
 
+	attributes:
+		class: App\Model\AttributeManager
+
 	references:
 		class: App\Model\ReferenceManager
 

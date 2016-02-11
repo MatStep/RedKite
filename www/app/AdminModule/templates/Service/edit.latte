@@ -1,10 +1,10 @@
 {block content}
 <div class="box box-primary">
 		<div class="box-header with-border">
-			<h2 class="box-title">
+			<h1 class="box-title">
 				Editovanie služby
-			</h2>
-			<a n:href="Service:" class="pull-right"><i class="fa fa-close"></i></a>
+			</h1>
+			<a n:href="Service:all" class="pull-right"><i class="fa fa-close"></i></a>
 		</div>
 		<div class="box-body">
 			{form serviceForm}
@@ -44,6 +44,18 @@
 					<img width="100%" src="{$basePath}/{$img_path}"/>
 				</div>
 			{/if}
+			<div class="form-group">
+			<label for="inputName">
+				Názov pre riadky ({$lang})
+			</label>
+			{input name_row}
+			</div>
+			<div class="form-group">
+				<label for="inputName">
+					Názov pre stĺpce ({$lang})
+				</label>
+				{input name_col}
+			</div>
 			{input edit}
 			{/form}
 		</div>
