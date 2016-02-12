@@ -59,6 +59,26 @@ class AttributeManager extends Nette\Object
 		return $attribute;
 	}
 
+	/*Get attribute value*/
+	public function getAttributeValue($attributeValueId)
+	{
+		$attributeValue =  $this->database->table('attribute_value')->where(self::COLUMN_ID, $attributeValueId)->fetch();
+
+		if ( !$attributeValue )
+		{
+			throw new Nette\Application\BadRequestException("DOESNT_EXIST");
+		}
+
+		return $attributeValue;
+	}
+
+	public function getAllAttributeValues($attributeId)
+	{
+		$attributeValues = $this->database->table('attribute_value')->where('attribute_id', $attributeId);
+
+		return $attributeValues;
+	}
+
 	public function insert($value)
 	{
 
@@ -72,6 +92,25 @@ class AttributeManager extends Nette\Object
         }
 
 		return $attribute;
+
+	}
+
+	public function insertAttributeValue($values)
+	{
+
+		$data = array();
+		$data['attribute_id'] = $values->attributeId;
+		$data['from'] = $values->from;
+		$data['to'] = $values->to;
+
+		$attributeValue =  $this->database->table('attribute_value')->insert($data);
+
+		//ADD LANGUAGE DATA
+        foreach($this->languages->getAllActive() as $lang) {
+            self::translateDataAttributeValue($lang->id, $attributeValue->id, $values, 0);
+        }
+
+		return $attributeValue;
 
 	}
 
@@ -90,6 +129,21 @@ class AttributeManager extends Nette\Object
         self::translateData($currentLanguage, $id, $values, 1);
 	}
 
+	public function editAttributeValue($id, $values)
+	{
+		$attribute_value = $this->database->table('attribute_value')->where(self::COLUMN_ID, $id);
+
+		if (!$attribute_value)
+		{
+			throw new Nette\Application\BadRequestException("DOESNT_EXIST");
+		}
+
+		$currentLanguage = $this->languages->getLanguageByName($this->languages->getLanguage());
+
+		//EDIT LANGUAGE DATA
+        self::translateDataAttributeValue($currentLanguage, $id, $values, 1);
+	}
+
 	public function remove($id)
 	{
 		// delete all rows where is attribute located in attribute lang
@@ -104,6 +158,22 @@ class AttributeManager extends Nette\Object
 		}
 
 		return $this->database->table(self::ATTRIBUTE_TABLE)->where(self::COLUMN_ID, $id)->delete();
+	}
+
+	public function removeAttributeValue($id)
+	{
+		// delete all rows where is attribute located in attribute lang
+
+		$allAttributeValueLang = $this->model->getAllFirstSecond($id,'attribute_value','lang');
+
+		while($allAttributeValueLang->count() > 0) {
+			foreach($allAttributeValueLang as $attributeValueLang)
+			{
+				$attributeValueLang->delete();
+			}
+		}
+
+		return $this->database->table('attribute_value')->where(self::COLUMN_ID, $id)->delete();
 	}
 
 
@@ -130,6 +200,33 @@ class AttributeManager extends Nette\Object
 			$attribute_lang = $this->model->getFirstSecond($attributeId, $langId, 'attribute', 'lang');
 			$attribute_lang->update(array(
 				self::COLUMN_NAME => $data,
+				));
+		}
+	}
+
+	/** 
+	 * translate data
+	 * @param int $lang 		   language id
+	 * @param array $data		   array of data to transalte
+	 * @param int $method 		   method defines 0-> adding, 1->updating
+	 * @param string $attributeId   id of attribute
+	 */
+	public function translateDataAttributeValue($langId, $attributeValueId, $data, $method)
+	{
+
+		if($method == '0')
+		{
+			$this->database->table('attribute_value_lang')->insert(array(
+				'attribute_value_id' => $attributeValueId,
+				'lang_id' => $langId,
+				'name' => $data['name'],
+				));
+		}
+		else
+		{
+			$attribute_value_lang = $this->model->getFirstSecond($attributeValueId, $langId, 'attribute_value', 'lang');
+			$attribute_value_lang->update(array(
+				'name' => $data['name'],
 				));
 		}
 	}

@@ -10,11 +10,13 @@
 	<div class="box-body">
 		<h2>Tabuľka - vytvorenie hlavičky</h2>
 		<p>Riadky: {$presenter->getAttributeLang($row->id)->name}
-			<a n:href="this">Pridať nový</a>
+			<a n:href="Service:addValue $service->id, $row->id">Pridať nový</a>
 		</p>
+
 		<p>Stĺpce: {$presenter->getAttributeLang($col->id)->name}
-			<a n:href="this">Pridať nový</a>
+			<a n:href="Service:addValue $service->id, $col->id">Pridať nový</a>
 		</p>
+
 		<!-- service VIEW TABLE BEGIN -->
 		<div class="table">
 			<table class="table table-hover">
@@ -25,28 +27,23 @@
 							{$presenter->getAttributeLang($row->id)->name}/{$presenter->getAttributeLang($col->id)->name}
 						</th>
 						{* Foreach showing onli th *}
+						{foreach $cols as $c}
 						<th>
-							1 farba
+							{$presenter->getAttributeValueLang($c->id)->name} <a n:href="Service:editValue $service->id, $col->id, $c->id" class="itemEdit"><i class="fa fa-edit"></i></a> <a n:href="Service:removeAttributeValue $service->id, $c->id" class="itemTrash"><i class="fa fa-trash-o"></i></a>
 						</th>
-						<th>
-							2 farby
-						</th>
-						<th>
-							3 farby
-						</th>
+						{/foreach}
 					</tr>
 				</thead>
 				<tbody>	<!-- TABLE BODY -->	
 					{* Foreach showing tr with th and td *}
+					{foreach $rows as $r}
 					<tr>
-						<th>1-24 ks</th>
+						<th>{$presenter->getAttributeValueLang($r->id)->name} <a n:href="Service:editValue $service->id, $row->id, $r->id" class="itemEdit"><i class="fa fa-edit"></i></a> <a n:href="Service:removeAttributeValue $service->id, $r->id" class="itemTrash"><i class="fa fa-trash-o"></i></a></th>
+						{foreach $cols as $value}
+							<td>hodnota</td>
+						{/foreach}
 					</tr>
-					<tr>
-						<th>25-50 ks</th>
-					</tr>
-					<tr>
-						<th>51-100 ks</th>
-					</tr>
+					{/foreach}
 				</tbody>
 			</table>
 		</div>

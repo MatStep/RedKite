@@ -35,12 +35,41 @@ class ServicePresenter extends \App\AdminModule\Presenters\BasePresenter
         if($serviceId == NULL) {
             $this->redirect("Service:All");
         }
+
+        //Service
         $service = $this->services->getService($serviceId);
         $this->template->service = $service;
-        $this->template->row = $this->attributes->getAttribute($service->row_id);
-        $this->template->col = $this->attributes->getAttribute($service->col_id);
+
+        //Row
+        $row = $this->attributes->getAttribute($service->row_id);
+        $this->template->row = $row;
+
+        //Col
+        $col = $this->attributes->getAttribute($service->col_id);
+        $this->template->col = $col;
+
+        //Rows
+        $this->template->rows = $this->attributes->getAllAttributeValues($row->id);
+
+        //Cols
+        $this->template->cols = $this->attributes->getAllAttributeValues($col->id);
+
+        //Services
 		$this->template->services = $this->services->getAll();
 	}
+
+    public function renderAddValue($serviceId, $attributeId)
+    {
+        $this->template->service = $this->services->getService($serviceId);
+        $this->template->attribute = $this->attributes->getAttribute($attributeId);
+    }
+
+    public function renderEditValue($serviceId, $attributeId, $attributeValueId)
+    {
+        $this->template->service = $this->services->getService($serviceId);
+        $this->template->attribute = $this->attributes->getAttribute($attributeId);
+        $this->template->attributeValue = $this->attributes->getAttributeValue($attributeValueId);
+    }
 
     public function renderAll()
     {
@@ -169,18 +198,15 @@ class ServicePresenter extends \App\AdminModule\Presenters\BasePresenter
             if($lang->id == parent::getLanguage()->id)
             {
                 $form->addText("name", "Názov" . "(" . $lang->iso_code . ")")
-                     ->getControlPrototype()->class("form-control")
                      ->setRequired('Názov je povinný');
             }
         }
 
         $form->addText("from", "Počet od")
-             ->setType('number')
-             ->addRule(Form::INTEGER, 'Zadaná hodnota musí byť číslo');
+             ->setType('number');
 
         $form->addText("to", "Počet do")
-             ->setType('number')
-             ->addRule(Form::INTEGER, 'Zadaná hodnota musí byť číslo');
+             ->setType('number');
 
         $form->addSubmit("add", "Pridať")
              ->getControlPrototype()->class("btn btn-primary pull-right");
@@ -198,31 +224,32 @@ class ServicePresenter extends \App\AdminModule\Presenters\BasePresenter
         $adding = true;
         $currentLanguage = parent::getLanguage();
 
-        if ( isset($this->request->getParameters()['attributeId']) )
+        if ( isset($this->request->getParameters()['attributeValueId']) )
         {
-            $attributeId = $this->getParameter('attributeId');
+            $attributeValueId = $this->getParameter('attributeValueId');
             $adding = false;
         }
+
+        $serviceId = $this->getParameter('serviceId');
+        $attributeId = $this->getParameter('attributeId');
+        $values['attributeId'] = $attributeId;
 
         try {
             if ($adding)
             {
-                //ADD Attribute Values
-                //TODO add insertValues
-                $this->attributes->insertValues($values);
-                $this->attributes->insertValues($values);
+                $this->attributes->insertAttributeValue($values);
 
-                $this->flashMessage('Tabuľka úspešne vytvorená');
+                $this->flashMessage('Tabuľka bola upravená');
             }
             else
             {
-                //EDIT ATTRIBUTE
-                $this->attributes->editValues($attributeId, $values);
 
-                $this->flashMessage('Služba bola aktualizovaná');
+                $this->attributes->editAttributeValue($attributeValueId, $values);
+
+                $this->flashMessage('Tabuľka bola aktualizovaná');
             }
 
-            $this->redirect('this');
+            $this->redirect('Service:', $serviceId);
 
         } catch (Nette\Application\BadRequestException $e) {
             if ($e->getMessage() == "NAME_EXISTS")
@@ -240,14 +267,31 @@ class ServicePresenter extends \App\AdminModule\Presenters\BasePresenter
         return $this->attributes->model->getFirstSecond($attributeId, parent::getLanguage()->id, 'attribute', 'lang');;
     }
 
+    public function getAttributeValueLang($attributeValueId)
+    {
+        return $this->attributes->model->getFirstSecond($attributeValueId, parent::getLanguage()->id, 'attribute_value', 'lang');;
+    }
+
 	public function actionRemove($serviceId)
 	{
         $service = $this->services->getService($serviceId);
         $attributeRow = $service->row_id;
         $attributeCol = $service->col_id;
+        $attributeValuesRow = $this->attributes->getAllAttributeValues($attributeRow);
+        $attributeValuesCol = $this->attributes->getAllAttributeValues($attributeCol);
 
         //delete service
 		$this->services->remove($serviceId);
+
+        //delete attribute_values
+        foreach($attributeValuesRow as $r)
+        {
+            $this->attributes->removeAttributeValue($r->id);
+        }
+        foreach($attributeValuesCol as $c)
+        {
+            $this->attributes->removeAttributeValue($c->id);
+        }
 
         //delete attributes
         $this->attributes->remove($attributeRow);
@@ -256,6 +300,16 @@ class ServicePresenter extends \App\AdminModule\Presenters\BasePresenter
 		$this->flashMessage('Služba bola úspešne vymazaná');
 		$this->redirect("Service:");
 	}
+
+    public function actionRemoveAttributeValue($serviceId, $attributeValueId)
+    {
+        $attribute = $this->attributes->getAttributeValue($attributeValueId);
+
+        $this->attributes->removeAttributeValue($attributeValueId);
+
+        $this->flashMessage('Hodnota bola úspešne vymazaná');
+        $this->redirect("Service:", $serviceId);
+    }
 
     public function actionRemoveImage($serviceId)
     {
@@ -282,5 +336,18 @@ class ServicePresenter extends \App\AdminModule\Presenters\BasePresenter
         $this['serviceForm']['name_col']->setDefaultValue($attributeCol->name);
 
 	}
+
+    public function actionEditValue($serviceId, $attributeId, $attributeValueId)
+    {
+        $attributeValue = $this->attributes->getAttributeValue($attributeValueId);
+        $lang = parent::getLanguage();
+        $attributeValueLang = self::getAttributeValueLang($attributeValueId);
+
+        $this->template->attributeValueId = $attributeValueId;
+
+        $this['attributeValueForm']->setDefaults($attributeValue->toArray());
+        $this['attributeValueForm']['name']->setDefaultValue($attributeValueLang->name);
+
+    }
 
 }
