@@ -142,7 +142,6 @@ class AttributeManager extends Nette\Object
 
 	public function insert($value)
 	{
-
 		$data = array();
 
 		$attribute =  $this->database->table(self::ATTRIBUTE_TABLE)->insert($data);
@@ -158,7 +157,6 @@ class AttributeManager extends Nette\Object
 
 	public function insertAttributeValue($values)
 	{
-
 		$data = array();
 		$data['attribute_id'] = $values->attributeId;
 		$data['from'] = $values->from;
@@ -177,7 +175,6 @@ class AttributeManager extends Nette\Object
 
 	public function insertServiceAttributeValue($values)
 	{
-
 		$data = array();
 		$data['attribute_value_id1'] = $values->attribute_value_id1;
 		$data['attribute_value_id2'] = $values->attribute_value_id2;
