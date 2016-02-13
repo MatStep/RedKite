@@ -1,0 +1,14 @@
+/*Select will return all price_sell from service_attribute_value*/
+SELECT DISTINCT price_sell FROM service_attribute_value sav 
+JOIN attribute_value av 
+JOIN service s
+WHERE s.id = 4 AND
+sav.attribute_value_id1 = av.id OR
+sav.attribute_value_id2 = av.id
+
+/*Select will return all data from service_attribute_value ased on one attribute*/
+SELECT * FROM service_attribute_value sav 
+JOIN attribute_value av 
+JOIN service s
+WHERE s.id = 4 AND
+sav.attribute_value_id1 = av.id

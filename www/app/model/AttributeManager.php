@@ -79,6 +79,67 @@ class AttributeManager extends Nette\Object
 		return $attributeValues;
 	}
 
+	/*Get service attribute value*/
+	public function getServiceAttributeValue($valueId)
+	{
+		$value =  $this->database->table('service_attribute_value')->where(self::COLUMN_ID, $valueId)->fetch();
+
+		if ( !$value )
+		{
+			throw new Nette\Application\BadRequestException("DOESNT_EXIST");
+		}
+
+		return $value;
+	}
+
+	/*Get serrvice attribute value*/
+	public function getAllServiceAttributeValues($serviceId)
+	{
+		$values =  $this->database->query('SELECT * FROM service_attribute_value sav 
+											JOIN attribute_value av 
+											JOIN service s
+											WHERE s.id = ? AND
+											sav.attribute_value_id1 = av.id', $serviceId);
+
+		return $values;
+	}
+
+	/**
+	 * Get service attribute value by id of attribute values
+	 * @param int $id1		id of attribute_value 1, row
+	 * @param int $id2		if of attribute_value 2, col
+	 * @return active row	service attribute value
+	 */
+	public function getValueByAttributeValueId($id1, $id2)
+	{
+		$value =  $this->database->table('service_attribute_value')->where('attribute_value_id1', $id1)->where('attribute_value_id2', $id2)->fetch();
+
+		if ( !$value )
+		{
+			throw new Nette\Application\BadRequestException("DOESNT_EXIST");
+		}
+
+		return $value;
+	}
+
+	/**
+	 * Check if service attribute value
+	 * @param int $id1	id of attribute_value 1, row
+	 * @param int $id2	if of attribute_value 2, col
+	 * @return boolean	0 -> doesn't exist, 1 -> exists
+	 */
+	public function existValue($id1, $id2)
+	{
+		$value =  $this->database->table('service_attribute_value')->where('attribute_value_id1', $id1)->where('attribute_value_id2', $id2)->fetch();
+
+		if ( !$value )
+		{
+			return FALSE;
+		}
+
+		return TRUE;
+	}
+
 	public function insert($value)
 	{
 
@@ -114,6 +175,26 @@ class AttributeManager extends Nette\Object
 
 	}
 
+	public function insertServiceAttributeValue($values)
+	{
+
+		$data = array();
+		$data['attribute_value_id1'] = $values->attribute_value_id1;
+		$data['attribute_value_id2'] = $values->attribute_value_id2;
+		$data['price_sell'] = $values->price_sell;
+		// $data['price_buy'] = $values->price_buy;
+
+		if(self::existValue($values->attribute_value_id1, $values->attribute_value_id2))
+		{
+			throw new Nette\Application\BadRequestException("ALREADY_EXISTS");
+		}
+
+		$value =  $this->database->table('service_attribute_value')->insert($data);
+
+		return $value;
+
+	}
+
 	public function edit($id, $values)
 	{
 		$attribute = $this->database->table(self::ATTRIBUTE_TABLE)->where(self::COLUMN_ID, $id);
@@ -142,6 +223,16 @@ class AttributeManager extends Nette\Object
 
 		//EDIT LANGUAGE DATA
         self::translateDataAttributeValue($currentLanguage, $id, $values, 1);
+	}
+
+	public function editServiceAttributeValue($id, $values)
+	{
+		$value = $this->database->table('service_attribute_value')->where(self::COLUMN_ID, $id);
+
+		if (!$value)
+		{
+			throw new Nette\Application\BadRequestException("DOESNT_EXIST");
+		}
 	}
 
 	public function remove($id)
@@ -174,6 +265,11 @@ class AttributeManager extends Nette\Object
 		}
 
 		return $this->database->table('attribute_value')->where(self::COLUMN_ID, $id)->delete();
+	}
+
+	public function removeServiceAttributeValue($id)
+	{
+		return $this->database->table('service_attribute_value')->where(self::COLUMN_ID, $id)->delete();
 	}
 
 

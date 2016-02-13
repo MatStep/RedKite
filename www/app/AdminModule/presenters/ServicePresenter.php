@@ -49,13 +49,18 @@ class ServicePresenter extends \App\AdminModule\Presenters\BasePresenter
         $this->template->col = $col;
 
         //Rows
-        $this->template->rows = $this->attributes->getAllAttributeValues($row->id);
+        $rows = $this->attributes->getAllAttributeValues($row->id);
+        $this->template->rows = $rows;
 
         //Cols
-        $this->template->cols = $this->attributes->getAllAttributeValues($col->id);
+        $cols = $this->attributes->getAllAttributeValues($col->id);
+        $this->template->cols = $cols;
 
         //Services
 		$this->template->services = $this->services->getAll();
+
+        //Values
+        $this->template->values = $this->attributes->getAllServiceAttributeValues($serviceId);
 	}
 
     public function renderAddValue($serviceId, $attributeId)
@@ -187,7 +192,7 @@ class ServicePresenter extends \App\AdminModule\Presenters\BasePresenter
     }
 
     /*
-     * Attribute form
+     * Attribute value form
      */
     protected function createComponentAttributeValueForm()
     {
@@ -257,6 +262,77 @@ class ServicePresenter extends \App\AdminModule\Presenters\BasePresenter
         }
     }
 
+    /*
+     * Service attribute value form
+     */
+    protected function createComponentServiceAttributeValueForm()
+    {
+        $form = new Form;
+
+        $form->addText("price_sell", "Predajná cena")
+             ->setAttribute('placeholder', '1.25')
+             ->setRequired('Údaj je povinný.');
+
+        $form->addHidden("attribute_value_id1");
+        $form->addHidden("attribute_value_id2");
+
+        $form->addSubmit("add", "Pridať")
+             ->getControlPrototype()->class("btn btn-primary pull-right");
+
+        $form->addSubmit("edit", "Uložiť zmeny")
+             ->getControlPrototype()->class("btn btn-primary pull-right");
+
+        $form->onSuccess[] = array($this, "serviceAttributeValueFormSucceeded");
+
+        return $form;
+    }
+
+    public function ServiceAttributeValueFormSucceeded($form, $values)
+    {
+        $adding = true;
+        $currentLanguage = parent::getLanguage();
+
+        if ( isset($this->request->getParameters()['serviceAttributeValueId']) )
+        {
+            $attributeValueId = $this->getParameter('serviceAttributeValueId');
+            $adding = false;
+        }
+
+        $serviceId = $this->getParameter('serviceId');
+
+        //TODO get attribute value from template
+        $attributeValueId1 = $values['attribute_value_id1'];
+        $attributeValueId2 = $values['attribute_value_id2'];
+
+        try {
+            if ($adding)
+            {
+                $this->attributes->insertServiceAttributeValue($values);
+
+                $this->flashMessage('Údaj bol pridaný');
+            }
+            else
+            {
+
+                $this->attributes->editServiceAttributeValue($serviceAttributeValueId, $values);
+
+                $this->flashMessage('Údaj bol aktualizovaný');
+            }
+
+            $this->redirect('Service:', $serviceId);
+
+        } catch (Nette\Application\BadRequestException $e) {
+            if ($e->getMessage() == "NAME_EXISTS")
+                $form->addError('Názov atribútu už existuje');
+            if ($e->getMessage() == "ALREADY_EXISTS")
+            {
+                $form->addError('Hodnota pre dané políčko už je v databáze zapísané');
+                $this->flashMessage('Hodnota pre dané políčko už je v databáze zapísané');
+                $this->redirect('Service:', $serviceId);
+            }
+        }
+    }
+
     public function getServiceLang($serviceId)
     {
         return $this->services->getServiceLang($serviceId, parent::getLanguage()->id);
@@ -270,6 +346,16 @@ class ServicePresenter extends \App\AdminModule\Presenters\BasePresenter
     public function getAttributeValueLang($attributeValueId)
     {
         return $this->attributes->model->getFirstSecond($attributeValueId, parent::getLanguage()->id, 'attribute_value', 'lang');;
+    }
+
+    public function existValue($id1, $id2)
+    {
+        return $this->attributes->existValue($id1, $id2);
+    }
+
+    public function getValueByAttributeValueId($id1, $id2)
+    {
+        return $this->attributes->getValueByAttributeValueId($id1, $id2);
     }
 
 	public function actionRemove($serviceId)

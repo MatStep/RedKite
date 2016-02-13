@@ -19,6 +19,13 @@
 
 		<!-- service VIEW TABLE BEGIN -->
 		<div class="table">
+			{form serviceAttributeValueForm}
+			<div n:if="$form->hasErrors()">
+				<ul class="errors">
+					<li n:foreach="$form->errors as $error"><strong>{$error}</strong></li>
+				</ul>
+			</div>
+			{/form}
 			<table class="table table-hover">
 				<!-- TABLE HEADER -->
 				<thead>
@@ -39,8 +46,28 @@
 					{foreach $rows as $r}
 					<tr>
 						<th>{$presenter->getAttributeValueLang($r->id)->name} <a n:href="Service:editValue $service->id, $row->id, $r->id" class="itemEdit"><i class="fa fa-edit"></i></a> <a n:href="Service:removeAttributeValue $service->id, $r->id" class="itemTrash"><i class="fa fa-trash-o"></i></a></th>
-						{foreach $cols as $value}
-							<td>hodnota</td>
+						{foreach $cols as $c}
+							<td>
+								{* If value for price sell exist show value*}
+								{if $presenter->existValue($r->id, $c->id)}
+									{$presenter->getValueByAttributeValueId($r->id, $c->id)->price_sell} €
+								{* Else show possibility to add value *}
+								{else}
+									<div id="serviceAttributeValueForm">
+										{form serviceAttributeValueForm}
+											<div class="fleft">
+												{* Set attribute id's to form *}
+												{?$control['serviceAttributeValueForm']['attribute_value_id1']->setValue($r->id)}
+												{?$control['serviceAttributeValueForm']['attribute_value_id2']->setValue($c->id)}
+												{input price_sell}
+											</div>
+											<div class="fleft">
+												{input add}
+											</div>
+										{/form}
+									</div>
+								{/if}
+							</td>
 						{/foreach}
 					</tr>
 					{/foreach}
