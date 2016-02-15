@@ -50,7 +50,7 @@
 							<td>
 								{* If value for price sell exist show value*}
 								{if $presenter->existValue($r->id, $c->id)}
-									{$presenter->getValueByAttributeValueId($r->id, $c->id)->price_sell} €
+									{$presenter->getValueByAttributeValueId($r->id, $c->id)->price_sell} € <a n:href="Service:" class="itemEdit"><i class="fa fa-edit"></i></a>
 								{* Else show possibility to add value *}
 								{else}
 									<div id="serviceAttributeValueForm">
