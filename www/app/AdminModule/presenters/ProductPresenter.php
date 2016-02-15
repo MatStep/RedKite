@@ -377,7 +377,10 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
 		$this->redirect('Product:edit', $productId, true);
 	}
 
-	public function createComponentProductImportPicturesForm()
+	/*
+	 * Product import images form
+	 */
+	public function createComponentProductImportImagesForm()
 	{
 		$form = new Form;
 
@@ -388,12 +391,12 @@ class ProductPresenter extends \App\AdminModule\Presenters\BasePresenter
 		$form->addSubmit("add", "Pridať import obrázkov")
 			 ->getControlPrototype()->class("btn btn-primary pull-right");
 
-		$form->onSuccess[] = array($this, "productImportPicturesFormSucceeded");
+		$form->onSuccess[] = array($this, "productImportImagesFormSucceeded");
 
 		return $form;
 	}
 
-	public function productImportPicturesFormSucceeded($form, $values) 
+	public function productImportImagesFormSucceeded($form, $values) 
 	{
 		$this->importArrayData($values);
 		$csvFile = $this->readCSV($values->csv);
