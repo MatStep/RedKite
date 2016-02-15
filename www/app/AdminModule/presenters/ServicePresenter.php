@@ -59,6 +59,8 @@ class ServicePresenter extends \App\AdminModule\Presenters\BasePresenter
         //Services
 		$this->template->services = $this->services->getAll();
 
+        $this->template->table_cells = $rows->count() * $cols->count();
+
         //Values
         $this->template->values = $this->attributes->getAllServiceAttributeValues($serviceId);
 	}
@@ -74,6 +76,14 @@ class ServicePresenter extends \App\AdminModule\Presenters\BasePresenter
         $this->template->service = $this->services->getService($serviceId);
         $this->template->attribute = $this->attributes->getAttribute($attributeId);
         $this->template->attributeValue = $this->attributes->getAttributeValue($attributeValueId);
+    }
+
+    public function renderEditPrice($serviceId, $valueId1, $valueId2, $serviceAttributeValueId)
+    {
+        $this->template->service = $this->services->getService($serviceId);
+        $this->template->value_id1 = $this->attributes->getAttributeValue($valueId1);
+        $this->template->value_id2 = $this->attributes->getAttributeValue($valueId2);
+        $this->template->service_attribute_value_id = $this->attributes->getValueByAttributeValueId($valueId1, $valueId2);
     }
 
     public function renderAll()
@@ -292,17 +302,24 @@ class ServicePresenter extends \App\AdminModule\Presenters\BasePresenter
         $adding = true;
         $currentLanguage = parent::getLanguage();
 
-        if ( isset($this->request->getParameters()['serviceAttributeValueId']) )
+        if ( isset($this->request->getParameters()['valueId1'])
+         &&  isset($this->request->getParameters()['valueId2'])
+         &&  isset($this->request->getParameters()['serviceAttributeValueId']))
         {
-            $attributeValueId = $this->getParameter('serviceAttributeValueId');
+            $attributeValueId1 = $this->getParameter('valueId1');
+            $attributeValueId2 = $this->getParameter('valueId2');
+            $serviceAttributeValueId = $this->getParameter('serviceAttributeValueId');
+            $values['attribute_value_id1'] = $attributeValueId1;
+            $values['attribute_value_id2'] = $attributeValueId2;
             $adding = false;
+        }
+        else
+        {
+            $attributeValueId1 = $values['attribute_value_id1'];
+            $attributeValueId2 = $values['attribute_value_id2'];
         }
 
         $serviceId = $this->getParameter('serviceId');
-
-        //TODO get attribute value from template
-        $attributeValueId1 = $values['attribute_value_id1'];
-        $attributeValueId2 = $values['attribute_value_id2'];
 
         try {
             if ($adding)
@@ -358,6 +375,16 @@ class ServicePresenter extends \App\AdminModule\Presenters\BasePresenter
         return $this->attributes->getValueByAttributeValueId($id1, $id2);
     }
 
+    // Get values from values result set that get data from DB query and compare all id's with attributes to get the data
+    public function getFromValues($values, $id1, $id2)
+    {
+        foreach($values as $value)
+        {
+            if($value->attribute_value_id1 == $id1 && $value->attribute_value_id2 == $id2)
+                return $value;
+        }
+    }
+
 	public function actionRemove($serviceId)
 	{
         $service = $this->services->getService($serviceId);
@@ -366,8 +393,14 @@ class ServicePresenter extends \App\AdminModule\Presenters\BasePresenter
         $attributeValuesRow = $this->attributes->getAllAttributeValues($attributeRow);
         $attributeValuesCol = $this->attributes->getAllAttributeValues($attributeCol);
 
-        //delete service
-		$this->services->remove($serviceId);
+        // Get all values for service
+        $values = $this->attributes->getAllServiceAttributeValues($serviceId);
+
+        foreach($values as $value)
+        {
+            // sav_id is id from DB query
+            $this->attributes->removeServiceAttributeValue($value->sav_id);
+        }
 
         //delete attribute_values
         foreach($attributeValuesRow as $r)
@@ -378,6 +411,9 @@ class ServicePresenter extends \App\AdminModule\Presenters\BasePresenter
         {
             $this->attributes->removeAttributeValue($c->id);
         }
+
+        //delete service
+        $this->services->remove($serviceId);
 
         //delete attributes
         $this->attributes->remove($attributeRow);
@@ -390,6 +426,18 @@ class ServicePresenter extends \App\AdminModule\Presenters\BasePresenter
     public function actionRemoveAttributeValue($serviceId, $attributeValueId)
     {
         $attribute = $this->attributes->getAttributeValue($attributeValueId);
+
+        // Get all values for service
+        $values = $this->attributes->getAllServiceAttributeValues($serviceId);
+
+        foreach($values as $value)
+        {
+            if($value->attribute_value_id1 == $attributeValueId || $value->attribute_value_id2 == $attributeValueId)
+            {
+                // sav_id is id from DB query
+                $this->attributes->removeServiceAttributeValue($value->sav_id);
+            }
+        }
 
         $this->attributes->removeAttributeValue($attributeValueId);
 
@@ -433,6 +481,14 @@ class ServicePresenter extends \App\AdminModule\Presenters\BasePresenter
 
         $this['attributeValueForm']->setDefaults($attributeValue->toArray());
         $this['attributeValueForm']['name']->setDefaultValue($attributeValueLang->name);
+
+    }
+
+    public function actionEditPrice($serviceId, $valueId1, $valueId2, $serviceAttributeValueId)
+    {
+        $value = $this->attributes->getServiceAttributeValue($serviceAttributeValueId);
+
+        $this['serviceAttributeValueForm']->setDefaults($value->toArray());
 
     }
 

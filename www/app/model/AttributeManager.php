@@ -95,11 +95,23 @@ class AttributeManager extends Nette\Object
 	/*Get serrvice attribute value*/
 	public function getAllServiceAttributeValues($serviceId)
 	{
-		$values =  $this->database->query('SELECT * FROM service_attribute_value sav 
-											JOIN attribute_value av 
-											JOIN service s
-											WHERE s.id = ? AND
-											sav.attribute_value_id1 = av.id', $serviceId);
+		$values =  $this->database->query('SELECT sav.id AS sav_id, sav.attribute_value_id1 AS attribute_value_id1,
+			sav.attribute_value_id2 AS attribute_value_id2,
+			sav.price_sell AS price_sell,
+			sav.price_buy AS price_buy,
+			av.id AS av_id,
+			attribute_id AS attribute_id,
+			av.from AS number_from,
+			av.to AS number_to,
+			s.id AS s_id,
+			row_id AS row_id,
+			col_id AS col_id,
+			img_path AS img_path FROM service_attribute_value AS sav
+			JOIN attribute_value av 
+			JOIN service s
+			WHERE s.id = ? AND
+			sav.attribute_value_id1 = av.id AND
+			attribute_id = row_id', $serviceId)->fetchAll();
 
 		return $values;
 	}
@@ -230,6 +242,10 @@ class AttributeManager extends Nette\Object
 		{
 			throw new Nette\Application\BadRequestException("DOESNT_EXIST");
 		}
+
+		$value->update(array(
+			'price_sell' => $values->price_sell,
+			));
 	}
 
 	public function remove($id)

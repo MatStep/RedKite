@@ -50,7 +50,13 @@
 							<td>
 								{* If value for price sell exist show value*}
 								{if $presenter->existValue($r->id, $c->id)}
-									{$presenter->getValueByAttributeValueId($r->id, $c->id)->price_sell} € <a n:href="Service:" class="itemEdit"><i class="fa fa-edit"></i></a>
+									{* {$presenter->getValueByAttributeValueId($r->id, $c->id)->price_sell} € <a n:href="Service:editPrice $service->id, $r->id, $c->id" class="itemEdit"><i class="fa fa-edit"></i></a> *}
+								{var $valueId = $presenter->getFromValues($values, $r->id, $c->id)->sav_id}
+								<?php 
+									$priceCurrency = $presenter->getFromValues($values, $r->id, $c->id)->price_sell*$currency->rate;
+									$taxIncluded = (($tax->value)/100 + 1) * $priceCurrency;
+								?>
+								{$priceCurrency} {$currency->sign} <a n:href="Service:editPrice $service->id, $r->id, $c->id, $valueId" class="itemEdit"><i class="fa fa-edit"></i></a>
 								{* Else show possibility to add value *}
 								{else}
 									<div id="serviceAttributeValueForm">

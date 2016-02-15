@@ -6,7 +6,7 @@ WHERE s.id = 4 AND
 sav.attribute_value_id1 = av.id OR
 sav.attribute_value_id2 = av.id
 
-/*Select will return all data from service_attribute_value based on one attribute row*/
+/*Select will return all data from service_attribute_value based on one attribute  row*/
 SELECT sav.id AS sav_id, sav.attribute_value_id1 AS attribute_value_id1,
 sav.attribute_value_id2 AS attribute_value_id2,
 sav.price_sell AS price_sell,
